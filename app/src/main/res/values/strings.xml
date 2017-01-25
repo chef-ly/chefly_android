@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Chef-ly</string>
+    <string name="chefly">Chef-ly</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="signin">Sign In</string>
+    <string name="continueAsGuest"><u>Continue As Guest</u></string>
+    <string name="or">Or</string>
+    <string name="signUp"><u>Sign Up Now!</u></string>
+    <string name="recipes">Recipes</string>
+    <string name="search">Search</string>
+    <string name="ingredients">Ingredients</string>
+    <string name="directions">Directions</string>
+    <string name="contentDescriptionRecipe">A picture of the recipe</string>
+    <string name="back">Back</string>
+</resources>
