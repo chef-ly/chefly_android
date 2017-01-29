@@ -5,9 +5,9 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -22,6 +22,7 @@ public class HttpConnection extends AsyncTask<URL, Integer, Long> {
     private final String TAG = "HttpConnection";
     private Context context;
     private String responseCode;
+    private String responseMessage;
 
     @Override
     protected void onPreExecute() {
@@ -56,16 +57,26 @@ public class HttpConnection extends AsyncTask<URL, Integer, Long> {
         try {
             for(URL url : params){
                 urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.setReadTimeout(5000);
+                urlConnection.connect();
+
                 Log.d(TAG,urlConnection.getURL().toString());
                 responseCode =  String.valueOf(urlConnection.getResponseCode());
-                Log.d(TAG,responseCode);
-                /* TODO  read data in from connection
-                InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-                int line;
-                while ((line = in.read()) != 0) {
-                    line.append(line).append('\n');
+                Log.d(TAG,responseCode + " " + urlConnection.getResponseMessage());
+
+                 // read data in from connection
+                BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                StringBuilder sb = new StringBuilder();
+
+                String line = null;
+                while ((line = reader.readLine()) != null)
+                {
+                    sb.append(line + "\n");
                 }
-                */
+
+                responseMessage = sb.toString();
+                Log.d(TAG,responseMessage);
             }
 
         } catch(IOException e){
@@ -75,7 +86,7 @@ public class HttpConnection extends AsyncTask<URL, Integer, Long> {
             urlConnection.disconnect();
         }
 
-        return null;
+        return urlConnection.getLastModified();
     }
 
     public HttpConnection(Context c){
@@ -89,6 +100,9 @@ public class HttpConnection extends AsyncTask<URL, Integer, Long> {
     }
     public String getResponseCode(){
         return responseCode;
+    }
+    public String getResponseMessage(){
+        return responseMessage;
     }
 
 }
