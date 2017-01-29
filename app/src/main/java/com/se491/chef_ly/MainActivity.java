@@ -10,6 +10,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
+
 
 public class MainActivity extends Activity implements View.OnClickListener{
 
@@ -25,6 +27,9 @@ public class MainActivity extends Activity implements View.OnClickListener{
         setContentView(R.layout.activity_main);
 
         setupViews();
+
+        HttpConnection connect = new HttpConnection(this);
+
     }
 
     private void setupViews(){

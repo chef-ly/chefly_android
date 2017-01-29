@@ -18,5 +18,5 @@
         <activity android:name=".RecipeListActivity" />
         <activity android:name=".RecipeDetailActivity"></activity>
     </application>
-
+    <uses-permission android:name="android.permission.INTERNET" />
 </manifest>
