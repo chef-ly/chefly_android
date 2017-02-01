@@ -17,7 +17,7 @@ import java.net.URL;
 
 public class HttpConnection extends AsyncTask<URL, Integer, Long> {
 
-    private final String urlString = "http://www.google.com";
+    private final String urlString = "https://pure-fortress-13559.herokuapp.com/";
     private final String TAG = "HttpConnection";
     private Context context;
     private String responseCode;
