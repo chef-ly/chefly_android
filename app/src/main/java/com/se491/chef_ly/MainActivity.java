@@ -28,7 +28,8 @@ public class MainActivity extends Activity implements View.OnClickListener{
 
         setupViews();
 
-        HttpConnection connect = new HttpConnection(this);
+        // test call to get Recipe list
+        new GetRecipeList(this);
 
     }
 
