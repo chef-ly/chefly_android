@@ -54,7 +54,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
         Recipe r = intent.getParcelableExtra("recipe");
 
         if(r == null){
-            recipeTitle.setText("Recipe Not Found :(");
+            recipeTitle.setText(R.string.recipeNotFound);
         }else{
             recipeTitle.setText(r.getName());
 

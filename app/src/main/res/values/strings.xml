@@ -13,4 +13,6 @@
     <string name="directions">Directions</string>
     <string name="contentDescriptionRecipe">A picture of the recipe</string>
     <string name="back">Back</string>
+    <string name="recipeNotFound">Recipe Not Found :(</string>
+    <string name="recipeImageContentDescription">Image of recipe</string>
 </resources>
