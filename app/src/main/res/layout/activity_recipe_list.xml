@@ -11,7 +11,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.se491.chef_ly.RecipeListActivity">
+    tools:context="com.se491.chef_ly.activity.RecipeListActivity">
 
 
         <TextView

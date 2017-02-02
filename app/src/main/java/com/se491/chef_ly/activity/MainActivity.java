@@ -1,4 +1,4 @@
-package com.se491.chef_ly;
+package com.se491.chef_ly.activity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -10,7 +10,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.IOException;
+import com.se491.chef_ly.R;
 
 
 public class MainActivity extends Activity implements View.OnClickListener{
@@ -30,7 +30,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
 
         // test call to get Recipe list
         //new GetRecipeList(this);
-        new GetRecipe(this, 2);
+        //new GetRecipe(this, 2);
 
     }
 

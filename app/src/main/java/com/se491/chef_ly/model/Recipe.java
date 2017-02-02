@@ -1,4 +1,4 @@
-package com.se491.chef_ly;
+package com.se491.chef_ly.model;
 
 import android.net.Uri;
 import android.os.Parcel;

@@ -1,4 +1,4 @@
-package com.se491.chef_ly;
+package com.se491.chef_ly.activity;
 
 
 import android.app.ListActivity;
@@ -18,6 +18,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.se491.chef_ly.R;
+import com.se491.chef_ly.model.Recipe;
+import com.se491.chef_ly.model.RecipeHolder;
 
 import java.io.IOException;
 import java.util.ArrayList;

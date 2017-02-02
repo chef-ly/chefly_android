@@ -1,4 +1,4 @@
-package com.se491.chef_ly;
+package com.se491.chef_ly.http;
 
 import android.content.Context;
 import android.util.Log;
@@ -11,21 +11,18 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 
-public class GetRecipe extends HttpConnection {
-    private String urlString = "https://pure-fortress-13559.herokuapp.com/recipe/";
-    private final String TAG = "GetRecipe";
+public class GetRecipeList extends HttpConnection {
+    private String urlString = "https://pure-fortress-13559.herokuapp.com/list";
+    private final String TAG = "GetRecipeList";
 
-    public GetRecipe(Context c, int id){
+    public GetRecipeList(Context c){
         super(c);
         try{
-
-            urlString = urlString + id;
             super.execute(new URL(urlString));
 
         }catch(MalformedURLException e){
             Log.d(TAG, "Malformed URL -> " + e.getMessage());
         }
-
     }
 
     @Override

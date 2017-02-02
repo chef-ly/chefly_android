@@ -1,7 +1,9 @@
-package com.se491.chef_ly;
+package com.se491.chef_ly.model;
 
 import android.content.res.Resources;
 import android.net.Uri;
+
+import com.se491.chef_ly.model.Recipe;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.se491.chef_ly;
+package com.se491.chef_ly.http;
 
 import android.content.Context;
 import android.os.AsyncTask;
