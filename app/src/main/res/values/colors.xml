@@ -4,4 +4,9 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="white">#FFFFFF</color>
+    <color name="btnGray">#5d5d67</color>
+    <color name="disabledBtn">#965d5d67</color>
+    <color name="disableText">#858383</color>
+    <color name="darkGray">#32323c</color>
+    <color name="lightGray">#837979</color>
 </resources>

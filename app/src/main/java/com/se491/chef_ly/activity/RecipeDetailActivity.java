@@ -15,8 +15,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,9 +34,11 @@ public class RecipeDetailActivity extends AppCompatActivity {
     private LinearLayout ingredientGroup;
     private Button addToListBtn;
     private CheckBox[] checkBoxes;
+    private Button getCookingBtn;
 
     private List<String> ingredients;
     private List<String> directions;
+    private String[] directionsForCooking;
     private static final String TAG = "RecipieDetailActivity";
 
     @Override
@@ -72,6 +72,22 @@ public class RecipeDetailActivity extends AppCompatActivity {
                     }
                 }
                 Toast.makeText(RecipeDetailActivity.this, count + " items added to list", Toast.LENGTH_SHORT).show();
+            }
+        });
+        getCookingBtn = (Button) findViewById(R.id.getCookingBtn);
+        getCookingBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent cookingIntent = new Intent(RecipeDetailActivity.this, GetCookingActivity.class);
+                if(directionsForCooking != null){
+                    cookingIntent.putExtra("directions", directionsForCooking);
+                    startActivity(cookingIntent);
+                    finish();
+                }else{
+                    Toast.makeText(RecipeDetailActivity.this, "Could not find recipe directions", Toast.LENGTH_SHORT).show();
+                }
+
+
             }
         });
 
@@ -116,7 +132,8 @@ public class RecipeDetailActivity extends AppCompatActivity {
                 ingredientGroup.addView(temp);
                 count++;
             }
-            //ingredientView.setText(sb.toString());
+            //
+            directionsForCooking = new String[directions.size()];
             StringBuilder sb = new StringBuilder();
             count = 1;
             for(String s : directions){
@@ -124,13 +141,16 @@ public class RecipeDetailActivity extends AppCompatActivity {
                 sb.append(":  ");
                 sb.append(s);
                 sb.append("\n");
+
+                directionsForCooking[count-1] = s;
                 count++;
             }
             directionView.setText(sb.toString());
 
         }
     }
-    public static final int getColor(Context context, int id) {
+    @SuppressWarnings("deprecation")
+    public static int getColor(Context context, int id) {
         final int version = Build.VERSION.SDK_INT;
         if (version >= 23) {
             return ContextCompat.getColor(context, id);

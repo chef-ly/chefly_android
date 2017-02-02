@@ -18,13 +18,13 @@
             android:id="@+id/title"
             android:text="@string/recipes"
             android:textSize="36sp"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
         <EditText
             android:id="@+id/search"
-            android:background="#837979"
-            android:textColor="#FFFFFF"
+            android:background="@color/lightGray"
+            android:textColor="@color/white"
             android:textSize="20sp"
             android:hint="@string/search"
             android:padding="5dp"

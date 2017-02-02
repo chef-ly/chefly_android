@@ -11,7 +11,7 @@
         android:layout_height="100dp" />
     <TextView
         android:id="@+id/recipeName"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/white"
         android:textSize="24sp"
         android:layout_gravity="center_vertical"
         android:layout_marginStart="20dp"

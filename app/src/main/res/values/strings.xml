@@ -17,4 +17,11 @@
     <string name="recipeImageContentDescription">Image of recipe</string>
     <string name="addToGroceryList">Add Selected to Grocery List</string>
     <string name="getCooking">Let\'s get cooking!</string>
+    <string name="x">X</string>
+    <string name="prev">Prev</string>
+    <string name="next">Next</string>
+    <string name="repeat">Repeat</string>
+    <string name="step">Step</string>
+    <string name="of">of</string>
+    <string name="bonappetit">Bon Appetit!</string>
 </resources>

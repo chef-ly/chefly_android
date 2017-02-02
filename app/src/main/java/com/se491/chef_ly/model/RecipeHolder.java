@@ -81,7 +81,16 @@ public class RecipeHolder {
         direc3.add("3");
         direc3.add("4");
         direc3.add("5");
-        direc3.add("6");
+        direc3.add("Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah..." +
+                "Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah..." +
+                "Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah..." +
+                "Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah..." +
+                "Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah..." +
+                "Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah..." +
+                "Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah..." +
+                "Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah..." +
+                "Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah..." +
+                "Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...END");
         //Bitmap image3 = BitmapFactory.decodeResource(resources, R.drawable.noimageavailable);
         Uri uri = Uri.parse("android.resource://com.se491.chef_ly/drawable/noimageavailable");
         Recipe r = new Recipe("Scrambled Eggs", ingred3,direc3,uri  );
