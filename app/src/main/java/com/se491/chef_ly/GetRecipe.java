@@ -6,22 +6,20 @@ import android.util.Log;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
 
 
-public class GetRecipePost extends HttpConnection {
-    private String urlString = "https://pure-fortress-13559.herokuapp.com/";
-    private final String TAG = "GetRecipePost";
-    private int id;
+public class GetRecipe extends HttpConnection {
+    private String urlString = "https://pure-fortress-13559.herokuapp.com/recipe/";
+    private final String TAG = "GetRecipe";
 
-    public GetRecipePost(Context c, int id){
+    public GetRecipe(Context c, int id){
         super(c);
-        this.id =id;
         try{
+
+            urlString = urlString + id;
             super.execute(new URL(urlString));
 
         }catch(MalformedURLException e){
@@ -33,22 +31,17 @@ public class GetRecipePost extends HttpConnection {
     @Override
     protected Long doInBackground(URL... params) {
         HttpURLConnection urlConnection = null;
-        String code = null;
         try {
             URL url = new URL(urlString);
             urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setDoOutput(true);  // sets method to POST
+            urlConnection.setRequestMethod("GET");
+            urlConnection.setReadTimeout(5000);
+            urlConnection.setRequestProperty("Accept", "application/json");
+            urlConnection.connect();
 
-            String result = URLEncoder.encode("id", "UTF-8") +
-                    "=" +
-                    URLEncoder.encode(String.valueOf(id), "UTF-8");
-
-            OutputStreamWriter wr = new OutputStreamWriter(urlConnection.getOutputStream());
-            wr.write(result);
-            wr.flush();
-            wr.close();
-
-            code = String.valueOf(urlConnection.getResponseCode());
+            Log.d(TAG,urlConnection.getURL().toString());
+            responseCode =  String.valueOf(urlConnection.getResponseCode());
+            Log.d(TAG,responseCode + " " + urlConnection.getResponseMessage());
 
             // read data in from connection
             BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
@@ -57,20 +50,24 @@ public class GetRecipePost extends HttpConnection {
             String line;
             while ((line = reader.readLine()) != null)
             {
-                sb.append(line);
+                sb.append(line );
                 sb.append("\n");
             }
             reader.close();
-            responseMessage = sb.toString();
+            responseMessage = sb.toString(); //should we return that?
+            // TODO translate json response into array of recipes
+            // recipeList = JSONArray(responseMessage).;
             Log.d(TAG,responseMessage);
 
+
         } catch(IOException e){
-            responseCode = "Error -> " + code + " " + e.getMessage();
+            responseCode = "Error -> " + e.getMessage();
         }
         finally{
             if(urlConnection != null){
                 urlConnection.disconnect();
             }
+
 
         }
 

@@ -29,7 +29,8 @@ public class MainActivity extends Activity implements View.OnClickListener{
         setupViews();
 
         // test call to get Recipe list
-        new GetRecipeList(this);
+        //new GetRecipeList(this);
+        new GetRecipe(this, 2);
 
     }
 
