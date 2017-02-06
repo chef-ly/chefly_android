@@ -111,8 +111,8 @@ public class GetCookingActivity extends Activity implements View.OnClickListener
                 prev.setClickable(true);
                 prev.setBackgroundColor(btnGray);
                 prev.setTextColor(white);
-                if(step < directions.length-1){
-                    step++;
+                step++;
+                if(step < directions.length){
                     updateStepText();
                     String nextStep = directions[step];
                     text.setText(nextStep);
@@ -128,7 +128,7 @@ public class GetCookingActivity extends Activity implements View.OnClickListener
                 }
                 break;
             case R.id.repeat:
-                if(step < directions.length-1){
+                if(step < directions.length){
                     read(directions[step]);
                 }else{
                     read(getResources().getString(R.string.bonappetit));
