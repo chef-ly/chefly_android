@@ -31,7 +31,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
         // test call to get Recipe list
         //new GetRecipeList(this);
         //new GetRecipe(this, 2);
-
+        Toast.makeText(getApplicationContext(),"Welcome To Chef.ly",Toast.LENGTH_SHORT).show();
     }
 
     private void setupViews(){
