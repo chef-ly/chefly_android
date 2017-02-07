@@ -22,6 +22,7 @@ public class GetCookingActivity extends Activity implements View.OnClickListener
     private Button next;
     private Button repeat;
     private Button exit;
+    private Button done;
     private TextView text;
     private TextView stepText;
     private TextToSpeech textToSpeech;
@@ -47,6 +48,8 @@ public class GetCookingActivity extends Activity implements View.OnClickListener
         prev.setOnClickListener(this);
         next = (Button) findViewById(R.id.next);
         next.setOnClickListener(this);
+        done = (Button) findViewById(R.id.done);
+        done.setOnClickListener(this);
         repeat = (Button) findViewById(R.id.repeat);
         repeat.setOnClickListener(this);
         exit = (Button) findViewById(R.id.exit);
@@ -92,6 +95,8 @@ public class GetCookingActivity extends Activity implements View.OnClickListener
                 next.setClickable(true);
                 next.setBackgroundColor(btnGray);
                 next.setTextColor(white);
+                next.setVisibility(View.VISIBLE);
+                done.setVisibility(View.GONE);
                 if(step != 0){
                     step--;
                     updateStepText();
@@ -121,10 +126,12 @@ public class GetCookingActivity extends Activity implements View.OnClickListener
                     String t = getResources().getString(R.string.bonappetit);
                     text.setText(t);
                     read(t);
+                    next.setVisibility(View.GONE);
                     next.setClickable(false);
                     next.setEnabled(false);
                     next.setBackgroundColor(disabledBackground);
                     next.setTextColor(disabledText);
+                    done.setVisibility(View.VISIBLE);
                 }
                 break;
             case R.id.repeat:
@@ -136,6 +143,7 @@ public class GetCookingActivity extends Activity implements View.OnClickListener
 
                 break;
             case R.id.exit:
+            case R.id.done:
                 setResult(RESULT_OK);
                 finish();
                 break;
