@@ -14,7 +14,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-
 import com.se491.chef_ly.R;
 import com.se491.chef_ly.http.MyService;
 import com.se491.chef_ly.utils.NetworkHelper;
@@ -29,7 +28,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private TextView signUp;
     private boolean netExist;
     private static final String urlString = "https://pure-fortress-13559.herokuapp.com/recipe/";
-    //TextView output;
+
 
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -44,12 +43,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         setupViews();
-
-        // test call to get Recipe list
-        //new GetRecipeList(this);
-        //new GetRecipe(this, 2);
         Toast.makeText(getApplicationContext(), "Welcome To Chef.ly", Toast.LENGTH_SHORT).show();
             //listen to the message
         LocalBroadcastManager.getInstance(getApplicationContext())
@@ -57,7 +51,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         new IntentFilter(MyService.MY_SERVICE_MESSAGE));
 
         netExist = NetworkHelper.hasNetworkAccess(this);
-        continueAsGuest.append("Network ok: " + netExist);
+        if(NetworkHelper.hasNetworkAccess(MainActivity.this)) //returns true if internet available
+        {
+            Toast.makeText(MainActivity.this,"Internet Connection",Toast.LENGTH_LONG).show();
+        }
+        else
+        {
+            Toast.makeText(MainActivity.this,"No Internet Connection",Toast.LENGTH_LONG).show();
+        }
     }
 
     private void setupViews() {

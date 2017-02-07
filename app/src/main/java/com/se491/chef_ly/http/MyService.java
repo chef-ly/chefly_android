@@ -6,6 +6,8 @@ import android.net.Uri;
 import android.util.Log;
 import android.support.v4.content.LocalBroadcastManager;
 
+import java.io.IOException;
+
 //manage request with the use of IntentService
 public class MyService extends IntentService {
     public static final String TAG = "MyService";
@@ -23,10 +25,12 @@ public class MyService extends IntentService {
         Uri uri = intent.getData();
         Log.i(TAG, "onHandleIntent: " + uri.toString());
 
+        String response;
         try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
+            response = HttpConnection.downloadUrl(uri.toString());
+        } catch (IOException e) {
             e.printStackTrace();
+            return;
         }
 
         Intent messageIntent = new Intent(MY_SERVICE_MESSAGE);
