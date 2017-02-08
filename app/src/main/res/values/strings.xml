@@ -21,7 +21,16 @@
     <string name="prev">Prev</string>
     <string name="next">Next</string>
     <string name="repeat">Repeat</string>
+    <string name="done">Done</string>
     <string name="step">Step</string>
     <string name="of">of</string>
     <string name="bonappetit">Bon Appetit!</string>
+    <string name="user">Don Heins</string>
+    <string name="email">heinsd@hotmail.com</string>
+    <string name="searchhint">Search...</string>
+    <string name="recipe_list_activity">RecipeListActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_settings">Search</string>
 </resources>
