@@ -73,17 +73,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
     <Button
-        android:id="@+id/done"
-        android:text="done"
-        android:textSize="16sp"
-        android:textColor="@color/white"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:background="@color/btnGray"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"/>
-    <Button
         android:id="@+id/repeat"
         android:text="@string/repeat"
         android:textSize="16sp"
