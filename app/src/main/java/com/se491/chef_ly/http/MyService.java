@@ -1,13 +1,17 @@
 package com.se491.chef_ly.http;
 
+
 import android.app.IntentService;
 import android.content.Intent;
 import android.net.Uri;
-import android.util.Log;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
+
+import com.google.gson.Gson;
+import com.se491.chef_ly.model.Example;
+
 
 import java.io.IOException;
-
 //manage request with the use of IntentService
 public class MyService extends IntentService {
     public static final String TAG = "MyService";
@@ -32,9 +36,11 @@ public class MyService extends IntentService {
             e.printStackTrace();
             return;
         }
-
+        Gson gson = new Gson();
+        Example[] dataItems = gson.fromJson(response, Example[].class);
         Intent messageIntent = new Intent(MY_SERVICE_MESSAGE);
-        messageIntent.putExtra(MY_SERVICE_PAYLOAD, "Service all done!"); //pass data back, set key value and message
+       // messageIntent.putExtra(MY_SERVICE_PAYLOAD, "Service all done!"); //pass data back, set key value and message
+       messageIntent.putExtra(MY_SERVICE_PAYLOAD, dataItems); //pass back the data
         //package the data
         LocalBroadcastManager manager =
                 LocalBroadcastManager.getInstance(getApplicationContext());

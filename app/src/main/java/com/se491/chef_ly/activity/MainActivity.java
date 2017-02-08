@@ -16,6 +16,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import com.se491.chef_ly.R;
 import com.se491.chef_ly.http.MyService;
+import com.se491.chef_ly.model.Example;
 import com.se491.chef_ly.utils.NetworkHelper;
 
 
@@ -27,15 +28,20 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private TextView continueAsGuest;
     private TextView signUp;
     private boolean netExist;
-    private static final String urlString = "https://pure-fortress-13559.herokuapp.com/recipe/";
+    private static final String urlString ="https://pure-fortress-13559.herokuapp.com/list/test";
 
 
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
-        public void onReceive(Context context, Intent intent) { //receive the data , message that i am looking for
-            String message =
-                    intent.getStringExtra(MyService.MY_SERVICE_PAYLOAD);
-            continueAsGuest.append(message + "\n");
+        public void onReceive(Context context, Intent intent) {
+//            String message =
+//                    intent.getStringExtra(MyService.MY_SERVICE_PAYLOAD);
+
+            Example[] dataItems = (Example[]) intent
+                    .getParcelableArrayExtra(MyService.MY_SERVICE_PAYLOAD);
+            for (Example item : dataItems) {
+                continueAsGuest.append(item.getItemName() + "\n");
+            }
         }
     };
 
@@ -45,7 +51,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         setContentView(R.layout.activity_main);
         setupViews();
         Toast.makeText(getApplicationContext(), "Welcome To Chef.ly", Toast.LENGTH_SHORT).show();
-            //listen to the message
+        //listen to the message
         LocalBroadcastManager.getInstance(getApplicationContext())
                 .registerReceiver(mBroadcastReceiver,
                         new IntentFilter(MyService.MY_SERVICE_MESSAGE));
@@ -134,5 +140,4 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
 
 }
-
 
