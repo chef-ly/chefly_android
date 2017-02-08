@@ -45,26 +45,48 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
     };
 
+//    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() { //for a list
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            Example[] dataItems = (Example[]) intent
+//                    .getParcelableArrayExtra(MyService.MY_SERVICE_PAYLOAD);
+//            Toast.makeText(MainActivity.this,
+//                    "Received " + Example.length + " items from service",
+//                    Toast.LENGTH_SHORT).show();
+//
+//            mItemList = Arrays.asList(dataItems);
+//            displayDataItems(null);
+//
+//        }
+//    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setupViews();
         Toast.makeText(getApplicationContext(), "Welcome To Chef.ly", Toast.LENGTH_SHORT).show();
-        //listen to the message
-        LocalBroadcastManager.getInstance(getApplicationContext())
-                .registerReceiver(mBroadcastReceiver,
-                        new IntentFilter(MyService.MY_SERVICE_MESSAGE));
+        //displayDataItems(category); in a list for to manage sliding navigation
+
+
 
         netExist = NetworkHelper.hasNetworkAccess(this);
         if(NetworkHelper.hasNetworkAccess(MainActivity.this)) //returns true if internet available
         {
             Toast.makeText(MainActivity.this,"Internet Connection",Toast.LENGTH_LONG).show();
+            //register to listen the data
+            Intent intent = new Intent(this, MyService.class);
+            intent.setData(Uri.parse(urlString));
+            startService(intent);
         }
         else
         {
             Toast.makeText(MainActivity.this,"No Internet Connection",Toast.LENGTH_LONG).show();
         }
+        //listen to the message
+        LocalBroadcastManager.getInstance(getApplicationContext())
+                .registerReceiver(mBroadcastReceiver,
+                        new IntentFilter(MyService.MY_SERVICE_MESSAGE));
     }
 
     private void setupViews() {
@@ -82,12 +104,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        //register to listen the data
-        Intent intent = new Intent(this, MyService.class);
-        intent.setData(Uri.parse(urlString));
-        startService(intent);
-        startService(intent);
-        startService(intent);
+
 
         switch (v.getId()) {
 
