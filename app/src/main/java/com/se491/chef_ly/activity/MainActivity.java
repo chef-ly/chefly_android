@@ -2,43 +2,102 @@ package com.se491.chef_ly.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Bundle;
+
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
+
 import android.text.Editable;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import com.se491.chef_ly.R;
+import com.se491.chef_ly.http.MyService;
+import com.se491.chef_ly.model.Example;
+import com.se491.chef_ly.utils.NetworkHelper;
+
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+
 
     private EditText username;
     private EditText password;
     private Button signInBtn;
     private TextView continueAsGuest;
     private TextView signUp;
+    private boolean netExist;
+    private static final String urlString ="https://pure-fortress-13559.herokuapp.com/list/test";
+
+
+    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+//            String message =
+//                    intent.getStringExtra(MyService.MY_SERVICE_PAYLOAD);
+
+            Example[] dataItems = (Example[]) intent
+                    .getParcelableArrayExtra(MyService.MY_SERVICE_PAYLOAD);
+            for (Example item : dataItems) {
+                continueAsGuest.append(item.getItemName() + "\n");
+            }
+        }
+    };
+
+//    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() { //for a list
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            Example[] dataItems = (Example[]) intent
+//                    .getParcelableArrayExtra(MyService.MY_SERVICE_PAYLOAD);
+//            Toast.makeText(MainActivity.this,
+//                    "Received " + Example.length + " items from service",
+//                    Toast.LENGTH_SHORT).show();
+//
+//            mItemList = Arrays.asList(dataItems);
+//            displayDataItems(null);
+//
+//        }
+//    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         setupViews();
+        Toast.makeText(getApplicationContext(), "Welcome To Chef.ly", Toast.LENGTH_SHORT).show();
+        //displayDataItems(category); in a list for to manage sliding navigation
 
-        // test call to get Recipe list
-        //new GetRecipeList(this);
-        //new GetRecipe(this, 2);
 
+
+        netExist = NetworkHelper.hasNetworkAccess(this);
+        if(NetworkHelper.hasNetworkAccess(MainActivity.this)) //returns true if internet available
+        {
+            Toast.makeText(MainActivity.this,"Internet Connection",Toast.LENGTH_LONG).show();
+            //register to listen the data
+            Intent intent = new Intent(this, MyService.class);
+            intent.setData(Uri.parse(urlString));
+            startService(intent);
+        }
+        else
+        {
+            Toast.makeText(MainActivity.this,"No Internet Connection",Toast.LENGTH_LONG).show();
+        }
+        //listen to the message
+        LocalBroadcastManager.getInstance(getApplicationContext())
+                .registerReceiver(mBroadcastReceiver,
+                        new IntentFilter(MyService.MY_SERVICE_MESSAGE));
     }
 
-    private void setupViews(){
+    private void setupViews() {
 
-        username = (EditText)findViewById(R.id.username);
-        password = (EditText)findViewById(R.id.password);
+        username = (EditText) findViewById(R.id.username);
+        password = (EditText) findViewById(R.id.password);
         signInBtn = (Button) findViewById(R.id.signInBtn);
         signInBtn.setOnClickListener(this);
         continueAsGuest = (TextView) findViewById(R.id.continueAsGuest);
@@ -50,23 +109,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        switch(v.getId()){
+
+
+        switch (v.getId()) {
 
             case R.id.signInBtn:
 
                 Editable user = username.getText();
                 Editable pword = password.getText();
-                if(user.length() == 0){
+                if (user.length() == 0) {
                     Toast.makeText(this, "Username cannot be blank", Toast.LENGTH_SHORT).show();
-                }else if(pword.length() == 0){
+                } else if (pword.length() == 0) {
                     Toast.makeText(this, "Password cannot be blank", Toast.LENGTH_SHORT).show();
-                }else{
+                } else {
                     boolean isAllowed = authenticate();
-                    if(isAllowed){
+                    if (isAllowed) {
                         Intent recipeListIntent = new Intent(MainActivity.this, RecipeListActivity.class);
-                        recipeListIntent.putExtra("name",user.toString());
+                        recipeListIntent.putExtra("name", user.toString());
                         startActivity(recipeListIntent);
-                    }else{
+                    } else {
                         Toast.makeText(this, "Invalid Username or password", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -74,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.continueAsGuest:
                 Intent recipeListIntent = new Intent(MainActivity.this, RecipeListActivity.class);
-                recipeListIntent.putExtra("name","guest");
+                recipeListIntent.putExtra("name", "guest");
                 startActivity(recipeListIntent);
                 break;
             case R.id.signUp:
@@ -85,10 +146,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }
     }
-    private boolean authenticate(){
+
+    private boolean authenticate() {
         //TODO contact server and authenticate user
         return true;
     }
-}
+    @Override
+    protected void onDestroy() { //unregister to listen the data
+        super.onDestroy();
 
+        LocalBroadcastManager.getInstance(getApplicationContext())
+                .unregisterReceiver(mBroadcastReceiver);
+    }
+
+
+
+}
 

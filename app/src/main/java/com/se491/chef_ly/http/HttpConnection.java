@@ -1,34 +1,71 @@
 package com.se491.chef_ly.http;
 
-import android.content.Context;
-import android.os.AsyncTask;
-import android.util.Log;
-import android.widget.Toast;
-
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 
-abstract class HttpConnection extends AsyncTask<URL, Integer, Long> {
+//Helper class for working with a remote server
 
-    private final String TAG = "HttpConnection";
-    private Context context;
-    protected String responseCode = "";
-    protected String responseMessage = "";
+public class HttpConnection {
 
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
+
+    //Returns text from a URL on a web server
+
+    public static String downloadUrl(String address) throws IOException {
+
+        InputStream is = null;
+        try {
+
+            URL url = new URL(address);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setReadTimeout(10000);
+            conn.setConnectTimeout(15000);
+            conn.setRequestMethod("GET");
+            conn.setDoInput(true);
+            conn.connect();
+
+            int responseCode = conn.getResponseCode();
+            if (responseCode != 200) {
+                throw new IOException("Got response code " + responseCode);
+            }
+            is = conn.getInputStream();
+            return readStream(is);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (is != null) {
+                is.close();
+            }
+        }
+        return null;
     }
+//Reads an InputStream and converts it to a String.
 
-    @Override
-    protected void onPostExecute(Long aLong) {
-        super.onPostExecute(aLong);
-        Toast.makeText(context, responseCode, Toast.LENGTH_LONG).show();
-        Log.d(TAG,responseCode);
+    private static String readStream(InputStream stream) throws IOException {
+
+        byte[] buffer = new byte[1024];
+        ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
+        BufferedOutputStream out = null;
+        try {
+            int length = 0;
+            out = new BufferedOutputStream(byteArray);
+            while ((length = stream.read(buffer)) > 0) {
+                out.write(buffer, 0, length);
+            }
+            out.flush();
+            return byteArray.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            if (out != null) {
+                out.close();
+            }
+        }
     }
-
-    HttpConnection(Context c){
-        context = c;
-    }
-
 
 }
