@@ -19,7 +19,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.se491.chef_ly.R;
+import com.se491.chef_ly.model.Ingredient;
 import com.se491.chef_ly.model.RecipeDetail;
+import com.se491.chef_ly.model.RecipeHolder;
 
 import java.io.IOException;
 import java.util.List;
@@ -36,7 +38,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
     private CheckBox[] checkBoxes;
     private Button getCookingBtn;
 
-    private List<String> ingredients;
+    private List<Ingredient> ingredients;
     private List<String> directions;
     private String[] directionsForCooking;
     private static final String TAG = "RecipieDetailActivity";
@@ -97,8 +99,10 @@ public class RecipeDetailActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         Intent intent = getIntent();
-        RecipeDetail r = intent.getParcelableExtra("recipe");
+        RecipeHolder rh = new RecipeHolder(getResources());
 
+        RecipeDetail r = rh.getDetailedRecipes().get(intent.getIntExtra("recipe", -1));
+        Log.d(TAG, "Categores size = " + r.getCategories().length);
         if(r == null){
             recipeTitle.setText(R.string.recipeNotFound);
         }else{
@@ -122,9 +126,9 @@ public class RecipeDetailActivity extends AppCompatActivity {
             int white = getColor(this,R.color.white);
             int colors[] = {white, white};
             int count = 0;
-            for(String s : ingredients){
+            for(Ingredient s : ingredients){
                 CheckBox temp  = new CheckBox(this);
-                temp.setText(s);
+                temp.setText(s.toString());
                 temp.setTextColor(white);
                 temp.setTextSize(20);
                 CompoundButtonCompat.setButtonTintList(temp ,new ColorStateList(states,colors));

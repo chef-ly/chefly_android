@@ -29,6 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.se491.chef_ly.R;
+import com.se491.chef_ly.model.Recipe;
 import com.se491.chef_ly.model.RecipeDetail;
 import com.se491.chef_ly.model.RecipeHolder;
 
@@ -40,7 +41,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
     private String user;
 
     private static final String TAG = "RecipeListActivity";
-    private static List<RecipeDetail> recipes = new ArrayList<>();
+    private static List<Recipe> recipes = new ArrayList<>();
 
 
     @Override
@@ -56,7 +57,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
             @Override
             public void onItemClick(AdapterView l, View v, int position, long id) {
                 Intent intent = new Intent(c, RecipeDetailActivity.class);
-                intent.putExtra("recipe", recipes.get(position));
+                intent.putExtra("recipe", position);
 
                 startActivity(intent);
             }
@@ -99,6 +100,10 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         static class ViewHolder{
             ImageView icon;
             TextView name;
+            TextView author;
+            TextView time;
+            TextView level;
+            TextView rating;
         }
 
         RecipeAdapter(Context context){
@@ -128,6 +133,10 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
                 holder = new ViewHolder();
                 holder.icon = (ImageView) row.findViewById(R.id.image);
                 holder.name = (TextView) row.findViewById(R.id.recipeName);
+                holder.author = (TextView) row.findViewById(R.id.recipeAuthor);
+                holder.time = (TextView) row.findViewById(R.id.recipeTime);
+                holder.level = (TextView) row.findViewById(R.id.recipeLevel);
+                holder.rating = (TextView) row.findViewById(R.id.recipeRating);
 
 
                 row.setTag(holder);
@@ -135,8 +144,19 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
                 holder = (ViewHolder) row.getTag();
             }
 
-            RecipeDetail r = recipes.get(position);
+            Recipe r = recipes.get(position);
             holder.name.setText(r.getName());
+            holder.author.setText(r.getAuthor());
+            int time = r.getTime();
+            int hour = 0;
+            while(time >= 60){
+                hour++;
+                time = time - 60;
+            }
+            String newTime = (hour != 0)? hour + " hrs ": ""  + ((time != 0) ? time + " min" : "") ;
+            holder.time.setText(String.valueOf(newTime));
+            holder.level.setText(String.valueOf(r.getLevel()));
+            holder.rating.setText(String.valueOf(r.getRating()));
             try{
                 holder.icon.setImageBitmap(MediaStore.Images.Media.getBitmap(parent.getContext().getContentResolver(), r.getImage()));
 
