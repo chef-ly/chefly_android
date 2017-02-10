@@ -19,7 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.se491.chef_ly.R;
-import com.se491.chef_ly.model.Recipe;
+import com.se491.chef_ly.model.RecipeDetail;
 
 import java.io.IOException;
 import java.util.List;
@@ -97,7 +97,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         Intent intent = getIntent();
-        Recipe r = intent.getParcelableExtra("recipe");
+        RecipeDetail r = intent.getParcelableExtra("recipe");
 
         if(r == null){
             recipeTitle.setText(R.string.recipeNotFound);

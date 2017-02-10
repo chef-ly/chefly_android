@@ -7,9 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -31,7 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.se491.chef_ly.R;
-import com.se491.chef_ly.model.Recipe;
+import com.se491.chef_ly.model.RecipeDetail;
 import com.se491.chef_ly.model.RecipeHolder;
 
 import java.io.IOException;
@@ -42,7 +40,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
     private String user;
 
     private static final String TAG = "RecipeListActivity";
-    private static List<Recipe> recipes = new ArrayList<>();
+    private static List<RecipeDetail> recipes = new ArrayList<>();
 
 
     @Override
@@ -137,7 +135,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
                 holder = (ViewHolder) row.getTag();
             }
 
-            Recipe r = recipes.get(position);
+            RecipeDetail r = recipes.get(position);
             holder.name.setText(r.getName());
             try{
                 holder.icon.setImageBitmap(MediaStore.Images.Media.getBitmap(parent.getContext().getContentResolver(), r.getImage()));
@@ -232,10 +230,10 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
                 Toast.makeText(this, "Profile", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_create_recipe:
-                Toast.makeText(this, "Create Recipe", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Create RecipeDetail", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_import_recipe:
-                Toast.makeText(this, "Import Recipe", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Import RecipeDetail", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_settings:
                 Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show();

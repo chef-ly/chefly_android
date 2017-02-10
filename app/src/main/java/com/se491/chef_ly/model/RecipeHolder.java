@@ -3,8 +3,6 @@ package com.se491.chef_ly.model;
 import android.content.res.Resources;
 import android.net.Uri;
 
-import com.se491.chef_ly.model.Recipe;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +14,7 @@ import java.util.List;
  */
 
 public class RecipeHolder {
-    List<Recipe> recipes = new ArrayList<>();
+    List<RecipeDetail> recipes = new ArrayList<>();
     Resources resources;
 
     public RecipeHolder(Resources r){
@@ -25,12 +23,12 @@ public class RecipeHolder {
 
     }
 
-    public List<Recipe> getRecipes(){
+    public List<RecipeDetail> getRecipes(){
         return recipes;
     }
-    public Recipe getRecipe(String name){
+    public RecipeDetail getRecipe(String name){
 
-        for(Recipe r : recipes){
+        for(RecipeDetail r : recipes){
             if(r.getName().equals(name)){
                 return r;
             }
@@ -51,7 +49,7 @@ public class RecipeHolder {
 
         //Bitmap image = BitmapFactory.decodeResource(resources, R.drawable.pbj);
         Uri pbjUri = Uri.parse("android.resource://com.se491.chef_ly/drawable/pbj");
-        Recipe pbj = new Recipe("Peanut Butter and Jelly", ingred,direc, pbjUri );
+        RecipeDetail pbj = new RecipeDetail("Peanut Butter and Jelly", ingred,direc, pbjUri );
 
         recipes.add(pbj);
         List<String> ingred2 = new ArrayList<>();
@@ -66,7 +64,7 @@ public class RecipeHolder {
         direc2.add("Bake @ 375 for 15 min");
        // Bitmap image2 = BitmapFactory.decodeResource(resources, R.drawable.pizza);
         Uri pizzaUri = Uri.parse("android.resource://com.se491.chef_ly/drawable/pizza");
-        Recipe pizza = new Recipe("Pizza", ingred2,direc2, pizzaUri );
+        RecipeDetail pizza = new RecipeDetail("Pizza", ingred2,direc2, pizzaUri );
         recipes.add(pizza);
 
         List<String> ingred3 = new ArrayList<>();
@@ -93,21 +91,21 @@ public class RecipeHolder {
                 "Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...Blah...END");
         //Bitmap image3 = BitmapFactory.decodeResource(resources, R.drawable.noimageavailable);
         Uri uri = Uri.parse("android.resource://com.se491.chef_ly/drawable/noimageavailable");
-        Recipe r = new Recipe("Scrambled Eggs", ingred3,direc3,uri  );
+        RecipeDetail r = new RecipeDetail("Scrambled Eggs", ingred3,direc3,uri  );
         recipes.add(r);
-        r = new Recipe("Spaghetti", ingred3,direc3, uri );
+        r = new RecipeDetail("Spaghetti", ingred3,direc3, uri );
         recipes.add(r);
-        r = new Recipe("Stuffed Peppers", ingred3,direc3, uri );
+        r = new RecipeDetail("Stuffed Peppers", ingred3,direc3, uri );
         recipes.add(r);
-        r = new Recipe("Meatloaf", ingred3,direc3, uri );
+        r = new RecipeDetail("Meatloaf", ingred3,direc3, uri );
         recipes.add(r);
-        r = new Recipe("Chicken Alfredo", ingred3,direc3, uri );
+        r = new RecipeDetail("Chicken Alfredo", ingred3,direc3, uri );
         recipes.add(r);
-        r = new Recipe("Taco Salad", ingred3,direc3, uri );
+        r = new RecipeDetail("Taco Salad", ingred3,direc3, uri );
         recipes.add(r);
-        r = new Recipe("Mediterranean Chicken and Pasta", ingred3,direc3, uri );
+        r = new RecipeDetail("Mediterranean Chicken and Pasta", ingred3,direc3, uri );
         recipes.add(r);
-        r = new Recipe("Cranberry-Apple Pork Roast", ingred3,direc3, uri );
+        r = new RecipeDetail("Cranberry-Apple Pork Roast", ingred3,direc3, uri );
         recipes.add(r);
 
 

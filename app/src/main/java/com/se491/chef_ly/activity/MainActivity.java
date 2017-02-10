@@ -1,6 +1,5 @@
 package com.se491.chef_ly.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
@@ -10,6 +9,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 
 import android.text.Editable;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,9 +19,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import com.se491.chef_ly.R;
 import com.se491.chef_ly.http.MyService;
-import com.se491.chef_ly.model.Example;
+import com.se491.chef_ly.model.Recipe;
 import com.se491.chef_ly.utils.NetworkHelper;
 
+import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
@@ -32,8 +33,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button signInBtn;
     private TextView continueAsGuest;
     private TextView signUp;
-    private boolean netExist;
-    private static final String urlString ="https://pure-fortress-13559.herokuapp.com/list/test";
+    private final String TAG = "MainActivity";
+    private static final String urlString ="https://pure-fortress-13559.herokuapp.com/list";
 
 
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
@@ -42,21 +43,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //            String message =
 //                    intent.getStringExtra(MyService.MY_SERVICE_PAYLOAD);
 
-            Example[] dataItems = (Example[]) intent
-                    .getParcelableArrayExtra(MyService.MY_SERVICE_PAYLOAD);
-            for (Example item : dataItems) {
-                continueAsGuest.append(item.getItemName() + "\n");
+            ArrayList<Recipe> dataItems = intent.getParcelableArrayListExtra(MyService.MY_SERVICE_PAYLOAD);
+            StringBuilder sb = new StringBuilder();
+            for(Recipe r: dataItems){
+                sb.append(r.getName());
+                sb.append(" ");
             }
+            Log.d(TAG,sb.toString());
         }
     };
 
 //    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() { //for a list
 //        @Override
 //        public void onReceive(Context context, Intent intent) {
-//            Example[] dataItems = (Example[]) intent
+//            Recipe[] dataItems = (Recipe[]) intent
 //                    .getParcelableArrayExtra(MyService.MY_SERVICE_PAYLOAD);
 //            Toast.makeText(MainActivity.this,
-//                    "Received " + Example.length + " items from service",
+//                    "Received " + Recipe.length + " items from service",
 //                    Toast.LENGTH_SHORT).show();
 //
 //            mItemList = Arrays.asList(dataItems);
@@ -73,9 +76,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Toast.makeText(getApplicationContext(), "Welcome To Chef.ly", Toast.LENGTH_SHORT).show();
         //displayDataItems(category); in a list for to manage sliding navigation
 
-
-
-        netExist = NetworkHelper.hasNetworkAccess(this);
         if(NetworkHelper.hasNetworkAccess(MainActivity.this)) //returns true if internet available
         {
             Toast.makeText(MainActivity.this,"Internet Connection",Toast.LENGTH_LONG).show();

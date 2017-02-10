@@ -8,10 +8,17 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.google.gson.Gson;
-import com.se491.chef_ly.model.Example;
-
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.reflect.TypeToken;
+import com.se491.chef_ly.model.RecipeList;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
+
 //manage request with the use of IntentService
 public class MyService extends IntentService {
     public static final String TAG = "MyService";
@@ -36,11 +43,20 @@ public class MyService extends IntentService {
             e.printStackTrace();
             return;
         }
-        Gson gson = new Gson();
-        Example[] dataItems = gson.fromJson(response, Example[].class);
+        GsonBuilder builder = new GsonBuilder();
+        builder.registerTypeAdapter(Uri.class, new JsonDeserializer<Uri>() {
+            @Override
+            public Uri deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+                return Uri.parse(json.toString());
+            }
+        });
+        Gson gson = builder.create();
+        Type type = new TypeToken<RecipeList>(){}.getType();
+
+        RecipeList dataItems = gson.fromJson(response, type);
         Intent messageIntent = new Intent(MY_SERVICE_MESSAGE);
        // messageIntent.putExtra(MY_SERVICE_PAYLOAD, "Service all done!"); //pass data back, set key value and message
-       messageIntent.putExtra(MY_SERVICE_PAYLOAD, dataItems); //pass back the data
+       messageIntent.putParcelableArrayListExtra(MY_SERVICE_PAYLOAD, dataItems.getRecipes()); //pass back the data
         //package the data
         LocalBroadcastManager manager =
                 LocalBroadcastManager.getInstance(getApplicationContext());
