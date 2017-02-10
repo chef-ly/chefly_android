@@ -56,10 +56,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() { //for a list
 //        @Override
 //        public void onReceive(Context context, Intent intent) {
-//            Recipe[] dataItems = (Recipe[]) intent
+//            RecipeList[] dataItems = ( RecipeList[]) intent
 //                    .getParcelableArrayExtra(MyService.MY_SERVICE_PAYLOAD);
 //            Toast.makeText(MainActivity.this,
-//                    "Received " + Recipe.length + " items from service",
+//                    "Received " +  RecipeList.length + " items from service",
 //                    Toast.LENGTH_SHORT).show();
 //
 //            mItemList = Arrays.asList(dataItems);
