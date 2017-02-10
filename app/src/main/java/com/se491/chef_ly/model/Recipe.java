@@ -9,12 +9,22 @@ public class Recipe implements Parcelable {
     private String name;
     private String author;
     private Uri image_url;
-    private int rating;
+    private double rating;
     private int time;
     private String[] categories;
     private String level;
 
-    public Recipe(int id, String name, String author, Uri image_url, int rating,  String[] categories, int time, String level) {
+    public Recipe(String name, String author, Uri image_url, double rating, int time, String[] categories, String level) {
+        this.name = name;
+        this.author = author;
+        this.image_url = image_url;
+        this.rating = rating;
+        this.time = time;
+        this.categories = categories;
+        this.level = level;
+    }
+
+    public Recipe(int id, String name, String author, Uri image_url, double rating, int time, String[] categories, String level) {
         this.id = id;
         this.name = name;
         this.author = author;
@@ -29,9 +39,9 @@ public class Recipe implements Parcelable {
         this.name = in.readString();
         this.author = in.readString();
         this.image_url=  Uri.parse(in.readString());
-        this.rating = in.readInt();
+        this.rating = in.readDouble();
         this.time = in.readInt();
-        in.readStringArray(categories);
+        categories = in.createStringArray();
         this.level = in.readString();
     }
 
@@ -46,7 +56,7 @@ public class Recipe implements Parcelable {
         dest.writeString(this.name);
         dest.writeString(this.author);
         image_url.writeToParcel(dest, flags);
-        dest.writeInt(rating);
+        dest.writeDouble(rating);
         dest.writeInt(this.time);
         dest.writeStringArray(categories);
         dest.writeSerializable(level);
@@ -76,15 +86,15 @@ public class Recipe implements Parcelable {
         return author;
     }
 
-    public Uri getImage_url() {
+    public Uri getImage() {
         return image_url;
     }
 
-    public int getRating() {
+    public double getRating() {
         return rating;
     }
 
-    public int getTotalTime() {
+    public int getTime() {
         return time;
     }
 

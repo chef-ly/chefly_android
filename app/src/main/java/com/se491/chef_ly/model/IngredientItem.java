@@ -1,8 +1,11 @@
 package com.se491.chef_ly.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.HashMap;
 
-public class IngredientItem {
+public class IngredientItem implements Parcelable{
     private String name;
     private String uom;
     private HashMap<String, Integer> nutrition;
@@ -10,6 +13,10 @@ public class IngredientItem {
     public IngredientItem(String name, String uom) {
         this.name = name;
         this.uom = uom;
+    }
+    public IngredientItem(Parcel in){
+        this.name = in.readString();
+        this.uom = in.readString();
     }
 
     public IngredientItem(String name, String uom, HashMap<String, Integer> nutrition) {
@@ -28,5 +35,27 @@ public class IngredientItem {
 
     public HashMap<String, Integer> getNutrition() {
         return nutrition;
+    }
+
+    public static final Parcelable.Creator<IngredientItem> CREATOR = new Parcelable.Creator<IngredientItem>() {
+        @Override
+        public IngredientItem createFromParcel(Parcel source) {
+            return new IngredientItem(source);
+        }
+
+        @Override
+        public IngredientItem[] newArray(int size) {
+            return new IngredientItem[size];
+        }
+    };
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(name);
+        dest.writeString(uom);
     }
 }

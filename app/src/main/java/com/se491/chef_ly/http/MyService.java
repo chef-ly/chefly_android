@@ -4,6 +4,7 @@ package com.se491.chef_ly.http;
 import android.app.IntentService;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Parcelable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -14,10 +15,12 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
+import com.se491.chef_ly.model.Recipe;
 import com.se491.chef_ly.model.RecipeList;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 
 //manage request with the use of IntentService
 public class MyService extends IntentService {
@@ -39,6 +42,7 @@ public class MyService extends IntentService {
         String response;
         try {
             response = HttpConnection.downloadUrl(uri.toString());
+            //TODO handle socket timeout
         } catch (IOException e) {
             e.printStackTrace();
             return;
@@ -56,7 +60,12 @@ public class MyService extends IntentService {
         RecipeList dataItems = gson.fromJson(response, type);
         Intent messageIntent = new Intent(MY_SERVICE_MESSAGE);
        // messageIntent.putExtra(MY_SERVICE_PAYLOAD, "Service all done!"); //pass data back, set key value and message
-       messageIntent.putParcelableArrayListExtra(MY_SERVICE_PAYLOAD, dataItems.getRecipes()); //pass back the data
+        if(dataItems != null){
+            messageIntent.putParcelableArrayListExtra(MY_SERVICE_PAYLOAD, dataItems.getRecipes()); //pass back the data
+        }else{
+            messageIntent.putParcelableArrayListExtra(MY_SERVICE_PAYLOAD, new ArrayList<Recipe>()); //pass back the data
+        }
+
         //package the data
         LocalBroadcastManager manager =
                 LocalBroadcastManager.getInstance(getApplicationContext());
