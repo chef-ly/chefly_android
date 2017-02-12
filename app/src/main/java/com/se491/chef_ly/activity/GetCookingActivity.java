@@ -67,7 +67,7 @@ public class GetCookingActivity extends Activity implements View.OnClickListener
             public void onInit(int status) {
                 if(status != TextToSpeech.ERROR) {
                     textToSpeech.setLanguage(Locale.US);
-                    Log.d(TAG, "Quality -> " + textToSpeech.getVoice().getQuality());
+                   // Log.d(TAG, "Quality -> " + textToSpeech.getVoice().getQuality());
                     
                     read(directions[0]);
                 }
