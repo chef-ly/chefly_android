@@ -6,8 +6,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.speech.tts.TextToSpeech;
+import android.speech.tts.Voice;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -26,6 +28,7 @@ public class GetCookingActivity extends Activity implements View.OnClickListener
     private TextView stepText;
     private TextToSpeech textToSpeech;
 
+    private final String TAG = "GetCookingActivity";
     private String[] directions;
     private int disabledBackground;
     private int disabledText;
@@ -64,6 +67,8 @@ public class GetCookingActivity extends Activity implements View.OnClickListener
             public void onInit(int status) {
                 if(status != TextToSpeech.ERROR) {
                     textToSpeech.setLanguage(Locale.US);
+                    Log.d(TAG, "Quality -> " + textToSpeech.getVoice().getQuality());
+                    
                     read(directions[0]);
                 }
             }

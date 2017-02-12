@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -35,18 +34,17 @@ import com.se491.chef_ly.R;
 import com.se491.chef_ly.http.MyService;
 import com.se491.chef_ly.http.RequestMethod;
 import com.se491.chef_ly.model.Recipe;
-import com.se491.chef_ly.model.RecipeDetail;
 import com.se491.chef_ly.model.RecipeHolder;
 import com.se491.chef_ly.utils.NetworkHelper;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class RecipeListActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener  {
+
+    private ListView listview;
     private String user;
-    RecipeAdapter mItemAdapter;
     private static final String TAG = "RecipeListActivity";
     private static List<Recipe> recipes = new ArrayList<>();
      private static final String urlString ="https://pure-fortress-13559.herokuapp.com/list";
@@ -54,15 +52,6 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-////            Recipe[] dataItems = (Recipe[]) intent
-////                    .getParcelableArrayExtra(MyService.MY_SERVICE_PAYLOAD);
-////            Toast.makeText(RecipeListActivity.this,
-////                    "Received " + dataItems.length + " items from service",
-////                    Toast.LENGTH_SHORT).show();//we have the data as object
-//
-//           // recipes = Arrays.asList(dataItems); //need them as arraylist
-//           // RecipeAdapter(null);//call the adapter maybe change to RecyclerView.Adapter
-//
 
                     ArrayList<Recipe> dataItems = intent.getParcelableArrayListExtra(MyService.MY_SERVICE_PAYLOAD);
                     StringBuilder sb = new StringBuilder();
@@ -71,7 +60,10 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
                         sb.append(" ");
                     }
                     Log.d(TAG,sb.toString());
-                }
+                    recipes = dataItems;
+            ((BaseAdapter) listview.getAdapter()).notifyDataSetChanged();
+
+        }
 
     };
     @Override
@@ -79,7 +71,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_list);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-        ListView listview = (ListView) findViewById(R.id.list);
+        listview = (ListView) findViewById(R.id.list);
         listview.setAdapter(new RecipeAdapter(this));
         final Context c = this;
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -107,8 +99,8 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         navigationView.setNavigationItemSelectedListener(this);
 
         //TODO - Replace with call to server
-        RecipeHolder rh = new RecipeHolder(getResources());
-        recipes = rh.getRecipes();
+        //RecipeHolder rh = new RecipeHolder(getResources());
+        //recipes = rh.getRecipes();
         if(NetworkHelper.hasNetworkAccess(RecipeListActivity.this)) //returns true if internet available
         {
             Toast.makeText(RecipeListActivity.this,"Internet Connection",Toast.LENGTH_LONG).show();
@@ -148,14 +140,6 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         Bundle extras = intent.getExtras();
         user = extras.getString("name");
     }
-    private void RecipeAdapter(String category) {
-
-        if (recipes != null) {
-          //  mItemAdapter = new RecipeAdapter(this, recipes);
-           //change the adapter, maybe to a RecyclerView.Adapter
-        }
-    }
-
 
     static class RecipeAdapter extends BaseAdapter{
 
