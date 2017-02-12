@@ -1,13 +1,16 @@
 package com.se491.chef_ly.activity;
 
-
 import android.app.SearchManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -29,21 +32,48 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.se491.chef_ly.R;
+import com.se491.chef_ly.http.MyService;
+import com.se491.chef_ly.http.RequestMethod;
 import com.se491.chef_ly.model.Recipe;
 import com.se491.chef_ly.model.RecipeDetail;
 import com.se491.chef_ly.model.RecipeHolder;
+import com.se491.chef_ly.utils.NetworkHelper;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class RecipeListActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener  {
     private String user;
-
+    RecipeAdapter mItemAdapter;
     private static final String TAG = "RecipeListActivity";
     private static List<Recipe> recipes = new ArrayList<>();
+     private static final String urlString ="https://pure-fortress-13559.herokuapp.com/list";
 
+    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+////            Recipe[] dataItems = (Recipe[]) intent
+////                    .getParcelableArrayExtra(MyService.MY_SERVICE_PAYLOAD);
+////            Toast.makeText(RecipeListActivity.this,
+////                    "Received " + dataItems.length + " items from service",
+////                    Toast.LENGTH_SHORT).show();//we have the data as object
+//
+//           // recipes = Arrays.asList(dataItems); //need them as arraylist
+//           // RecipeAdapter(null);//call the adapter maybe change to RecyclerView.Adapter
+//
 
+                    ArrayList<Recipe> dataItems = intent.getParcelableArrayListExtra(MyService.MY_SERVICE_PAYLOAD);
+                    StringBuilder sb = new StringBuilder();
+                    for(Recipe r: dataItems){
+                        sb.append(r.getName());
+                        sb.append(" ");
+                    }
+                    Log.d(TAG,sb.toString());
+                }
+
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,9 +109,36 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         //TODO - Replace with call to server
         RecipeHolder rh = new RecipeHolder(getResources());
         recipes = rh.getRecipes();
+        if(NetworkHelper.hasNetworkAccess(RecipeListActivity.this)) //returns true if internet available
+        {
+            Toast.makeText(RecipeListActivity.this,"Internet Connection",Toast.LENGTH_LONG).show();
+                      //register to listen the data
+            RequestMethod requestPackage = new RequestMethod();
 
+            requestPackage.setEndPoint(urlString);
+            requestPackage.setParam("name", "Pepperoni Pizza");//filter data if i want
+            requestPackage.setMethod("GET"); //  or requestPackage.setMethod("POST");
+            Intent intent = new Intent(this, MyService.class);
+            intent.putExtra(MyService.REQUEST_PACKAGE, requestPackage);
+            startService(intent);
+        }
+        else
+        {
+            Toast.makeText(RecipeListActivity.this,"No Internet Connection",Toast.LENGTH_LONG).show();
+        }
+        //listen to the message
+        LocalBroadcastManager.getInstance(getApplicationContext())
+                .registerReceiver(mBroadcastReceiver,
+                        new IntentFilter(MyService.MY_SERVICE_MESSAGE));
         handleIntent(getIntent());
 
+    }
+    @Override
+    protected void onDestroy() { //unregister to listen the data
+        super.onDestroy();
+
+        LocalBroadcastManager.getInstance(getApplicationContext())
+                .unregisterReceiver(mBroadcastReceiver);
     }
 
     @Override
@@ -91,7 +148,13 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         Bundle extras = intent.getExtras();
         user = extras.getString("name");
     }
+    private void RecipeAdapter(String category) {
 
+        if (recipes != null) {
+          //  mItemAdapter = new RecipeAdapter(this, recipes);
+           //change the adapter, maybe to a RecyclerView.Adapter
+        }
+    }
 
 
     static class RecipeAdapter extends BaseAdapter{

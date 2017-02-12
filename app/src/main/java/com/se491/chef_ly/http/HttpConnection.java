@@ -1,71 +1,58 @@
 package com.se491.chef_ly.http;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.util.Map;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 //Helper class for working with a remote server
+//okhttp is better for failure recoveries
 
 public class HttpConnection {
 
 
-    //Returns text from a URL on a web server
+    public static String downloadFromFeed(RequestMethod requestPackage)
+            throws IOException {
 
-    public static String downloadUrl(String address) throws IOException {
-
-        InputStream is = null;
-        try {
-
-            URL url = new URL(address);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(10000);
-            conn.setConnectTimeout(15000);
-            conn.setRequestMethod("GET");
-            conn.setDoInput(true);
-            conn.connect();
-
-            int responseCode = conn.getResponseCode();
-            if (responseCode != 200) {
-                throw new IOException("Got response code " + responseCode);
-            }
-            is = conn.getInputStream();
-            return readStream(is);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (is != null) {
-                is.close();
-            }
+        String address = requestPackage.getEndpoint();
+        String encodedParams = requestPackage.getEncodedParams();
+//check for get request
+        if (requestPackage.getMethod().equals("GET") &&
+                encodedParams.length() > 0) {
+            address = String.format("%s?%s", address, encodedParams);
         }
-        return null;
-    }
-//Reads an InputStream and converts it to a String.
+//create request object
+        OkHttpClient client = new OkHttpClient();
 
-    private static String readStream(InputStream stream) throws IOException {
+        Request.Builder requestBuilder = new Request.Builder()
+                .url(address);
+//check for post request
+        if (requestPackage.getMethod().equals("POST")) {
+            MultipartBody.Builder builder = new MultipartBody.Builder() //simulate a web form
+                    .setType(MultipartBody.FORM);
+            //extract the parameters from the request
+            Map<String, String> params = requestPackage.getParams();//get the reference of the pair
+            for (String key : params.keySet()) {
+                builder.addFormDataPart(key, params.get(key));
+            }
+            RequestBody requestBody = builder.build();
+            requestBuilder.method("POST", requestBody);
+        }
 
-        byte[] buffer = new byte[1024];
-        ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
-        BufferedOutputStream out = null;
-        try {
-            int length = 0;
-            out = new BufferedOutputStream(byteArray);
-            while ((length = stream.read(buffer)) > 0) {
-                out.write(buffer, 0, length);
-            }
-            out.flush();
-            return byteArray.toString();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        } finally {
-            if (out != null) {
-                out.close();
-            }
+        Request request = requestBuilder.build();
+        //get responce with the use of the method newCall
+        Response response = client.newCall(request).execute(); //synchornous request
+        //check if the request is successful
+        if (response.isSuccessful()) {
+            return response.body().string();
+        } else {
+            throw new IOException("Exception: response code " + response.code());
         }
     }
+
+
 
 }

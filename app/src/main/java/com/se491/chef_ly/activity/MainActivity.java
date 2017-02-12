@@ -2,7 +2,6 @@ package com.se491.chef_ly.activity;
 
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.Uri;
 import android.os.Bundle;
 
 import android.support.v4.content.LocalBroadcastManager;
@@ -19,6 +18,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import com.se491.chef_ly.R;
 import com.se491.chef_ly.http.MyService;
+import com.se491.chef_ly.http.RequestMethod;
 import com.se491.chef_ly.model.Recipe;
 import com.se491.chef_ly.utils.NetworkHelper;
 
@@ -34,37 +34,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView continueAsGuest;
     private TextView signUp;
     private final String TAG = "MainActivity";
-    private static final String urlString ="https://pure-fortress-13559.herokuapp.com/list";
+   private static final String urlString ="https://pure-fortress-13559.herokuapp.com/list";
 
 
-    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-//            String message =
-//                    intent.getStringExtra(MyService.MY_SERVICE_PAYLOAD);
 
-            ArrayList<Recipe> dataItems = intent.getParcelableArrayListExtra(MyService.MY_SERVICE_PAYLOAD);
-            StringBuilder sb = new StringBuilder();
-            for(Recipe r: dataItems){
-                sb.append(r.getName());
-                sb.append(" ");
-            }
-            Log.d(TAG,sb.toString());
-        }
-    };
 
-//    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() { //for a list
+//
+//    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
 //        @Override
 //        public void onReceive(Context context, Intent intent) {
-//            Recipe[] dataItems = (Recipe[]) intent
-//                    .getParcelableArrayExtra(MyService.MY_SERVICE_PAYLOAD);
-//            Toast.makeText(MainActivity.this,
-//                    "Received " + Recipe.length + " items from service",
-//                    Toast.LENGTH_SHORT).show();
+////            String message =
+////                    intent.getStringExtra(MyService.MY_SERVICE_PAYLOAD);
 //
-//            mItemList = Arrays.asList(dataItems);
-//            displayDataItems(null);
-//
+//            ArrayList<Recipe> dataItems = intent.getParcelableArrayListExtra(MyService.MY_SERVICE_PAYLOAD);
+//            StringBuilder sb = new StringBuilder();
+//            for(Recipe r: dataItems){
+//                sb.append(r.getName());
+//                sb.append(" ");
+//            }
+//            Log.d(TAG,sb.toString());
 //        }
 //    };
 
@@ -80,18 +68,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         {
             Toast.makeText(MainActivity.this,"Internet Connection",Toast.LENGTH_LONG).show();
             //register to listen the data
-            Intent intent = new Intent(this, MyService.class);
-            intent.setData(Uri.parse(urlString));
-            startService(intent);
+//            RequestMethod requestPackage = new RequestMethod();
+//
+//            requestPackage.setEndPoint(urlString);
+//            requestPackage.setParam("name", "Pepperoni Pizza");//filter data if i want
+//            requestPackage.setMethod("GET"); //  or requestPackage.setMethod("POST");
+//            Intent intent = new Intent(this, MyService.class);
+//            intent.putExtra(MyService.REQUEST_PACKAGE, requestPackage);
+//            startService(intent);
+
         }
         else
         {
             Toast.makeText(MainActivity.this,"No Internet Connection",Toast.LENGTH_LONG).show();
         }
         //listen to the message
-        LocalBroadcastManager.getInstance(getApplicationContext())
-                .registerReceiver(mBroadcastReceiver,
-                        new IntentFilter(MyService.MY_SERVICE_MESSAGE));
+//        LocalBroadcastManager.getInstance(getApplicationContext())
+//                .registerReceiver(mBroadcastReceiver,
+//                        new IntentFilter(MyService.MY_SERVICE_MESSAGE));
     }
 
     private void setupViews() {
@@ -151,13 +145,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //TODO contact server and authenticate user
         return true;
     }
-    @Override
-    protected void onDestroy() { //unregister to listen the data
-        super.onDestroy();
-
-        LocalBroadcastManager.getInstance(getApplicationContext())
-                .unregisterReceiver(mBroadcastReceiver);
-    }
+//    @Override
+//    protected void onDestroy() { //unregister to listen the data
+//        super.onDestroy();
+//
+//        LocalBroadcastManager.getInstance(getApplicationContext())
+//                .unregisterReceiver(mBroadcastReceiver);
+//    }
 
 
 
