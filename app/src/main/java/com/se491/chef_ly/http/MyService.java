@@ -4,7 +4,6 @@ package com.se491.chef_ly.http;
 import android.app.IntentService;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Parcelable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -28,7 +27,7 @@ public class MyService extends IntentService {
     public static final String MY_SERVICE_MESSAGE = "myServiceMessage";
     public static final String MY_SERVICE_PAYLOAD = "myServicePayload";
 
-
+    public static final String REQUEST_PACKAGE = "requestPackage";
 
     public MyService() {
         super("MyService");
@@ -36,17 +35,18 @@ public class MyService extends IntentService {
     //called automaticly when server starts, receives data as an argument
     @Override
     protected void onHandleIntent(Intent intent) {
-        Uri uri = intent.getData();
-        Log.i(TAG, "onHandleIntent: " + uri.toString());
+
+        RequestMethod requestPackage =
+                intent.getParcelableExtra(REQUEST_PACKAGE);
 
         String response;
         try {
-            response = HttpConnection.downloadUrl(uri.toString());
-            //TODO handle socket timeout
+            response = HttpConnection.downloadFromFeed(requestPackage);
         } catch (IOException e) {
             e.printStackTrace();
             return;
         }
+
         GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapter(Uri.class, new JsonDeserializer<Uri>() {
             @Override
@@ -59,19 +59,19 @@ public class MyService extends IntentService {
 
         RecipeList dataItems = gson.fromJson(response, type);
         Intent messageIntent = new Intent(MY_SERVICE_MESSAGE);
-       // messageIntent.putExtra(MY_SERVICE_PAYLOAD, "Service all done!"); //pass data back, set key value and message
+        // messageIntent.putExtra(MY_SERVICE_PAYLOAD, "Service all done!"); //pass data back, set key value and message
         if(dataItems != null){
             messageIntent.putParcelableArrayListExtra(MY_SERVICE_PAYLOAD, dataItems.getRecipes()); //pass back the data
         }else{
             messageIntent.putParcelableArrayListExtra(MY_SERVICE_PAYLOAD, new ArrayList<Recipe>()); //pass back the data
         }
 
-        //package the data
+
+
         LocalBroadcastManager manager =
                 LocalBroadcastManager.getInstance(getApplicationContext());
-        manager.sendBroadcast(messageIntent); //send / broadcast the message
+        manager.sendBroadcast(messageIntent);
     }
-
 
     @Override
     public void onCreate() {
