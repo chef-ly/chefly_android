@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -36,6 +37,7 @@ import com.se491.chef_ly.http.RequestMethod;
 import com.se491.chef_ly.model.Recipe;
 import com.se491.chef_ly.model.RecipeHolder;
 import com.se491.chef_ly.utils.NetworkHelper;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -45,10 +47,13 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
 
     private ListView listview;
     private String user;
+
     private static final String TAG = "RecipeListActivity";
     private static List<Recipe> recipes = new ArrayList<>();
      private static final String urlString ="https://pure-fortress-13559.herokuapp.com/list";
-
+    //include url for image
+    private static final String picUr2 ="http://cookdiary.net/wp-content/uploads/images/Spaghetti_with_Meatballs_800.jpg";
+    private static final String picUrl ="http://www.todayifoundout.com/wp-content/uploads/2014/02/peanut-butter-and-jelly.jpg";
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -142,7 +147,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
     }
 
     static class RecipeAdapter extends BaseAdapter{
-
+        private Context mContext;
         private LayoutInflater inflater;
         static class ViewHolder{
             ImageView icon;
@@ -154,6 +159,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         }
 
         RecipeAdapter(Context context){
+            this.mContext = context;
             inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
         @Override
@@ -204,14 +210,24 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
             holder.time.setText(String.valueOf(newTime));
             holder.level.setText(String.valueOf(r.getLevel()));
             holder.rating.setText(String.valueOf(r.getRating()));
-            try{
-                holder.icon.setImageBitmap(MediaStore.Images.Media.getBitmap(parent.getContext().getContentResolver(), r.getImage()));
 
-            }catch (IOException e){
-                Log.d(TAG, "IOException on load image");
-                Log.d(TAG, e.getMessage());
 
-            }
+            try{ //load the image download /display image cache image in persistence storage
+               // holder.icon.setImageBitmap(MediaStore.Images.Media.getBitmap(parent.getContext().getContentResolver(), r.getImage()));
+                //url + r.getImage()
+              // String url = picUrl ;// r.getImage();//append the image with a url we have to save images
+               Uri uri=r.getImage(); //take the url
+                String image = uri.toString(); //make the url into a string
+               String url = picUrl;   // r.getImage();
+                //can not handle more than one url context may be the problem
+               // String url = picUrl+picUr2;
+                Picasso.with(mContext)
+                        .load(url)  //load different image url
+                        .resize(50, 50)//resize image manually
+                        .into(holder.icon);
+            } catch (Exception e) {
+            e.printStackTrace();
+        }
             return row;
         }
     }
