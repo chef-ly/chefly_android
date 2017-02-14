@@ -5,9 +5,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.content.LocalBroadcastManager;
@@ -31,15 +31,16 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestListener;
+
 import com.se491.chef_ly.R;
 import com.se491.chef_ly.http.MyService;
 import com.se491.chef_ly.http.RequestMethod;
 import com.se491.chef_ly.model.Recipe;
-import com.se491.chef_ly.model.RecipeHolder;
 import com.se491.chef_ly.utils.NetworkHelper;
-import com.squareup.picasso.Picasso;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,20 +53,14 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
     private static List<Recipe> recipes = new ArrayList<>();
      private static final String urlString ="https://pure-fortress-13559.herokuapp.com/list";
     //include url for image
-    private static final String picUr2 ="http://cookdiary.net/wp-content/uploads/images/Spaghetti_with_Meatballs_800.jpg";
-    private static final String picUrl ="http://www.todayifoundout.com/wp-content/uploads/2014/02/peanut-butter-and-jelly.jpg";
+    //private static final String picUr2 ="http://cookdiary.net/wp-content/uploads/images/Spaghetti_with_Meatballs_800.jpg";
+    //private static final String picUrl ="http://www.todayifoundout.com/wp-content/uploads/2014/02/peanut-butter-and-jelly.jpg";
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-                    ArrayList<Recipe> dataItems = intent.getParcelableArrayListExtra(MyService.MY_SERVICE_PAYLOAD);
-                    StringBuilder sb = new StringBuilder();
-                    for(Recipe r: dataItems){
-                        sb.append(r.getName());
-                        sb.append(" ");
-                    }
-                    Log.d(TAG,sb.toString());
-                    recipes = dataItems;
+            recipes = intent.getParcelableArrayListExtra(MyService.MY_SERVICE_PAYLOAD);
+
             ((BaseAdapter) listview.getAdapter()).notifyDataSetChanged();
 
         }
@@ -77,8 +72,10 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         setContentView(R.layout.activity_recipe_list);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         listview = (ListView) findViewById(R.id.list);
-        listview.setAdapter(new RecipeAdapter(this));
+
         final Context c = this;
+        listview.setAdapter(new RecipeAdapter(listview.getContext()));
+
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -102,10 +99,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        //TODO - Replace with call to server
-        //RecipeHolder rh = new RecipeHolder(getResources());
-        //recipes = rh.getRecipes();
+        
         if(NetworkHelper.hasNetworkAccess(RecipeListActivity.this)) //returns true if internet available
         {
             Toast.makeText(RecipeListActivity.this,"Internet Connection",Toast.LENGTH_LONG).show();
@@ -147,7 +141,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
     }
 
     static class RecipeAdapter extends BaseAdapter{
-        private Context mContext;
+        private Context context;
         private LayoutInflater inflater;
         static class ViewHolder{
             ImageView icon;
@@ -159,7 +153,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         }
 
         RecipeAdapter(Context context){
-            this.mContext = context;
+            this.context = context;
             inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
         @Override
@@ -180,7 +174,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View row = convertView;
-            ViewHolder holder;
+            final ViewHolder holder;
             if(convertView == null){
                 row = inflater.inflate(R.layout.recipe_list_item, parent, false);
                 holder = new ViewHolder();
@@ -212,19 +206,33 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
             holder.rating.setText(String.valueOf(r.getRating()));
 
 
-            try{ //load the image download /display image cache image in persistence storage
-               // holder.icon.setImageBitmap(MediaStore.Images.Media.getBitmap(parent.getContext().getContentResolver(), r.getImage()));
-                //url + r.getImage()
-              // String url = picUrl ;// r.getImage();//append the image with a url we have to save images
+            try{
                Uri uri=r.getImage(); //take the url
                 String image = uri.toString(); //make the url into a string
-               String url = picUrl;   // r.getImage();
-                //can not handle more than one url context may be the problem
-               // String url = picUrl+picUr2;
-                Picasso.with(mContext)
-                        .load(url)  //load different image url
-                        .resize(50, 50)//resize image manually
+                image = image.substring(1, image.length()-1);  //remove the quotes from uri string
+
+                final String tag = "ListView";
+                Glide.with(context)
+                        .load(image).asBitmap()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .dontAnimate()
+                        .listener(new RequestListener<String, Bitmap>() {
+                            @Override
+                            public boolean onException(Exception e, String model, com.bumptech.glide.request.target.Target<Bitmap> target, boolean isFirstResource) {
+                                Log.d(tag, e.getMessage());
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onResourceReady(Bitmap resource, String model, com.bumptech.glide.request.target.Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                                Log.d(tag, "Image resource ready");
+                                return false;
+                            }
+                        })
+                        .error(R.drawable.noimageavailable)
                         .into(holder.icon);
+
+
             } catch (Exception e) {
             e.printStackTrace();
         }

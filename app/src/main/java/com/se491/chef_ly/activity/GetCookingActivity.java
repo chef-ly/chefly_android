@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.se491.chef_ly.R;
 
 import java.util.Locale;
+import java.util.Set;
 
 public class GetCookingActivity extends Activity implements View.OnClickListener {
 
@@ -67,6 +68,8 @@ public class GetCookingActivity extends Activity implements View.OnClickListener
             public void onInit(int status) {
                 if(status != TextToSpeech.ERROR) {
                     textToSpeech.setLanguage(Locale.US);
+
+                    // Causes nullPointerException on Nexus_5_API_22
                    // Log.d(TAG, "Quality -> " + textToSpeech.getVoice().getQuality());
                     
                     read(directions[0]);
