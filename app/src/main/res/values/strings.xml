@@ -35,6 +35,7 @@
     <string name="recipe_list_activity">RecipeListActivity</string>
     <string name="shoppingList">Shopping List</string>
     <string name="removePurchased">Remove Purchased</string>
+    <string name="finished">Finished</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

@@ -15,7 +15,7 @@ class ShoppingList {
 
     public static final String SQL_CREATE =
             "CREATE TABLE " +TABLE_LIST_ITEMS + "(" +
-                    COLUMN_LIST_ID + " TEXT PRIMARY KEY," +
+                    COLUMN_LIST_ID + " INTEGER PRIMARY KEY," +
                     COLUMN_QUANTITY+ " INTEGER," +
                     COLUMN_UNIT  + " TEXT," +
                     COLUMN_NAME + " TEXT," +

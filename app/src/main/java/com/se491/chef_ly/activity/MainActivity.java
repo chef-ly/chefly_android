@@ -38,24 +38,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
 
-
-//
-//    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-////            String message =
-////                    intent.getStringExtra(MyService.MY_SERVICE_PAYLOAD);
-//
-//            ArrayList<Recipe> dataItems = intent.getParcelableArrayListExtra(MyService.MY_SERVICE_PAYLOAD);
-//            StringBuilder sb = new StringBuilder();
-//            for(Recipe r: dataItems){
-//                sb.append(r.getName());
-//                sb.append(" ");
-//            }
-//            Log.d(TAG,sb.toString());
-//        }
-//    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,26 +48,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if(NetworkHelper.hasNetworkAccess(MainActivity.this)) //returns true if internet available
         {
-            Toast.makeText(MainActivity.this,"Internet Connection",Toast.LENGTH_LONG).show();
-            //register to listen the data
-//            RequestMethod requestPackage = new RequestMethod();
-//
-//            requestPackage.setEndPoint(urlString);
-//            requestPackage.setParam("name", "Pepperoni Pizza");//filter data if i want
-//            requestPackage.setMethod("GET"); //  or requestPackage.setMethod("POST");
-//            Intent intent = new Intent(this, MyService.class);
-//            intent.putExtra(MyService.REQUEST_PACKAGE, requestPackage);
-//            startService(intent);
+            //Toast.makeText(MainActivity.this,"Internet Connection",Toast.LENGTH_LONG).show();
+            Log.d(TAG,"Internet Connection" );
 
         }
-        else
-        {
-            Toast.makeText(MainActivity.this,"No Internet Connection",Toast.LENGTH_LONG).show();
+        else {
+            //Toast.makeText(MainActivity.this, "No Internet Connection", Toast.LENGTH_LONG).show();
+            Log.d(TAG,"No Internet Connection" );
+
         }
-        //listen to the message
-//        LocalBroadcastManager.getInstance(getApplicationContext())
-//                .registerReceiver(mBroadcastReceiver,
-//                        new IntentFilter(MyService.MY_SERVICE_MESSAGE));
     }
 
     private void setupViews() {
@@ -145,15 +116,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //TODO contact server and authenticate user
         return true;
     }
-//    @Override
-//    protected void onDestroy() { //unregister to listen the data
-//        super.onDestroy();
-//
-//        LocalBroadcastManager.getInstance(getApplicationContext())
-//                .unregisterReceiver(mBroadcastReceiver);
-//    }
-
-
 
 }
 
