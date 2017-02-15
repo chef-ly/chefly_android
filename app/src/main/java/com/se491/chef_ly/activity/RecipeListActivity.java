@@ -36,9 +36,11 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestListener;
 
 import com.se491.chef_ly.R;
+import com.se491.chef_ly.activity.nav_activities.ShoppingListActivity;
 import com.se491.chef_ly.http.MyService;
 import com.se491.chef_ly.http.RequestMethod;
 import com.se491.chef_ly.model.Recipe;
+import com.se491.chef_ly.model.ShoppingListItem;
 import com.se491.chef_ly.utils.NetworkHelper;
 
 import java.util.ArrayList;
@@ -99,7 +101,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        
+
         if(NetworkHelper.hasNetworkAccess(RecipeListActivity.this)) //returns true if internet available
         {
             Toast.makeText(RecipeListActivity.this,"Internet Connection",Toast.LENGTH_LONG).show();
@@ -328,6 +330,10 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
                 break;
             case R.id.nav_settings:
                 Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.nav_shopping_list:
+                Intent intent = new Intent(this.getApplicationContext(), ShoppingListActivity.class);
+                startActivity(intent);
                 break;
             case R.id.nav_share:
                 Toast.makeText(this, "Share", Toast.LENGTH_SHORT).show();

@@ -1,13 +1,13 @@
 package com.se491.chef_ly.Databases;
 
-public class ShoppingList {
+class ShoppingList {
 
-    public static final String TABLE_LIST_ITEMS = "ShoppingListItems";
-    public static final String COLUMN_LIST_ID = "shoppingId";
-    public static final String COLUMN_QUANTITY = "qty";
-    public static final String COLUMN_UNIT = "unit";
-    public static final String COLUMN_NAME = "name";
-    public static final String COLUMN_PURCHASED = "purchased";
+    protected static final String TABLE_LIST_ITEMS = "ShoppingListItems";
+    protected static final String COLUMN_LIST_ID = "shoppingId";
+    protected static final String COLUMN_QUANTITY = "qty";
+    protected static final String COLUMN_UNIT = "unit";
+    protected static final String COLUMN_NAME = "name";
+    protected static final String COLUMN_PURCHASED = "purchased";
 
     public static final String[] ALL_COLUMNS =
             {COLUMN_LIST_ID, COLUMN_QUANTITY,COLUMN_UNIT , COLUMN_NAME ,

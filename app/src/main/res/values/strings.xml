@@ -33,8 +33,13 @@
     <string name="rating">Rating: </string>
     <string name="by">by </string>
     <string name="recipe_list_activity">RecipeListActivity</string>
+    <string name="shoppingList">Shopping List</string>
+    <string name="removePurchased">Remove Purchased</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_settings">Search</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

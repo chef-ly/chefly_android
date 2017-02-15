@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.se491.chef_ly.Databases.DatabaseHandler;
 import com.se491.chef_ly.R;
 import com.se491.chef_ly.model.Ingredient;
 import com.se491.chef_ly.model.RecipeDetail;
@@ -47,7 +48,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_detail);
-
+        final Context c = getApplicationContext();
         recipeTitle = (TextView) findViewById(R.id.recipeName);
         imageView = (ImageView) findViewById(R.id.image);
         directionView = (TextView) findViewById(R.id.directionView);
@@ -65,9 +66,11 @@ public class RecipeDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 int count = 0;
+                DatabaseHandler handler = new DatabaseHandler(c);
                 for(CheckBox cb : checkBoxes){
                     if(cb.isChecked()){
                         // TODO add to grocery list
+                        handler.addItemToShoppingList(ingredients.get(cb.getId()), false);
                         count++;
                         cb.setChecked(false);
                         Log.d(TAG,"Added to list -> " +String.valueOf(cb.getText()));
@@ -128,6 +131,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
             int count = 0;
             for(Ingredient s : ingredients){
                 CheckBox temp  = new CheckBox(this);
+                temp.setId(count);
                 temp.setText(s.toString());
                 temp.setTextColor(white);
                 temp.setTextSize(20);
