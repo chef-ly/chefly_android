@@ -20,7 +20,8 @@ import java.util.ArrayList;
 
 public class ShoppingListActivity extends ListActivity {
     private static ArrayList<ShoppingListItem> shoppingList = new ArrayList<>();
-    private Button btn;
+    private Button deletePurchasedBtn;
+    private Button finished;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,20 +31,30 @@ public class ShoppingListActivity extends ListActivity {
 
         final DatabaseHandler handler = new DatabaseHandler(this.getApplicationContext());
 
-        btn = (Button) findViewById(R.id.clearPurchasedBtn);
-        btn.setOnClickListener(new View.OnClickListener() {
+        finished = (Button) findViewById(R.id.finishedBtn);
+        finished.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                setResult(RESULT_OK);
+                finish();
+            }
+        });
+        deletePurchasedBtn = (Button) findViewById(R.id.clearPurchasedBtn);
+        deletePurchasedBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
                 ArrayList<ShoppingListItem> toDelete = new ArrayList<>();
 
                 for(ShoppingListItem item : shoppingList){
                     if(item.isPurchased()){
-                        //TODO remove item from list - uncommenting the line below causes concurrent modification error
-                        //shoppingList.remove(item);
                         toDelete.add(item);
                     }
                 }
                 if(toDelete.size() > 0){
+                    for(ShoppingListItem item: toDelete){
+                        shoppingList.remove(item);
+                    }
                     DatabaseHandler h = new DatabaseHandler(getApplicationContext());
                     h.deleteItemFromShoppingList(toDelete);
                     ((BaseAdapter) getListAdapter()).notifyDataSetChanged();
@@ -62,6 +73,8 @@ public class ShoppingListActivity extends ListActivity {
         TextView uom = (TextView) v.findViewById(R.id.uom);
         TextView name = (TextView) v.findViewById(R.id.name);
         ShoppingListItem item = shoppingList.get(position);
+        DatabaseHandler h = new DatabaseHandler(getApplicationContext());
+
         if(item.isPurchased()){
             item.setPurchased(false);
             qty.setPaintFlags(qty.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
@@ -115,6 +128,15 @@ public class ShoppingListActivity extends ListActivity {
             qty.setText(String.valueOf(item.getQty()));
             uom.setText(item.getUnitOfMeasure());
             name.setText(item.getName());
+            if(!item.isPurchased()){
+                qty.setPaintFlags(qty.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
+                uom.setPaintFlags(uom.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
+                name.setPaintFlags(name.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
+            }else{
+                qty.setPaintFlags(qty.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                uom.setPaintFlags(uom.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                name.setPaintFlags(name.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            }
             return convertView;
 
         }

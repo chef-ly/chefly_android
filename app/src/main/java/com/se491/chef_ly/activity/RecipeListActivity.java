@@ -104,7 +104,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
 
         if(NetworkHelper.hasNetworkAccess(RecipeListActivity.this)) //returns true if internet available
         {
-            Toast.makeText(RecipeListActivity.this,"Internet Connection",Toast.LENGTH_LONG).show();
+            //Toast.makeText(RecipeListActivity.this,"Internet Connection",Toast.LENGTH_LONG).show();
                       //register to listen the data
             RequestMethod requestPackage = new RequestMethod();
 
@@ -117,7 +117,8 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         }
         else
         {
-            Toast.makeText(RecipeListActivity.this,"No Internet Connection",Toast.LENGTH_LONG).show();
+            //Toast.makeText(RecipeListActivity.this,"No Internet Connection",Toast.LENGTH_LONG).show();
+            Log.d(TAG, "No Internet Connection");
         }
         //listen to the message
         LocalBroadcastManager.getInstance(getApplicationContext())
