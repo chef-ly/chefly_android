@@ -35,6 +35,9 @@
         </activity>
         <activity android:name=".activity.RecipeDetailActivity" />
         <activity android:name=".activity.GetCookingActivity" />
+        <activity
+            android:name=".activity.RegisterActivity"
+            android:windowSoftInputMode="stateAlwaysVisible" />
         <!--
  ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -47,7 +50,7 @@
             android:name=".http.MyService"
             android:exported="false" />
 
-        <activity android:name=".activity.nav_activities.ShoppingListActivity"></activity>
+        <activity android:name=".activity.nav_activities.ShoppingListActivity" />
     </application>
 
 </manifest>

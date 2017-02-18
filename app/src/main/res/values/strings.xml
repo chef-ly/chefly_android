@@ -36,6 +36,11 @@
     <string name="shoppingList">Shopping List</string>
     <string name="removePurchased">Remove Purchased</string>
     <string name="finished">Finished</string>
+    <string name="createRecipeTitle">Create A Recipe</string>
+    <string name="chooseUsername">Create a New Username</string>
+    <string name="createPassword">Enter Password</string>
+    <string name="createPasswordAgain">Enter Password Again</string>
+    <string name="registerPageTitle">Register</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
