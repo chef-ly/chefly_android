@@ -83,6 +83,6 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
     }
 
     private boolean registerNewUser() {
-        return false; // TODO send http request to register new user
+        return true; // TODO send http request to register new user
     }
 }
