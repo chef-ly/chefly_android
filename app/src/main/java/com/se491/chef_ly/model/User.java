@@ -24,12 +24,22 @@ public class User {
         authToken = null;
     }
 
-    public static void addAuthentication(String inpUsername, String inpAuthToken) {
+    public static void saveAuthentication(String inpUsername, String inpAuthToken) {
         if (inpUsername == null || inpAuthToken == null || inpUsername.isEmpty() || inpAuthToken.isEmpty()) {
             throw new IllegalArgumentException("Both username and authToken must not be null or empty");
         }
 
         username = inpUsername;
         authToken = inpAuthToken;
+    }
+
+    public static boolean authenticateExisting(String username, String password) {
+        // TODO call to server and then save tokens
+        return true;
+    }
+
+    public static boolean authenticateNew(String username, String password) {
+        // TODO create a new user and save tokens
+        return true;
     }
 }

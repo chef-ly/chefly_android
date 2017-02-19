@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.text.InputType;
 import android.widget.Toast;
+import com.se491.chef_ly.model.User;
 
 import com.se491.chef_ly.R;
 
@@ -83,6 +84,10 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
     }
 
     private boolean registerNewUser() {
-        return true; // TODO send http request to register new user
+        if (User.authenticateNew(username, password)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
