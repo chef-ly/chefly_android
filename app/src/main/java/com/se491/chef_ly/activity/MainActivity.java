@@ -104,8 +104,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(recipeListIntent);
                 break;
             case R.id.signUp:
-                //TODO
-                Toast.makeText(this, "Sign up clicked", Toast.LENGTH_SHORT).show();
+                Intent registerIntent = new Intent(MainActivity.this, RegisterActivity.class);
+                startActivity(registerIntent);
                 break;
             default:
 
