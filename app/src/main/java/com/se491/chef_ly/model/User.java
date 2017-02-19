@@ -1,4 +1,6 @@
 package com.se491.chef_ly.model;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 /**
  * Created by davidchang on 2/19/17.
@@ -34,7 +36,6 @@ public class User {
     }
 
     public static boolean authenticateExisting(String username, String password) {
-        // TODO call to server and then save tokens
         return true;
     }
 

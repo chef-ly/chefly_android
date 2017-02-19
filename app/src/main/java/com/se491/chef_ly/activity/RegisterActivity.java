@@ -1,21 +1,33 @@
 package com.se491.chef_ly.activity;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.text.InputType;
 import android.widget.Toast;
-import com.se491.chef_ly.model.User;
 
+import com.se491.chef_ly.http.MyService;
+import com.se491.chef_ly.http.RequestMethod;
+import com.se491.chef_ly.model.User;
+import android.util.Log;
 import com.se491.chef_ly.R;
 
 public class RegisterActivity extends Activity implements View.OnClickListener {
 
     private final String TAG = "RegisterActivity";
+
+    private static String urlString = "https://pure-fortress-13559.herokuapp.com/user/register";
+
+    private String token;
 
     private Button nextButton;
     private TextView instruction;
@@ -23,6 +35,15 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
 
     private String username;
     private String password;
+
+    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            token = intent.getStringExtra(MyService.MY_SERVICE_PAYLOAD);
+            Log.d(TAG, token);
+        }
+
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +53,10 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
         nextButton.setOnClickListener(this);
         instruction = (TextView) findViewById(R.id.registerInstruction);
         input = (EditText) findViewById(R.id.registerInput);
+
+        LocalBroadcastManager.getInstance(getApplicationContext())
+                .registerReceiver(mBroadcastReceiver,
+                        new IntentFilter(MyService.MY_SERVICE_MESSAGE));
     }
 
     @Override
@@ -43,6 +68,14 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
             default:
                 // TODO error handler?
         }
+    }
+
+    @Override
+    protected void onDestroy() { //unregister to listen the data
+        super.onDestroy();
+
+        LocalBroadcastManager.getInstance(getApplicationContext())
+                .unregisterReceiver(mBroadcastReceiver);
     }
 
     private void handleRegisterButtonClick() {
@@ -84,10 +117,15 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
     }
 
     private boolean registerNewUser() {
-        if (User.authenticateNew(username, password)) {
-            return true;
-        } else {
-            return false;
-        }
+        RequestMethod requestPackage = new RequestMethod();
+
+        requestPackage.setEndPoint(urlString);
+        requestPackage.setParam("username", username);
+        requestPackage.setParam("password", password); //filter data if i want
+        requestPackage.setMethod("POST");
+        Intent intent = new Intent(this, MyService.class);
+        intent.putExtra(MyService.REQUEST_PACKAGE, requestPackage);
+        startService(intent);
+        return true;
     }
 }
