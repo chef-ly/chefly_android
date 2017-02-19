@@ -20,6 +20,7 @@ import com.se491.chef_ly.R;
 import com.se491.chef_ly.http.MyService;
 import com.se491.chef_ly.http.RequestMethod;
 import com.se491.chef_ly.model.Recipe;
+import com.se491.chef_ly.model.User;
 import com.se491.chef_ly.utils.NetworkHelper;
 
 import java.util.ArrayList;
@@ -87,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 } else if (pword.length() == 0) {
                     Toast.makeText(this, "Password cannot be blank", Toast.LENGTH_SHORT).show();
                 } else {
-                    boolean isAllowed = authenticate();
+                    boolean isAllowed = authenticate(user, pword);
                     if (isAllowed) {
                         Intent recipeListIntent = new Intent(MainActivity.this, RecipeListActivity.class);
                         recipeListIntent.putExtra("name", user.toString());
@@ -112,9 +113,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private boolean authenticate() {
-        //TODO contact server and authenticate user
-        return true;
+    private boolean authenticate(Editable user, Editable password) {
+        return User.authenticateExisting(user.toString(), password.toString());
     }
 
 }
