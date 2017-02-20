@@ -51,6 +51,7 @@
             android:exported="false" />
 
         <activity android:name=".activity.nav_activities.ShoppingListActivity" />
+        <activity android:name=".activity.CreateRecipeActivity"></activity>
     </application>
 
 </manifest>
