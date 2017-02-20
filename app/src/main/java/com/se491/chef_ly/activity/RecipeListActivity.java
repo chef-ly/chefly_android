@@ -53,10 +53,8 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
 
     private static final String TAG = "RecipeListActivity";
     private static List<Recipe> recipes = new ArrayList<>();
-     private static final String urlString ="https://pure-fortress-13559.herokuapp.com/list";
-    //include url for image
-    //private static final String picUr2 ="http://cookdiary.net/wp-content/uploads/images/Spaghetti_with_Meatballs_800.jpg";
-    //private static final String picUrl ="http://www.todayifoundout.com/wp-content/uploads/2014/02/peanut-butter-and-jelly.jpg";
+    private static final String urlString ="https://pure-fortress-13559.herokuapp.com/list";
+
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -325,6 +323,9 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
                 break;
             case R.id.nav_create_recipe:
                 Toast.makeText(this, "Create RecipeDetail", Toast.LENGTH_SHORT).show();
+                Intent createRecipeIntent = new Intent(getApplicationContext(), CreateRecipeActivity.class);
+                startActivity(createRecipeIntent);
+
                 break;
             case R.id.nav_import_recipe:
                 Toast.makeText(this, "Import RecipeDetail", Toast.LENGTH_SHORT).show();

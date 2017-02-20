@@ -43,10 +43,10 @@ public class MyService extends IntentService {
         try {
             response = HttpConnection.downloadFromFeed(requestPackage);
         } catch (IOException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             return;
         }
-
+        Log.d(TAG,response);
         GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapter(Uri.class, new JsonDeserializer<Uri>() {
             @Override
