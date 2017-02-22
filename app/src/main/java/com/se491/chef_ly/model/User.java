@@ -39,8 +39,11 @@ public class User {
         return true;
     }
 
-    public static boolean authenticateNew(String username, String password) {
-        // TODO create a new user and save tokens
-        return true;
+    public static String getUsername() {
+        return username;
+    }
+
+    public static String getAuthToken() {
+        return authToken;
     }
 }

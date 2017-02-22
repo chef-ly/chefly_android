@@ -20,6 +20,10 @@ import com.se491.chef_ly.http.RequestMethod;
 import com.se491.chef_ly.model.User;
 import android.util.Log;
 import com.se491.chef_ly.R;
+import com.se491.chef_ly.model.User;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class RegisterActivity extends Activity implements View.OnClickListener {
 
@@ -39,10 +43,29 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            token = intent.getStringExtra(MyService.MY_SERVICE_PAYLOAD);
-            Log.d(TAG, token);
-        }
+            try {
+                token = intent.getStringExtra(MyService.MY_SERVICE_RESPONSE_STRING);
+                Log.d(TAG, token);
 
+                if (token != null) {
+                    JSONObject jsonToken = new JSONObject(token);
+                    User.saveAuthentication(username, token);
+
+                    // Direct user to list view
+                    Intent recipeListIntent = new Intent(RegisterActivity.this, RecipeListActivity.class);
+                    recipeListIntent.putExtra("name", username);
+                    startActivity(recipeListIntent);
+                    finish();
+                } else {
+                    Toast.makeText(getApplicationContext(), "There was a problem while registering your account", Toast.LENGTH_SHORT).show();
+                    Intent mainIntent = new Intent(RegisterActivity.this, MainActivity.class);
+                    startActivity(mainIntent);
+                    finish();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     };
 
     @Override
@@ -94,20 +117,7 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
         } else if (currentInstruction.equals(getResources().getText(R.string.createPasswordAgain))) {
             // check if password matches new input
             if (input.getText().toString().equals(password)) {
-                if (registerNewUser()) {
-                    // Direct user to list view
-                    Intent recipeListIntent = new Intent(RegisterActivity.this, RecipeListActivity.class);
-                    recipeListIntent.putExtra("name", username);
-                    startActivity(recipeListIntent);
-                    setResult(RESULT_OK);
-                    finish();
-                } else {
-                    Toast.makeText(getApplicationContext(), "There was a problem while registering your account", Toast.LENGTH_SHORT).show();
-                    Intent mainIntent = new Intent(RegisterActivity.this, MainActivity.class);
-                    startActivity(mainIntent);
-                }
-                setResult(RESULT_OK);
-                finish();
+                registerNewUser();
             } else {
                 Toast.makeText(getApplicationContext(), "Your passwords did not match. Please try again", Toast.LENGTH_SHORT).show();
             }
@@ -116,7 +126,7 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    private boolean registerNewUser() {
+    private void registerNewUser() {
         RequestMethod requestPackage = new RequestMethod();
 
         requestPackage.setEndPoint(urlString);
@@ -126,6 +136,5 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
         Intent intent = new Intent(this, MyService.class);
         intent.putExtra(MyService.REQUEST_PACKAGE, requestPackage);
         startService(intent);
-        return true;
     }
 }
