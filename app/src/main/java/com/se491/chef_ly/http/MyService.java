@@ -25,6 +25,7 @@ import java.util.ArrayList;
 public class MyService extends IntentService {
     public static final String TAG = "MyService";
     public static final String MY_SERVICE_MESSAGE = "myServiceMessage";
+    public static final String MY_SERVICE_RESPONSE_STRING = "myServiceResponseString";
     public static final String MY_SERVICE_PAYLOAD = "myServicePayload";
 
     public static final String REQUEST_PACKAGE = "requestPackage";
@@ -59,6 +60,7 @@ public class MyService extends IntentService {
 
         RecipeList dataItems = gson.fromJson(response, type);
         Intent messageIntent = new Intent(MY_SERVICE_MESSAGE);
+        messageIntent.putExtra(MY_SERVICE_RESPONSE_STRING, response);
         // messageIntent.putExtra(MY_SERVICE_PAYLOAD, "Service all done!"); //pass data back, set key value and message
         if(dataItems != null){
             messageIntent.putParcelableArrayListExtra(MY_SERVICE_PAYLOAD, dataItems.getRecipes()); //pass back the data

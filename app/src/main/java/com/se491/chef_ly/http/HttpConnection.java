@@ -7,12 +7,15 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.MediaType;
+import org.json.JSONObject;
+import com.se491.chef_ly.model.User;
 
 //Helper class for working with a remote server
 //okhttp is better for failure recoveries
 
 public class HttpConnection {
-
+    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     public static String downloadFromFeed(RequestMethod requestPackage)
             throws IOException {
@@ -31,15 +34,17 @@ public class HttpConnection {
                 .url(address);
 //check for post request
         if (requestPackage.getMethod().equals("POST")) {
-            MultipartBody.Builder builder = new MultipartBody.Builder() //simulate a web form
-                    .setType(MultipartBody.FORM);
             //extract the parameters from the request
             Map<String, String> params = requestPackage.getParams();//get the reference of the pair
-            for (String key : params.keySet()) {
-                builder.addFormDataPart(key, params.get(key));
-            }
-            RequestBody requestBody = builder.build();
-            requestBuilder.method("POST", requestBody);
+            JSONObject parameter = new JSONObject(params);
+            RequestBody body = RequestBody.create(JSON, parameter.toString());
+
+            requestBuilder.post(body);
+            requestBuilder.addHeader("content-type", "application/json; charset=utf-8");
+        }
+
+        if (User.isAuthenticated()) {
+            requestBuilder.addHeader("Authorization", User.getAuthToken());
         }
 
         Request request = requestBuilder.build();
