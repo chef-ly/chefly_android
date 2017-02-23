@@ -4,6 +4,8 @@ package com.se491.chef_ly.http;
 import android.app.IntentService;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -15,6 +17,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 import com.se491.chef_ly.model.Recipe;
+import com.se491.chef_ly.model.RecipeDetail;
 import com.se491.chef_ly.model.RecipeList;
 
 import java.io.IOException;
@@ -39,7 +42,9 @@ public class MyService extends IntentService {
 
         RequestMethod requestPackage =
                 intent.getParcelableExtra(REQUEST_PACKAGE);
-
+        String sender = intent.getStringExtra("Tag");
+        Log.d(TAG, "Sender -> " + sender);
+        Log.d(TAG, "Request Package Endpoint-> " + requestPackage.getEndpoint() );
         String response;
         try {
             response = HttpConnection.downloadFromFeed(requestPackage);
@@ -47,25 +52,38 @@ public class MyService extends IntentService {
             //e.printStackTrace();
             return;
         }
-        Log.d(TAG,response);
+        Log.d(TAG,"Response -> " + response);
         GsonBuilder builder = new GsonBuilder();
-        builder.registerTypeAdapter(Uri.class, new JsonDeserializer<Uri>() {
-            @Override
-            public Uri deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-                return Uri.parse(json.toString());
-            }
-        });
+        //builder.registerTypeAdapter(Uri.class, new JsonDeserializer<Uri>() {
+        //    @Override
+        //    public Uri deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        //        return Uri.parse(json.toString());
+        //    }
+        //});
         Gson gson = builder.create();
-        Type type = new TypeToken<RecipeList>(){}.getType();
 
-        RecipeList dataItems = gson.fromJson(response, type);
+        RecipeList dataItems = null;
+        Type type = new TypeToken<RecipeList>(){}.getType();
+        dataItems = gson.fromJson(response, type);
+
         Intent messageIntent = new Intent(MY_SERVICE_MESSAGE);
         messageIntent.putExtra(MY_SERVICE_RESPONSE_STRING, response);
         // messageIntent.putExtra(MY_SERVICE_PAYLOAD, "Service all done!"); //pass data back, set key value and message
         if(dataItems != null){
             messageIntent.putParcelableArrayListExtra(MY_SERVICE_PAYLOAD, dataItems.getRecipes()); //pass back the data
         }else{
-            messageIntent.putParcelableArrayListExtra(MY_SERVICE_PAYLOAD, new ArrayList<Recipe>()); //pass back the data
+            // unidentified sender - send empty parcel back
+            messageIntent.putExtra(MY_SERVICE_PAYLOAD, new Parcelable() {
+                @Override
+                public int describeContents() {
+                    return 0;
+                }
+
+                @Override
+                public void writeToParcel(Parcel dest, int flags) {
+
+                }
+            }); //pass back the data
         }
 
 

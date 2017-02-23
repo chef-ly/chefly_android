@@ -4,44 +4,49 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.se491.chef_ly.R;
+
 import java.util.List;
 
 
 public class RecipeDetail implements Parcelable{
-    private int id;
+    private String _id;
     private String name;
     private String author;
     private String description;
     private int serves;
     private int time;
+    private Level level;
     private String[] categories;
-    private Uri image;
-    private List<Ingredient> ingredients;
-    private List<String> directions;
+    private String image;
+    private Ingredient[] ingredients;
+    private String[] directions;
 
     // Constructor for client to create new Recipe
-    public RecipeDetail(String name, String author, String description, int serves, int time, String[] categories, Uri image, List<Ingredient> ingredients, List<String> directions) {
+    public RecipeDetail(String name, String author, String description, int serves, int time, Level level, String[] categories, String image, Ingredient[] ingredients,String[] directions) {
         this.name = name;
         this.author = author;
         this.description = description;
         this.serves = serves;
         this.time = time;
+        this.level = level;
         this.categories = categories;
         this.image = image;
         this.ingredients = ingredients;
         this.directions = directions;
-        this.id = 0; // TODO get available id from server
+        this._id = ""; // TODO get available id from server
     }
     // Constructor for recpie from server
 
 
-    public RecipeDetail(int id, String name, String author, String description, int serves, int time, String[] categories, Uri image, List<Ingredient> ingredients, List<String> directions) {
-        this.id = id;
+    public RecipeDetail(String id, String name, String author, String description, int serves, int time, Level level, String[] categories, String image, Ingredient[] ingredients, String[] directions) {
+        this._id = id;
         this.name = name;
         this.author = author;
         this.description = description;
         this.serves = serves;
         this.time = time;
+        this.level = level;
         this.categories = categories;
         this.image = image;
         this.ingredients = ingredients;
@@ -49,21 +54,23 @@ public class RecipeDetail implements Parcelable{
     }
 
     RecipeDetail(Parcel in){   //TODO test
-        id = in.readInt();
+        _id = in.readString();
         name = in.readString();
         author = in.readString();
         description = in.readString();
         serves = in.readInt();
         time = in.readInt();
+        level = Level.valueOf(in.readString());
         categories = in.createStringArray();
-        image = Uri.parse(in.readString());
-        ingredients = in.readArrayList(Ingredient.class.getClassLoader());
-        directions = in.readArrayList(String.class.getClassLoader());
+        image = in.readString();
+
+        ingredients = in.createTypedArray(Ingredient.CREATOR);
+        directions = in.createStringArray();
 
     }
 
-    public int getId() {
-        return id;
+    public String getId() {
+        return _id;
     }
 
     public String getName() {
@@ -91,14 +98,19 @@ public class RecipeDetail implements Parcelable{
     }
 
     public Uri getImage() {
-        return image;
+        if(!(image == null)){
+            return Uri.parse(image);
+        }else{
+            return Uri.EMPTY;
+        }
+
     }
 
-    public List<Ingredient> getIngredients() {
+    public Ingredient[] getIngredients() {
         return ingredients;
     }
 
-    public List<String> getDirections() {
+    public String[] getDirections() {
         return directions;
     }
 
@@ -118,16 +130,17 @@ public class RecipeDetail implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(id);
-        dest.writeString(this.name);
-        dest.writeString(this.author);
-        dest.writeString(this.description);
-        dest.writeInt(this.serves);
-        dest.writeInt(this.time);
+        dest.writeString(_id);
+        dest.writeString(name);
+        dest.writeString(author);
+        dest.writeString(description);
+        dest.writeInt(serves);
+        dest.writeInt(time);
+        dest.writeString(level.toString());
         dest.writeStringArray(categories);
-        dest.writeString(image.toString());
-        dest.writeList(ingredients);
-        dest.writeList(directions);
+        dest.writeString(image);
+        dest.writeTypedArray(ingredients, 0);
+        dest.writeStringArray(directions);
 
 
     }
