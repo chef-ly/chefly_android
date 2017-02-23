@@ -54,6 +54,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
     private static final String TAG = "RecipeListActivity";
     private static List<Recipe> recipes = new ArrayList<>();
     private static final String urlString ="https://pure-fortress-13559.herokuapp.com/list";
+    // private static final String urlString = "https://chefly-dev.herokuapp.com/dev";
 
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override

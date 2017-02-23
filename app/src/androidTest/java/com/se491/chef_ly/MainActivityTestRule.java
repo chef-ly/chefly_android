@@ -3,7 +3,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.support.test.rule.ActivityTestRule;
 import android.util.Log;
-
+//create my own rules
 public class MainActivityTestRule<A extends Activity> extends ActivityTestRule<A> {
 
     public MainActivityTestRule(Class<A> activityClass) {
