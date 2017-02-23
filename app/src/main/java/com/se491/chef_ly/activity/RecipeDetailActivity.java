@@ -3,6 +3,7 @@ package com.se491.chef_ly.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
@@ -18,13 +19,19 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.se491.chef_ly.Databases.DatabaseHandler;
 import com.se491.chef_ly.R;
+import com.se491.chef_ly.http.HttpConnection;
+import com.se491.chef_ly.http.RequestMethod;
 import com.se491.chef_ly.model.Ingredient;
 import com.se491.chef_ly.model.RecipeDetail;
-import com.se491.chef_ly.model.RecipeHolder;
+import com.se491.chef_ly.utils.NetworkHelper;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.List;
 
 
@@ -39,10 +46,12 @@ public class RecipeDetailActivity extends AppCompatActivity {
     private CheckBox[] checkBoxes;
     private Button getCookingBtn;
 
-    private List<Ingredient> ingredients;
-    private List<String> directions;
+    private RecipeDetail recipeDetail;
+    private Ingredient[] ingredients;
+    private String[] directions;
     private String[] directionsForCooking;
-    private static final String TAG = "RecipieDetailActivity";
+    private static final String TAG = "RecipeDetailActivity";
+    private static final String urlString ="https://chefly-dev.herokuapp.com/recipe/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,8 +78,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
                 DatabaseHandler handler = new DatabaseHandler(c);
                 for(CheckBox cb : checkBoxes){
                     if(cb.isChecked()){
-                        // TODO add to grocery list
-                        handler.addItemToShoppingList(ingredients.get(cb.getId()), false);
+                        handler.addItemToShoppingList(ingredients[cb.getId()], false);
                         count++;
                         cb.setChecked(false);
                         Log.d(TAG,"Added to list -> " +String.valueOf(cb.getText()));
@@ -102,61 +110,115 @@ public class RecipeDetailActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         Intent intent = getIntent();
-        RecipeHolder rh = new RecipeHolder(getResources());
+        final String recipeID = intent.getStringExtra("recipe");
+        final Context c = getApplicationContext();
+        if(NetworkHelper.hasNetworkAccess(RecipeDetailActivity.this)) //returns true if internet available
+        {
+            //register to listen the data
+            RequestMethod requestPackage = new RequestMethod();
 
-        RecipeDetail r = rh.getDetailedRecipes().get(intent.getIntExtra("recipe", -1));
-        Log.d(TAG, "Categores size = " + r.getCategories().length);
-        if(r == null){
-            recipeTitle.setText(R.string.recipeNotFound);
-        }else{
-            recipeTitle.setText(r.getName());
-
-            try{
-                imageView.setImageBitmap(MediaStore.Images.Media.getBitmap(getContentResolver(), r.getImage()));
-
-            }catch (IOException e){
-                Log.d(TAG, "IOException on load image");
-                Log.d(TAG, e.getMessage());
-
-            }
+            requestPackage.setEndPoint(urlString + recipeID);
+            requestPackage.setMethod("GET"); //  or requestPackage.setMethod("POST");
 
 
-            ingredients = r.getIngredients();
-            directions = r.getDirections();
+            new AsyncTask<RequestMethod, Integer, Long>(){
+                String resp = "";
+                @Override
+                protected Long doInBackground(RequestMethod... params) {
+                    for(RequestMethod r : params){
+                        try {
+                            resp = HttpConnection.downloadFromFeed(r);
+                            //TODO parse json into recipe detail update UI
+                            GsonBuilder builder = new GsonBuilder();
+                            Gson gson = builder.create();
+                            Type type;
+                            type = new TypeToken<RecipeDetail>(){}.getType();
+                            recipeDetail = gson.fromJson(resp, type);
+                            Log.d(TAG, recipeDetail.toString());
+                        } catch (IOException e) {
+                            //e.printStackTrace();
+                            return -1L;
+                        }
+                        Log.d(TAG, resp);
+                    }
+                    return 1L;
+                }
 
-            checkBoxes = new CheckBox[ingredients.size()];
-            int states[][] = {{android.R.attr.state_checked}, {}};
-            int white = getColor(this,R.color.white);
-            int colors[] = {white, white};
-            int count = 0;
-            for(Ingredient s : ingredients){
-                CheckBox temp  = new CheckBox(this);
-                temp.setId(count);
-                temp.setText(s.toString());
-                temp.setTextColor(white);
-                temp.setTextSize(20);
-                CompoundButtonCompat.setButtonTintList(temp ,new ColorStateList(states,colors));
-                checkBoxes[count] = temp;
-                ingredientGroup.addView(temp);
-                count++;
-            }
-            //
-            directionsForCooking = new String[directions.size()];
-            StringBuilder sb = new StringBuilder();
-            count = 1;
-            for(String s : directions){
-                sb.append(count);
-                sb.append(":  ");
-                sb.append(s);
-                sb.append("\n");
+                @Override
+                protected void onPostExecute(Long aLong) {
+                    super.onPostExecute(aLong);
+                    //TODO let parent know detail is ready
+                    if(recipeDetail == null){
+                        recipeTitle.setText(R.string.recipeNotFound);
+                    }else{
+                        recipeTitle.setText(recipeDetail.getName());
 
-                directionsForCooking[count-1] = s;
-                count++;
-            }
-            directionView.setText(sb.toString());
+                        try{
+                            imageView.setImageBitmap(MediaStore.Images.Media.getBitmap(getContentResolver(), recipeDetail.getImage()));
 
+                        }catch (IOException e){
+                            Log.d(TAG, "IOException on load image");
+                            Log.d(TAG, e.getMessage());
+
+                        }
+
+                        ingredients = recipeDetail.getIngredients();
+                        directions = recipeDetail.getDirections();
+                        if(ingredients == null){
+                            ingredients = new Ingredient[0];
+                        }
+                        if(directions == null){
+                            directions = new String[0];
+                        }
+
+                        checkBoxes = new CheckBox[ingredients.length];
+                        int states[][] = {{android.R.attr.state_checked}, {}};
+                        int white = getColor(c,R.color.white);
+                        int colors[] = {white, white};
+                        int count = 0;
+                        for(Ingredient s : ingredients){
+                            CheckBox temp  = new CheckBox(c);
+                            temp.setId(count);
+                            temp.setText(s.toString());
+                            temp.setTextColor(white);
+                            temp.setTextSize(20);
+                            CompoundButtonCompat.setButtonTintList(temp ,new ColorStateList(states,colors));
+                            checkBoxes[count] = temp;
+                            ingredientGroup.addView(temp);
+                            count++;
+                        }
+                        //
+                        directionsForCooking = new String[directions.length];
+                        StringBuilder sb = new StringBuilder();
+                        count = 1;
+                        for(String s : directions){
+                            sb.append(count);
+                            sb.append(":  ");
+                            sb.append(s);
+                            sb.append("\n");
+
+                            directionsForCooking[count-1] = s;
+                            count++;
+                        }
+                        directionView.setText(sb.toString());
+
+                    }
+
+
+                }
+            }.execute(requestPackage);
         }
+        else
+        {
+            //Toast.makeText(RecipeListActivity.this,"No Internet Connection",Toast.LENGTH_LONG).show();
+            Log.d(TAG, "No Internet Connection");
+        }
+
+
+
     }
+
+
     @SuppressWarnings("deprecation")
     public static int getColor(Context context, int id) {
         final int version = Build.VERSION.SDK_INT;

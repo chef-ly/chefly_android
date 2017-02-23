@@ -53,8 +53,9 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
 
     private static final String TAG = "RecipeListActivity";
     private static List<Recipe> recipes = new ArrayList<>();
-    private static final String urlString ="https://pure-fortress-13559.herokuapp.com/list";
-    // private static final String urlString = "https://chefly-dev.herokuapp.com/dev";
+
+    private static final String urlString ="https://chefly-dev.herokuapp.com/list";
+
 
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -82,7 +83,8 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
             @Override
             public void onItemClick(AdapterView l, View v, int position, long id) {
                 Intent intent = new Intent(c, RecipeDetailActivity.class);
-                intent.putExtra("recipe", position);
+                String recipeID = ((Recipe) l.getAdapter().getItem(position)).getId();
+                intent.putExtra("recipe", recipeID);
 
                 startActivity(intent);
             }
@@ -112,6 +114,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
             requestPackage.setMethod("GET"); //  or requestPackage.setMethod("POST");
             Intent intent = new Intent(this, MyService.class);
             intent.putExtra(MyService.REQUEST_PACKAGE, requestPackage);
+            intent.putExtra("Tag", TAG);
             startService(intent);
         }
         else

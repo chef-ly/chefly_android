@@ -36,6 +36,7 @@ public class GetCookingActivity extends Activity implements View.OnClickListener
     private int btnGray;
     private int white;
     private int step;
+    private boolean hasDirections = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,13 +67,17 @@ public class GetCookingActivity extends Activity implements View.OnClickListener
         textToSpeech = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
-                if(status != TextToSpeech.ERROR) {
+                if(status != TextToSpeech.ERROR ) {
                     textToSpeech.setLanguage(Locale.US);
 
                     // Causes nullPointerException on Nexus_5_API_22
                    // Log.d(TAG, "Quality -> " + textToSpeech.getVoice().getQuality());
-                    
-                    read(directions[0]);
+                    if(directions.length > 0){
+                        read(directions[0]);
+                    }else{
+                        next.setText(getResources().getString(R.string.done));
+                    }
+
                 }
             }
         });
@@ -83,76 +88,91 @@ public class GetCookingActivity extends Activity implements View.OnClickListener
         super.onStart();
         Intent i = getIntent();
         directions = i.getStringArrayExtra("directions");
+        if(directions.length > 0){
+            hasDirections = true;
+            step = 0;
+            String step1 = directions[0];
+            text.setText(step1);
 
-        step = 0;
-        String step1 = directions[0];
-        text.setText(step1);
+            updateStepText();
+        }
 
-        updateStepText();
+
 
     }
 
     @Override
     public void onClick(View view) {
-        switch(view.getId()){
-            case R.id.prev:
-                next.setEnabled(true);
-                next.setClickable(true);
-                next.setBackgroundColor(btnGray);
-                next.setTextColor(white);
-                next.setText(getResources().getString(R.string.next));
-                if(step != 0){
-                    step--;
-                    updateStepText();
-                    String prevStep = directions[step];
-                    text.setText(prevStep);
-                    read(prevStep);
-                    if(step == 0){
-                        prev.setClickable(false);
-                        prev.setEnabled(false);
-                        prev.setBackgroundColor(disabledBackground);
-                        prev.setTextColor(disabledText);
+
+            switch(view.getId()){
+                case R.id.prev:
+                    if(hasDirections) {
+                        next.setEnabled(true);
+                        next.setClickable(true);
+                        next.setBackgroundColor(btnGray);
+                        next.setTextColor(white);
+                        next.setText(getResources().getString(R.string.next));
+                        if (step != 0) {
+                            step--;
+                            updateStepText();
+                            String prevStep = directions[step];
+                            text.setText(prevStep);
+                            read(prevStep);
+                            if (step == 0) {
+                                prev.setClickable(false);
+                                prev.setEnabled(false);
+                                prev.setBackgroundColor(disabledBackground);
+                                prev.setTextColor(disabledText);
+                            }
+                        }
+                        break;
                     }
-                }
-                break;
-            case R.id.next:
-                prev.setEnabled(true);
-                prev.setClickable(true);
-                prev.setBackgroundColor(btnGray);
-                prev.setTextColor(white);
-                step++;
-                if(step < directions.length){
-                    updateStepText();
-                    String nextStep = directions[step];
-                    text.setText(nextStep);
-                    read(nextStep);
-                } else if(step == directions.length) {
-                    String t = getResources().getString(R.string.bonappetit);
-                    text.setText(t);
-                    read(t);
-                    next.setText(getResources().getString(R.string.done));
-                } else {
+                case R.id.next:
+                    if(hasDirections) {
+                        prev.setEnabled(true);
+                        prev.setClickable(true);
+                        prev.setBackgroundColor(btnGray);
+                        prev.setTextColor(white);
+                        step++;
+                        if (step < directions.length) {
+                            updateStepText();
+                            String nextStep = directions[step];
+                            text.setText(nextStep);
+                            read(nextStep);
+                        } else if (step == directions.length) {
+                            String t = getResources().getString(R.string.bonappetit);
+                            text.setText(t);
+                            read(t);
+                            next.setText(getResources().getString(R.string.done));
+                        } else {
+                            setResult(RESULT_OK);
+                            finish();
+                            break;
+                        }
+                        break;
+                    }else{
+                        next.setText(getResources().getString(R.string.done));
+                    }
+                case R.id.repeat:
+                    if(hasDirections) {
+                        if (step < directions.length) {
+                            read(directions[step]);
+                        } else {
+                            read(getResources().getString(R.string.bonappetit));
+                        }
+
+                        break;
+                    }
+                case R.id.exit:
                     setResult(RESULT_OK);
                     finish();
                     break;
-                }
-                break;
-            case R.id.repeat:
-                if(step < directions.length){
-                    read(directions[step]);
-                }else{
-                    read(getResources().getString(R.string.bonappetit));
-                }
+                default:
+                    //TODO
 
-                break;
-            case R.id.exit:
-                setResult(RESULT_OK);
-                finish();
-                break;
-            default:
-                //TODO
+            }
 
-        }
+
     }
     @TargetApi(21)
     @SuppressWarnings("deprecation")

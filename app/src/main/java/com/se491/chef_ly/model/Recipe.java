@@ -5,16 +5,16 @@ import android.os.Parcelable;
 
 public class Recipe implements Parcelable {
 
-    private int id;
+    private String _id;
     private String name;
     private String author;
-    private Uri image_url;
+    private String image_url;
     private double rating;
     private int time;
     private String[] categories;
     private String level;
 
-    public Recipe(String name, String author, Uri image_url, double rating, int time, String[] categories, String level) {
+    public Recipe(String name, String author, String image_url, double rating, int time, String[] categories, String level) {
         this.name = name;
         this.author = author;
         this.image_url = image_url;
@@ -24,8 +24,8 @@ public class Recipe implements Parcelable {
         this.level = level;
     }
 
-    public Recipe(int id, String name, String author, Uri image_url, double rating, int time, String[] categories, String level) {
-        this.id = id;
+    public Recipe(String id, String name, String author, String image_url, double rating, int time, String[] categories, String level) {
+        this._id = id;
         this.name = name;
         this.author = author;
         this.image_url = image_url;
@@ -35,10 +35,10 @@ public class Recipe implements Parcelable {
         this.level = level;
     }
     protected Recipe(Parcel in) {
-        this.id=in.readInt();
+        this._id=in.readString();
         this.name = in.readString();
         this.author = in.readString();
-        this.image_url=  Uri.parse(in.readString());
+        this.image_url=  in.readString();
         this.rating = in.readDouble();
         this.time = in.readInt();
         categories = in.createStringArray();
@@ -52,10 +52,10 @@ public class Recipe implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(this.id);
+        dest.writeString(this._id);
         dest.writeString(this.name);
         dest.writeString(this.author);
-        image_url.writeToParcel(dest, flags);
+        dest.writeString(image_url);
         dest.writeDouble(rating);
         dest.writeInt(this.time);
         dest.writeStringArray(categories);
@@ -74,8 +74,8 @@ public class Recipe implements Parcelable {
         }
     };
 
-    public int getId() {
-        return id;
+    public String getId() {
+        return _id;
     }
 
     public String getName() {
@@ -87,7 +87,7 @@ public class Recipe implements Parcelable {
     }
 
     public Uri getImage() {
-        return image_url;
+        return Uri.parse(image_url);
     }
 
     public double getRating() {
