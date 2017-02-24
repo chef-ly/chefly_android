@@ -20,6 +20,8 @@ import org.junit.runner.RunWith;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static android.support.test.espresso.action.ViewActions.replaceText;
 import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
@@ -30,13 +32,13 @@ import static org.hamcrest.Matchers.allOf;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class GuestShoppingList {
+public class TestUI {
 
     @Rule
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
 
     @Test
-    public void guestShoppingList() {
+    public void testUI() {
         ViewInteraction appCompatTextView = onView(
                 allOf(withId(R.id.continueAsGuest), withText("Continue As Guest"), isDisplayed()));
         appCompatTextView.perform(click());
@@ -45,32 +47,13 @@ public class GuestShoppingList {
                 allOf(childAtPosition(
                         allOf(withId(R.id.list),
                                 withParent(withId(R.id.activity_recipe_list))),
-                        0),
+                        1),
                         isDisplayed()));
         linearLayout.perform(click());
 
-        ViewInteraction checkBox = onView(
-                allOf(withText("Peanut Butter - 2.0 tablespoon"),
-                        withParent(withId(R.id.ingredientGroup))));
-        checkBox.perform(scrollTo(), click());
-
-        ViewInteraction checkBox2 = onView(
-                allOf(withText("Strawberry Jelly - 2.0 tablespoon"),
-                        withParent(withId(R.id.ingredientGroup))));
-        checkBox2.perform(scrollTo(), click());
-
-        ViewInteraction checkBox3 = onView(
-                allOf(withText("Rye Bread - 2.0 slice"),
-                        withParent(withId(R.id.ingredientGroup))));
-        checkBox3.perform(scrollTo(), click());
-
         ViewInteraction appCompatButton = onView(
-                allOf(withId(R.id.addToListBtn), withText("Add Selected to Grocery List")));
-        appCompatButton.perform(scrollTo(), click());
-
-        ViewInteraction appCompatButton2 = onView(
                 allOf(withId(R.id.backBtn), withText("Back")));
-        appCompatButton2.perform(scrollTo(), click());
+        appCompatButton.perform(scrollTo(), click());
 
         ViewInteraction appCompatImageButton = onView(
                 allOf(withContentDescription("Open navigation drawer"),
@@ -79,24 +62,24 @@ public class GuestShoppingList {
         appCompatImageButton.perform(click());
 
         ViewInteraction appCompatCheckedTextView = onView(
-                allOf(withId(R.id.design_menu_item_text), withText("Shopping List"), isDisplayed()));
+                allOf(withId(R.id.design_menu_item_text), withText("Create new recipe"), isDisplayed()));
         appCompatCheckedTextView.perform(click());
 
-        ViewInteraction linearLayout2 = onView(
-                allOf(childAtPosition(
-                        allOf(withId(android.R.id.list),
-                                withParent(withId(R.id.activity_shopping_list))),
-                        0),
-                        isDisplayed()));
-        linearLayout2.perform(click());
+        ViewInteraction appCompatEditText = onView(
+                allOf(withId(R.id.recipeName), isDisplayed()));
+        appCompatEditText.perform(replaceText("a"), closeSoftKeyboard());
 
-        ViewInteraction button = onView(
-                allOf(withId(R.id.clearPurchasedBtn), withText("Remove Purchased"), isDisplayed()));
-        button.perform(click());
+        ViewInteraction appCompatEditText2 = onView(
+                allOf(withId(R.id.recipeName), withText("a"), isDisplayed()));
+        appCompatEditText2.perform(click());
 
-        ViewInteraction button2 = onView(
-                allOf(withId(R.id.finishedBtn), withText("Finished"), isDisplayed()));
-        button2.perform(click());
+        ViewInteraction appCompatEditText3 = onView(
+                allOf(withId(R.id.recipeImage), isDisplayed()));
+        appCompatEditText3.perform(replaceText(""), closeSoftKeyboard());
+
+        ViewInteraction appCompatEditText4 = onView(
+                allOf(withId(R.id.recipeDescription), isDisplayed()));
+        appCompatEditText4.perform(replaceText("csacsa"), closeSoftKeyboard());
 
     }
 
