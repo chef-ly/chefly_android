@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView continueAsGuest;
     private TextView signUp;
     private final String TAG = "MainActivity";
-   private static final String urlString ="https://pure-fortress-13559.herokuapp.com/list";
+   private static final String urlString ="https://chefly-prod.herokuapp.com/list";
 
 
 
