@@ -20,7 +20,12 @@ before_script:
         - emulator -avd test -no-skin -no-audio -no-window &    #Start emulator
 
 script:
-   - ./gradlew build connectedCheck
+  - echo "Travis branch is $TRAVIS_BRANCH"
+  - echo "Travis branch is in pull request $TRAVIS_PULL+REQUEST"
+  - android-wait-for-emulator
+  - adb devices   #Display list of devices
+  - adb shell input keyevent 82 &
+  - ./gradlew build connectedCheck
 
 
 before_install:
