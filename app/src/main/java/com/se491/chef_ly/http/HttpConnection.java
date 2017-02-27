@@ -1,5 +1,7 @@
 package com.se491.chef_ly.http;
 
+import android.util.Log;
+
 import java.io.IOException;
 import java.util.Map;
 import okhttp3.MultipartBody;
@@ -15,6 +17,7 @@ import com.se491.chef_ly.model.User;
 //okhttp is better for failure recoveries
 
 public class HttpConnection {
+    private static final String TAG = "HttpConnection";
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     public static String downloadFromFeed(RequestMethod requestPackage)
@@ -36,8 +39,17 @@ public class HttpConnection {
         if (requestPackage.getMethod().equals("POST")) {
             //extract the parameters from the request
             Map<String, String> params = requestPackage.getParams();//get the reference of the pair
-            JSONObject parameter = new JSONObject(params);
-            RequestBody body = RequestBody.create(JSON, parameter.toString());
+            String msg = "";
+            if(params.size() ==1){
+                for(String key : params.keySet())
+                msg = params.get(key);
+            }else{
+                JSONObject parameter = new JSONObject(params);
+                msg = parameter.toString();
+            }
+
+            RequestBody body = RequestBody.create(JSON, msg);
+            Log.d(TAG, msg);
 
             requestBuilder.post(body);
             requestBuilder.addHeader("content-type", "application/json; charset=utf-8");
@@ -48,12 +60,14 @@ public class HttpConnection {
         }
 
         Request request = requestBuilder.build();
+
         //get responce with the use of the method newCall
         Response response = client.newCall(request).execute(); //synchornous request
         //check if the request is successful
         if (response.isSuccessful()) {
             return response.body().string();
         } else {
+            Log.d(TAG, response.toString());
             throw new IOException("Exception: response code " + response.code());
         }
     }

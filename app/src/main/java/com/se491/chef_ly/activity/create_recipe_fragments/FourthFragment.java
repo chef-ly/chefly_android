@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.se491.chef_ly.R;
+import com.se491.chef_ly.activity.CreateRecipeActivity;
 import com.se491.chef_ly.model.Ingredient;
 import com.se491.chef_ly.model.IngredientItem;
 
@@ -32,13 +33,10 @@ import java.util.ArrayList;
  */
 public class FourthFragment extends Fragment {
     private String title;
-    private int pageNum;
+    //private int pageNum;
 
     private ArrayList<EditText> directions;
     private LinearLayout buttons;
-    private EditText step;
-    private Button newLineBtn;
-    private Button removeLineBtn;
 
     private OnFragmentInteractionListener mListener;
 
@@ -60,7 +58,7 @@ public class FourthFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             title = getArguments().getString("title");
-            pageNum = getArguments().getInt("pageNum",0);
+            //pageNum = getArguments().getInt("pageNum",0);
         }
 
         directions = new ArrayList<>();
@@ -76,6 +74,11 @@ public class FourthFragment extends Fragment {
 
         View v =  inflater.inflate(R.layout.fragment_fourth, container, false);
         final LinearLayout root = (LinearLayout) v.findViewById(R.id.root);
+
+        EditText step;
+        Button newLineBtn;
+        Button removeLineBtn;
+        Button createRecipeBtn;
 
         step = (EditText) v.findViewById(R.id.step);
 
@@ -109,18 +112,21 @@ public class FourthFragment extends Fragment {
                 EditText newstep = new EditText(v.getContext());
 
                 directions.add(newstep);
-
                 newstep.setInputType(InputType.TYPE_CLASS_TEXT);
-
                 newstep.setTextColor(getColor(v.getContext(), R.color.white));
-
                 newstep.setTextSize(22);
-
                 newstep.setHint("Next step...");
 
                 root.removeView(buttons);
                 root.addView(newstep);
                 root.addView(buttons);
+            }
+        });
+        createRecipeBtn = (Button) v.findViewById(R.id.completeRecipeBtn);
+        createRecipeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((CreateRecipeActivity)getActivity()).createRecipie();
             }
         });
 

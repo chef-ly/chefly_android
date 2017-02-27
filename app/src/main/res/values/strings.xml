@@ -42,6 +42,8 @@
     <string name="createPasswordAgain">Enter Password Again</string>
     <string name="registerPageTitle">Register</string>
     <string name="recipeName">Recipe Title</string>
+    <string name="author">Author</string>
+    <string name="level">Difficulty</string>
     <string name="recipeImage">Image</string>
     <string name="recipeDescription">Description</string>
     <string name="qty">Qty</string>
@@ -51,6 +53,7 @@
     <string name="recipeServings">Serves</string>
     <string name="recipeCategories">Categories</string>
     <string name="categoryHint">Italian, French, Dessert, Lunch, Quick, &#8230;</string>
+    <string name="createRecipe">Create Recipe</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

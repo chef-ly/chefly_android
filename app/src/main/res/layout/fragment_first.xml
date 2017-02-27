@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/firstFrag"
     tools:context="com.se491.chef_ly.activity.create_recipe_fragments.FirstFragment">
 
     <LinearLayout
@@ -25,6 +26,20 @@
             android:layout_height="wrap_content" />
         <EditText
             android:id="@+id/recipeName"
+            android:inputType="textAutoCorrect"
+            android:textSize="22sp"
+            android:background="@color/white"
+            android:layout_marginBottom="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:text="@string/author"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <EditText
+            android:id="@+id/recipeAuthor"
             android:inputType="textAutoCorrect"
             android:textSize="22sp"
             android:background="@color/white"

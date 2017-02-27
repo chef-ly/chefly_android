@@ -329,6 +329,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
             case R.id.nav_create_recipe:
                 Toast.makeText(this, "Create RecipeDetail", Toast.LENGTH_SHORT).show();
                 Intent createRecipeIntent = new Intent(getApplicationContext(), CreateRecipeActivity.class);
+                createRecipeIntent.putExtra("user",user);
                 startActivity(createRecipeIntent);
 
                 break;

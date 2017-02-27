@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/fourthFrag"
     tools:context="com.se491.chef_ly.activity.create_recipe_fragments.FourthFragment">
 
     <LinearLayout
@@ -63,6 +64,16 @@
 
 
     </LinearLayout>
+    <Button
+        android:id="@+id/completeRecipeBtn"
+        android:background="@color/btnGray"
+        android:text="@string/createRecipe"
+        android:textSize="22sp"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="10dp"
+        android:textColor="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 
 </FrameLayout>

@@ -23,13 +23,15 @@ import com.se491.chef_ly.R;
 public class FirstFragment extends Fragment {
 
     private String title;
-    private int pageNum;
 
     private EditText recipeTitle;
+    private EditText recipeAuthor;
     private EditText recipeImage;
     private EditText recipeDescription;
 
     private OnFragmentInteractionListener mListener;
+
+    private String user;
 
     public FirstFragment() {
         // Required empty public constructor
@@ -49,7 +51,8 @@ public class FirstFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             title = getArguments().getString("title");
-            pageNum = getArguments().getInt("pageNum",0);
+           // pageNum = getArguments().getInt("pageNum",0);
+            user = getArguments().getString("user");
         }
     }
 
@@ -59,6 +62,8 @@ public class FirstFragment extends Fragment {
         // Inflate the layout for this fragment
         View v =  inflater.inflate(R.layout.fragment_first, container, false);
         recipeTitle = (EditText) v.findViewById(R.id.recipeName);
+        recipeAuthor =  (EditText) v.findViewById(R.id.recipeAuthor);
+        recipeAuthor.setText(user);
         recipeImage = (EditText) v.findViewById(R.id.recipeImage);
         recipeDescription = (EditText) v.findViewById(R.id.recipeDescription);
 
@@ -110,6 +115,7 @@ public class FirstFragment extends Fragment {
     public String getRecipeTitle(){
         return recipeTitle.getText().toString();
     }
+    public String getRecipeAuthor(){ return recipeAuthor.getText().toString();}
     public String getRecipeImage(){
         return  recipeImage.getText().toString();
     }

@@ -81,6 +81,10 @@ public class RecipeDetail implements Parcelable{
         return description;
     }
 
+    public Level getLevel() {
+        return level;
+    }
+
     public int getServes() {
         return serves;
     }

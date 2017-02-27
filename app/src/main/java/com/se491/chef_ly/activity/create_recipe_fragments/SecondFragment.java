@@ -7,10 +7,14 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.se491.chef_ly.R;
+import com.se491.chef_ly.model.Level;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -23,7 +27,7 @@ import com.se491.chef_ly.R;
 public class SecondFragment extends Fragment {
 
     private String title;
-    private int pageNum;
+    private Level level = Level.EASY;
 
     private EditText recipeTime;
     private EditText recipeServings;
@@ -49,7 +53,7 @@ public class SecondFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             title = getArguments().getString("title");
-            pageNum = getArguments().getInt("pageNum",0);
+            //pageNum = getArguments().getInt("pageNum",0);
         }
     }
 
@@ -58,10 +62,26 @@ public class SecondFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v =  inflater.inflate(R.layout.fragment_second, container, false);
-        recipeTime = (EditText) v.findViewById(R.id.recipeName);
-        recipeServings = (EditText) v.findViewById(R.id.recipeImage);
-        recipeCategories = (EditText) v.findViewById(R.id.recipeDescription);
+        recipeTime = (EditText) v.findViewById(R.id.recipeTime);
+        recipeServings = (EditText) v.findViewById(R.id.recipeServings);
+        Spinner difficultySpinner = (Spinner) v.findViewById(R.id.difficultySpinner);
+        recipeCategories = (EditText) v.findViewById(R.id.recipeCategories);
 
+        final Level[] diff = Level.values();
+        ArrayAdapter<Level> spinnerArrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, diff);
+        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        difficultySpinner.setAdapter(spinnerArrayAdapter);
+        difficultySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                level = diff[position];
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
         TextView fragTitle = (TextView) v.findViewById(R.id.fragTitle);
         fragTitle.setText(title);
 
@@ -110,6 +130,7 @@ public class SecondFragment extends Fragment {
     public String getRecipeTime(){
         return recipeTime.getText().toString();
     }
+    public Level getRecipeLevel(){  return level;}
     public String getRecipeServings(){
         return  recipeServings.getText().toString();
     }

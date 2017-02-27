@@ -18,7 +18,6 @@ import android.widget.Toast;
 
 import com.se491.chef_ly.R;
 import com.se491.chef_ly.model.Ingredient;
-import com.se491.chef_ly.model.IngredientItem;
 
 import java.util.ArrayList;
 
@@ -33,17 +32,11 @@ import java.util.ArrayList;
  */
 public class ThirdFragment extends Fragment {
     private String title;
-    private int pageNum;
+    //private int pageNum;
 
     private ArrayList<EditText[]> ingredients;
     private ArrayList<LinearLayout> ingredientRows;
     private LinearLayout buttons;
-    private ViewGroup myViewGroup;
-    private EditText ingredientQty;
-    private EditText ingredientUom;
-    private EditText ingredientName;
-    private Button newLineBtn;
-    private Button removeLineBtn;
 
     private OnFragmentInteractionListener mListener;
 
@@ -65,7 +58,7 @@ public class ThirdFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             title = getArguments().getString("title");
-            pageNum = getArguments().getInt("pageNum",0);
+            //pageNum = getArguments().getInt("pageNum",0);
         }
 
         ingredients = new ArrayList<>();
@@ -82,6 +75,12 @@ public class ThirdFragment extends Fragment {
 
         View v =  inflater.inflate(R.layout.fragment_third, container, false);
         final LinearLayout root = (LinearLayout) v.findViewById(R.id.root);
+
+        EditText ingredientQty;
+        EditText ingredientUom;
+        EditText ingredientName;
+        Button newLineBtn;
+        Button removeLineBtn;
 
         ingredientQty = (EditText) v.findViewById(R.id.ingredientQty);
         ingredientUom = (EditText) v.findViewById(R.id.ingredientUom);
