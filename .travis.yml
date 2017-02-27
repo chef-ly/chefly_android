@@ -5,7 +5,8 @@ dist: precise
 env:
     matrix:
         - ANDROID_TARGET=android-25 ANDROID_ABI=armeabi-v7a
-
+    global:
+        - ADB_INSTALL_TIMEOUT=10    #Time out to 10 mins
 android:
   components:
     - tools # to get the new `repository-11.xml`
@@ -13,7 +14,7 @@ android:
     - platform-tools
     - build-tools-25.0.2
     - android-25
-    - sys-img-armeabi-v7a-android-wear-20
+    - sys-img-armeabi-v7a-android-25
     - extra
 
 licenses:
