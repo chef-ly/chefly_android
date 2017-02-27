@@ -4,8 +4,8 @@ sudo: false
 dist: precise
 env:
     matrix:
-        - ANDROID_TARGET=android-19 ANDROID_ABI=armeabi-v7a
-        - ANDROID_TARGET=android-21 ANDROID_ABI=armeabi-v7a
+        - ANDROID_TARGET=android-25 ANDROID_ABI=armeabi-v7a
+
 android:
   components:
     - tools # to get the new `repository-11.xml`
@@ -13,9 +13,7 @@ android:
     - platform-tools
     - build-tools-25.0.2
     - android-25
-     #sys-img-armeabi-v7a-android-22 #emulator
-    - sys-img-armeabi-v7a-android-19
-    - sys-img-armeabi-v7a-android-21
+    - sys-img-armeabi-v7a-android-wear-20
     - extra
 
 licenses:
