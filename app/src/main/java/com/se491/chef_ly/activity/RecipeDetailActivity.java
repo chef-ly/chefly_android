@@ -42,6 +42,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
     private ImageView imageView;
     private TextView directionView;
     private Button backBtn;
+    private Button editBtn;
     private LinearLayout ingredientGroup;
     private Button addToListBtn;
     private CheckBox[] checkBoxes;
@@ -70,6 +71,14 @@ public class RecipeDetailActivity extends AppCompatActivity {
                 finish();
             }
         });
+        editBtn = (Button) findViewById(R.id.edit);
+        editBtn.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(RecipeDetailActivity.this,"Edit",Toast.LENGTH_LONG).show();
+            }
+        });
+
         ingredientGroup = (LinearLayout) findViewById(R.id.ingredientGroup);
         addToListBtn = (Button) findViewById(R.id.addToListBtn);
         addToListBtn.setOnClickListener(new View.OnClickListener() {
