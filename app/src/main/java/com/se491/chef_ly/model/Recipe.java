@@ -87,7 +87,12 @@ public class Recipe implements Parcelable {
     }
 
     public Uri getImage() {
-        return Uri.parse(image_url);
+        if(image_url != null){
+            return Uri.parse(image_url);
+        }else{
+            return Uri.EMPTY;
+        }
+
     }
 
     public double getRating() {

@@ -213,29 +213,31 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
             try{
                Uri uri=r.getImage(); //take the url
                 String image = uri.toString(); //make the url into a string
-                image = image.substring(1, image.length()-1);  //remove the quotes from uri string
+                if(!image.isEmpty()){
+                    image = image.substring(1, image.length()-1);  //remove the quotes from uri string
+                    final String tag = "ListView";
+                    Glide.with(context)
+                            .load(image).asBitmap()
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .dontAnimate()
+                            .listener(new RequestListener<String, Bitmap>() {
+                                @Override
+                                public boolean onException(Exception e, String model, com.bumptech.glide.request.target.Target<Bitmap> target, boolean isFirstResource) {
+                                    Log.d(tag, e.getMessage());
+                                    return false;
+                                }
 
-                final String tag = "ListView";
-                Glide.with(context)
-                        .load(image).asBitmap()
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .dontAnimate()
-                        .listener(new RequestListener<String, Bitmap>() {
-                            @Override
-                            public boolean onException(Exception e, String model, com.bumptech.glide.request.target.Target<Bitmap> target, boolean isFirstResource) {
-                                Log.d(tag, e.getMessage());
-                                return false;
-                            }
-
-                            @Override
-                            public boolean onResourceReady(Bitmap resource, String model, com.bumptech.glide.request.target.Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                                Log.d(tag, "Image resource ready");
-                                return false;
-                            }
-                        })
-                        .error(R.drawable.noimageavailable)
-                        .into(holder.icon);
-
+                                @Override
+                                public boolean onResourceReady(Bitmap resource, String model, com.bumptech.glide.request.target.Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                                    Log.d(tag, "Image resource ready");
+                                    return false;
+                                }
+                            })
+                            .error(R.drawable.noimageavailable)
+                            .into(holder.icon);
+                }else{
+                    holder.icon.setImageResource(R.drawable.noimageavailable);
+                }
 
             } catch (Exception e) {
             e.printStackTrace();

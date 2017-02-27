@@ -3,6 +3,7 @@ package com.se491.chef_ly.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.provider.MediaStore;
@@ -149,7 +150,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
                 @Override
                 protected void onPostExecute(Long aLong) {
                     super.onPostExecute(aLong);
-                    //TODO let parent know detail is ready
+
                     if(recipeDetail == null){
                         recipeTitle.setText(R.string.recipeNotFound);
                     }else{

@@ -4,10 +4,6 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.se491.chef_ly.R;
-
-import java.util.List;
-
 
 public class RecipeDetail implements Parcelable{
     private String _id;
@@ -20,7 +16,7 @@ public class RecipeDetail implements Parcelable{
     private String[] categories;
     private String image;
     private Ingredient[] ingredients;
-    private String[] directions;
+    private String[] instructions;
 
     // Constructor for client to create new Recipe
     public RecipeDetail(String name, String author, String description, int serves, int time, Level level, String[] categories, String image, Ingredient[] ingredients,String[] directions) {
@@ -33,7 +29,7 @@ public class RecipeDetail implements Parcelable{
         this.categories = categories;
         this.image = image;
         this.ingredients = ingredients;
-        this.directions = directions;
+        this.instructions = directions;
         this._id = ""; // TODO get available id from server
     }
     // Constructor for recpie from server
@@ -50,7 +46,7 @@ public class RecipeDetail implements Parcelable{
         this.categories = categories;
         this.image = image;
         this.ingredients = ingredients;
-        this.directions = directions;
+        this.instructions = directions;
     }
 
     RecipeDetail(Parcel in){   //TODO test
@@ -65,7 +61,7 @@ public class RecipeDetail implements Parcelable{
         image = in.readString();
 
         ingredients = in.createTypedArray(Ingredient.CREATOR);
-        directions = in.createStringArray();
+        instructions = in.createStringArray();
 
     }
 
@@ -111,7 +107,7 @@ public class RecipeDetail implements Parcelable{
     }
 
     public String[] getDirections() {
-        return directions;
+        return instructions;
     }
 
     public static final Parcelable.Creator<RecipeDetail> CREATOR = new Parcelable.Creator<RecipeDetail>(){
@@ -140,7 +136,7 @@ public class RecipeDetail implements Parcelable{
         dest.writeStringArray(categories);
         dest.writeString(image);
         dest.writeTypedArray(ingredients, 0);
-        dest.writeStringArray(directions);
+        dest.writeStringArray(instructions);
 
 
     }
