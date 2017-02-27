@@ -40,7 +40,6 @@ import com.se491.chef_ly.activity.nav_activities.ShoppingListActivity;
 import com.se491.chef_ly.http.MyService;
 import com.se491.chef_ly.http.RequestMethod;
 import com.se491.chef_ly.model.Recipe;
-import com.se491.chef_ly.model.ShoppingListItem;
 import com.se491.chef_ly.utils.NetworkHelper;
 
 import java.util.ArrayList;

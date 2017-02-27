@@ -79,9 +79,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
-        values.put(ShoppingList.COLUMN_NAME, i.getItem().getName());
+        values.put(ShoppingList.COLUMN_NAME, i.getName());
         values.put(ShoppingList.COLUMN_QUANTITY, i.getQty());
-        values.put(ShoppingList.COLUMN_UNIT, i.getItem().getUom());
+        values.put(ShoppingList.COLUMN_UNIT, i.getUom());
         values.put(ShoppingList.COLUMN_PURCHASED, purchased);
 
         long result = db.insert(ShoppingList.TABLE_LIST_ITEMS, null, values);

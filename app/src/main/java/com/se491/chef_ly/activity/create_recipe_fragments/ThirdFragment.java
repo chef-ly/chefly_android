@@ -207,7 +207,7 @@ public class ThirdFragment extends Fragment {
 
         ArrayList<Ingredient> result = new ArrayList<>();
         for(EditText[] array : ingredients){
-            Ingredient i = new Ingredient(new IngredientItem(array[2].getText().toString(),array[1].getText().toString()), Integer.valueOf(array[0].getText().toString()));
+            Ingredient i = new Ingredient(array[2].getText().toString(),array[1].getText().toString(), Integer.valueOf(array[0].getText().toString()));
             result.add(i);
         }
 

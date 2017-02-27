@@ -76,8 +76,8 @@ public class CreateRecipeActivity extends AppCompatActivity
 
     public static class MyAdapter extends FragmentPagerAdapter{
         private static final int NUM_PAGES = 4;
-        //page 1 -> FirstFragment - recipe title, image, and description
-        //page 2 -> SecondFragment -time, serves, categories
+        //page 1 -> FirstFragment - recipe title, image, and description TODO add author
+        //page 2 -> SecondFragment -time, serves, categories TODO add level
         //page 3 -> ThirdFragment -ingredients
         //page 4 -> FourthFragment -directions
 

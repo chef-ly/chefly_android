@@ -51,7 +51,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
     private String[] directions;
     private String[] directionsForCooking;
     private static final String TAG = "RecipeDetailActivity";
-    private static final String urlString ="https://chefly-dev.herokuapp.com/recipe/";
+    private static final String urlString ="https://chefly-prod.herokuapp.com/recipe/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,14 +128,16 @@ public class RecipeDetailActivity extends AppCompatActivity {
                     for(RequestMethod r : params){
                         try {
                             resp = HttpConnection.downloadFromFeed(r);
+                            //resp = "{\"_id\":\"58b34ba5b4bc390004204d78\",\"name\":\"Cajun Chicken Pasta\",\"author\":\"Tom\",\"description\":\"Chicken, Pasta, Cajun\",\"feeds\":1,\"time\":3,\"rating\":5,\"level\":\"Easy\",\"__v\":0,\"instructions\":[{\"step\":1,\"instruction\":\"Bring a large pot of lightly salted water to a boil. Add linguini pasta, and cook for 8 to 10 minutes, or until al dente; drain.\",\"_id\":\"58b34ba5b4bc390004204d7c\",\"verbs\":[],\"nouns\":[]},{\"step\":2,\"instruction\":\"Meanwhile, place chicken and Cajun seasoning in a bowl, and toss to coat.\",\"_id\":\"58b34ba5b4bc390004204d7b\",\"verbs\":[],\"nouns\":[]},{\"step\":3,\"instruction\":\"In a large skillet over medium heat, saute chicken in butter until no longer pink and juices run clear, about 5 to 7 minutes. Add green and red bell peppers, sliced mushrooms and green onions; cook for 2 to 3 minutes. Reduce heat, and stir in heavy cream. Season the sauce with basil, lemon pepper, salt, garlic powder and ground black pepper, and heat through.\",\"_id\":\"58b34ba5b4bc390004204d7a\",\"verbs\":[],\"nouns\":[]},{\"step\":4,\"instruction\":\"In a large bowl, toss linguini with sauce. Sprinkle with grated Parmesan cheese.\",\"_id\":\"58b34ba5b4bc390004204d79\",\"verbs\":[],\"nouns\":[]}],\"ingredients\":[{\"name\":\"toast\", \"uom\":\"slice\", \"qty\": 2 },{\"name\":\"jelly\", \"uom\":\"tbsp\", \"qty\": 1}],\"categories\":[\"snack\",\"lunch\",\"tasty\",\"easy\"]}";
                             //TODO parse json into recipe detail update UI
                             GsonBuilder builder = new GsonBuilder();
+
                             Gson gson = builder.create();
                             Type type;
                             type = new TypeToken<RecipeDetail>(){}.getType();
                             recipeDetail = gson.fromJson(resp, type);
                             Log.d(TAG, recipeDetail.toString());
-                        } catch (IOException e) {
+                        } catch (Exception e){ //IOException e) {
                             //e.printStackTrace();
                             return -1L;
                         }
