@@ -39,18 +39,20 @@
             <ImageView
                 android:id="@+id/image"
                 android:contentDescription="@string/contentDescriptionRecipe"
-                android:scaleType="fitStart"
+                android:scaleType="centerCrop"
                 android:layout_gravity="center_horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="350dp" />
+                android:layout_height="200dp" />
             <TextView
                 android:id="@+id/ingredientTitle"
                 android:text="@string/ingredients"
                 android:textSize="28sp"
-                android:textColor="@color/white"
                 android:textStyle="bold"
+                android:textColor="@color/white"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:gravity="center" />
             <LinearLayout
                 android:id="@+id/ingredientGroup"
                 android:orientation="vertical"
@@ -89,8 +91,20 @@
                 android:layout_height="wrap_content">
                 <Button
                     android:id="@+id/getCookingBtn"
-                    android:layout_weight="0.8"
+                    android:layout_weight="0.1"
                     android:text="@string/getCooking"
+                    android:textColor="@color/white"
+                    android:background="@color/btnGray"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="5dp"
+                    android:paddingStart="5dp"
+                    android:paddingEnd="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <Button
+                    android:id="@+id/edit"
+                    android:layout_weight="0.1"
+                    android:text="@string/edit"
                     android:textColor="@color/white"
                     android:background="@color/btnGray"
                     android:layout_gravity="center_horizontal"
@@ -107,6 +121,7 @@
                     android:background="@color/btnGray"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
+
             </LinearLayout>
 
         </LinearLayout>
