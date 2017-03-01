@@ -15,10 +15,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewSwitcher;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -42,12 +44,13 @@ public class RecipeDetailActivity extends AppCompatActivity {
     private ImageView imageView;
     private TextView directionView;
     private Button backBtn;
+    private Button addremove;
     private Button editBtn;
     private LinearLayout ingredientGroup;
     private Button addToListBtn;
     private CheckBox[] checkBoxes;
     private Button getCookingBtn;
-
+    private EditText editTextDesciption;
     private RecipeDetail recipeDetail;
     private Ingredient[] ingredients;
     private String[] directions;
@@ -62,6 +65,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
         final Context c = getApplicationContext();
         recipeTitle = (TextView) findViewById(R.id.recipeName);
         imageView = (ImageView) findViewById(R.id.image);
+        editTextDesciption=(EditText)findViewById(R.id.hidden_edit_view);
         directionView = (TextView) findViewById(R.id.directionView);
         backBtn = (Button) findViewById(R.id.backBtn);
         backBtn.setOnClickListener(new View.OnClickListener(){
@@ -69,13 +73,6 @@ public class RecipeDetailActivity extends AppCompatActivity {
             public void onClick(View v) {
                 setResult(RESULT_OK);
                 finish();
-            }
-        });
-        editBtn = (Button) findViewById(R.id.edit);
-        editBtn.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(RecipeDetailActivity.this,"Edit",Toast.LENGTH_LONG).show();
             }
         });
 
@@ -113,9 +110,31 @@ public class RecipeDetailActivity extends AppCompatActivity {
 
             }
         });
+        addremove = (Button) findViewById(R.id.addremove);
+        addremove.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Intent addRemoveIntent = new Intent(RecipeDetailActivity.this, EditActivity.class);
+                startActivity(addRemoveIntent);
+                finish();
+            }
+        });
+        editBtn = (Button) findViewById(R.id.edit);
+        editBtn.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                TextViewClicked();
+                Toast.makeText(RecipeDetailActivity.this,"Edit",Toast.LENGTH_LONG).show();
+            }
+        });
 
     }
-
+    public void TextViewClicked() {
+        ViewSwitcher switcher = (ViewSwitcher) findViewById(R.id.my_switcher);
+        switcher.showNext(); //or switcher.showPrevious();
+        TextView myTV = (TextView) switcher.findViewById(R.id.directionView);
+        myTV.setText("value");
+    }
     @Override
     protected void onStart() {
         super.onStart();
