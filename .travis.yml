@@ -4,6 +4,7 @@ sudo: false
 dist: precise
 env:
     matrix:
+        - ANDROID_TARGET=android-19 ANDROID_ABI=armeabi-v7a
         - ANDROID_TARGET=android-21 ANDROID_ABI=armeabi-v7a
     global:
         - ADB_INSTALL_TIMEOUT=10    #Time out to 10 mins
@@ -14,6 +15,7 @@ android:
     - platform-tools
     - build-tools-25.0.2
     - android-25
+    - sys-img-armeabi-v7a-android-19
     - sys-img-armeabi-v7a-android-21
     - extra
 
@@ -34,8 +36,8 @@ script:
   - android-wait-for-emulator
   - adb devices   #Display list of devices
   - adb shell input keyevent 82 &
-  - ./gradlew connectedAndroidTest
-  #build connectedCheck
+  - ./gradlew connectedCheck -PdisablePreDex --stacktrace
+   #- ./gradlew connectedAndroidTest
   #- ./gradlew build -x lint
   # './gradlew clean build'
 
