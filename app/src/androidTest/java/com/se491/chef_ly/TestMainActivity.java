@@ -30,18 +30,18 @@ public class TestMainActivity {
 //        onView(withId(R.id.registerInput)).check(matches(allOf(isDescendantOfA(withId(R.id.activity_register)), isDisplayed())));
 //    }
 
-    @Test
-    public void clickSignInButton_openRecipeScreen() { //continue to recipe screen
-        String username = "a";
-        String password = "a";
-        //locate the username edit text and type in the email address
-        onView(withId(R.id.username)).perform(typeText(username), closeSoftKeyboard());//ViewMatcher
-        //locate the password edit text and type in the password
-        onView(withId(R.id.password)).perform(typeText(password), closeSoftKeyboard());//ViewMatcher
-        onView(withId(R.id.signInBtn)).perform(click()); //click on it to perform action
-        //onView(withId(R.id.signInBtn)).check(matches(isDisplayed()));
-        //onView(withId(R.id.list)).check(matches(withId(R.id.activity_recipe_list)));
-    }
+//    @Test
+//    public void clickSignInButton_openRecipeScreen() { //continue to recipe screen
+//        String username = "a";
+//        String password = "a";
+//        //locate the username edit text and type in the email address
+//        onView(withId(R.id.username)).perform(typeText(username), closeSoftKeyboard());//ViewMatcher
+//        //locate the password edit text and type in the password
+//        onView(withId(R.id.password)).perform(typeText(password), closeSoftKeyboard());//ViewMatcher
+//        onView(withId(R.id.signInBtn)).perform(click()); //click on it to perform action
+//        //onView(withId(R.id.signInBtn)).check(matches(isDisplayed()));
+//        //onView(withId(R.id.list)).check(matches(withId(R.id.activity_recipe_list)));
+//    }
 
     @Test
     public void clickGuestButton_openRecipeScreen() {
