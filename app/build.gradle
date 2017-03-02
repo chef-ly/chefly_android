@@ -36,6 +36,9 @@ apply plugin: 'jacoco-android'
                 free {}
                 paid {}
             }
+    lintOptions {
+            abortOnError false
+            }
 }
 
 dependencies {
