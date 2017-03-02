@@ -8,6 +8,15 @@ env:
         - ANDROID_TARGET=android-21 ANDROID_ABI=armeabi-v7a
     global:
         - ADB_INSTALL_TIMEOUT=10    #Time out to 10 mins
+
+before_cache:
+        - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+
+cache:
+    directories:      #Cache all dirs under .gradle folder
+        - $HOME/.gradle/daemon      #Cache daemon logs
+        - $HOME/.gradle/native      #Cache library downloaded from the gradle dependency
+        - $HOME/.gradle/wrapper     #Cache the gradle
 android:
   components:
     - tools # to get the new `repository-11.xml`
@@ -15,6 +24,8 @@ android:
     - platform-tools
     - build-tools-25.0.2
     - android-25
+    # Additional components
+    - extra-android-m2repository
     #- sys-img-armeabi-v7a-android-19
     - sys-img-armeabi-v7a-android-21
     - extra
@@ -27,8 +38,7 @@ before_script:
         - chmod +x gradlew      #Grand permissions
         - android list targets
         - echo no | android create avd --force --name test --target $ANDROID_TARGET --abi $ANDROID_ABI    #Create AVD for given api
-       # - echo no | android create avd --force -n test -t android-21 --abi armeabi-v7a --skin 480x800
-        - emulator -avd test -no-skin -no-audio -no-window &    #Start emulator
+        - emulator -avd test -no-audio -no-window &    #Start emulator
 
 script:
   - echo "Travis branch is $TRAVIS_BRANCH"
