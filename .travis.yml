@@ -43,3 +43,6 @@ script:
 
 before_install:
    - chmod +x gradlew
+   - pip install --user codecov    #Install codecov
+after_success:
+   - codecov                       #Run codecov

@@ -1,5 +1,14 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.dicedmelon.gradle:jacoco-android:0.1.1'
+    }
+}
+
 apply plugin: 'com.android.application'
-apply plugin: 'jacoco'
+apply plugin: 'jacoco-android'
         android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
@@ -10,6 +19,7 @@ apply plugin: 'jacoco'
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
     }
     buildTypes {
         release {
@@ -22,6 +32,10 @@ apply plugin: 'jacoco'
 
     }
     lintOptions { warning 'InvalidPackage' }
+            productFlavors {
+                free {}
+                paid {}
+            }
 }
 
 dependencies {
@@ -47,4 +61,14 @@ dependencies {
 
 dependencies{
     androidTestCompile 'com.jayway.android.robotium:robotium-solo:5.6.3'
+}
+
+jacoco{
+    toolVersion='0.7.5.201505241946'
+}
+jacocoAndroidUnitTestReport{
+        csv.enabled false
+        html.enabled true
+        xml.enabled true
+
 }
