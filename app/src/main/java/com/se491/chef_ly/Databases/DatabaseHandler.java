@@ -103,6 +103,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return listItems;
     }
 
+
     public void addItemToShoppingList(Ingredient i, boolean purchased){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -127,6 +128,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close();
     }
 
+    public void recipeUpdate(RecipeDetail recipe){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        db.update(RecipeDetailTable.RECIPE_DETAIL_TABLE_ITEMS, values,RecipeDetailTable.COLUMN_RECIPE_DETAIL_ID + " = " + recipe.getId(), null);
+        db.close();
+    }
     public void deleteItemFromShoppingList(ArrayList<ShoppingListItem> items){
         SQLiteDatabase db = this.getWritableDatabase();
         for(ShoppingListItem item : items){

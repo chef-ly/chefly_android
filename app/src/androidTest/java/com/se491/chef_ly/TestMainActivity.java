@@ -21,14 +21,14 @@ import static org.hamcrest.core.AllOf.allOf;
 public class TestMainActivity {
     @Rule
     public MainActivityTestRule<MainActivity> mainActivityActivityTestRule = new MainActivityTestRule<MainActivity>(MainActivity.class);
-
-   @Test
-    public void clickSignUpButton_opensRegisterScreen() {
-        //Locate the Signup button using the withId ViewMatcher
-        onView(withId(R.id.signUp)).perform(click()); //click on it to perform action
-        //Assert that the register screen is displayed
-        onView(withId(R.id.registerInput)).check(matches(allOf(isDescendantOfA(withId(R.id.activity_register)), isDisplayed())));
-    }
+//
+//   @Test
+//    public void clickSignUpButton_opensRegisterScreen() {
+//        //Locate the Signup button using the withId ViewMatcher
+//        onView(withId(R.id.signUp)).perform(click()); //click on it to perform action
+//        //Assert that the register screen is displayed
+//        onView(withId(R.id.registerInput)).check(matches(allOf(isDescendantOfA(withId(R.id.activity_register)), isDisplayed())));
+//    }
 
     @Test
     public void clickSignInButton_openRecipeScreen() { //continue to recipe screen

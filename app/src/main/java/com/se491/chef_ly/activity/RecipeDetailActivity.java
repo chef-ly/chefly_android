@@ -11,8 +11,11 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.CompoundButtonCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -55,6 +58,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
     private Ingredient[] ingredients;
     private String[] directions;
     private String[] directionsForCooking;
+    private String steps;
     private static final String TAG = "RecipeDetailActivity";
     private static final String urlString ="https://chefly-prod.herokuapp.com/recipe/";
 
@@ -63,6 +67,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_detail);
         final Context c = getApplicationContext();
+
         recipeTitle = (TextView) findViewById(R.id.recipeName);
         imageView = (ImageView) findViewById(R.id.image);
         editTextDesciption=(EditText)findViewById(R.id.hidden_edit_view);
@@ -124,17 +129,41 @@ public class RecipeDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 TextViewClicked();
-                Toast.makeText(RecipeDetailActivity.this,"Edit",Toast.LENGTH_LONG).show();
+
             }
         });
 
     }
     public void TextViewClicked() {
         ViewSwitcher switcher = (ViewSwitcher) findViewById(R.id.my_switcher);
-        switcher.showNext(); //or switcher.showPrevious();
-        TextView myTV = (TextView) switcher.findViewById(R.id.directionView);
-        myTV.setText("value");
+        View newView = switcher.getNextView();
+        //switcher.showNext(); //or switcher.showPrevious();
+        TextView step = (TextView) switcher.findViewById(R.id.directionView);
+        EditText editText = (EditText)findViewById(R.id.hidden_edit_view);
+       // editText.requestFocus();
+       // editText.setText("sss", TextView.BufferType.EDITABLE );
+        //editText.setSelection(editText.getText().length());
+        //String newSteps = editText.getText().toString();//save new steps
+       // step.setText(newSteps) ;
+        if (newView instanceof TextView) {
+            ((TextView) newView).setText(steps);
+        } else if (newView instanceof EditText) {
+            ((EditText) newView).setText(steps);
+            ((EditText) newView).setFocusableInTouchMode(true);
+            ((EditText) newView).requestFocus();
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
+        }
+        String newSteps = editText.getText().toString();//save new steps
+        step.setText(newSteps) ;
+        directionView.setText(newSteps);
+        switcher.showNext();
+//        DatabaseHandler handler = new DatabaseHandler(this);
+//        handler.recipeUpdate(directionsForCooking[newSteps],false);
+        //recipeDetail=newSteps;
+        //directions = recipeDetail.getDirections();
     }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -231,7 +260,8 @@ public class RecipeDetailActivity extends AppCompatActivity {
                             directionsForCooking[count-1] = s;
                             count++;
                         }
-                        directionView.setText(sb.toString());
+                        steps=sb.toString();
+                        directionView.setText(steps);
 
                     }
 
