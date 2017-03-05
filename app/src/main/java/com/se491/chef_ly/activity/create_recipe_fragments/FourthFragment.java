@@ -18,8 +18,6 @@ import android.widget.Toast;
 
 import com.se491.chef_ly.R;
 import com.se491.chef_ly.activity.CreateRecipeActivity;
-import com.se491.chef_ly.model.Ingredient;
-import com.se491.chef_ly.model.IngredientItem;
 
 import java.util.ArrayList;
 
