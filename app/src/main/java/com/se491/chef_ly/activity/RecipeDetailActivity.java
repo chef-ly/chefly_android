@@ -162,6 +162,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
 //        handler.recipeUpdate(directionsForCooking[newSteps],false);
         //recipeDetail=newSteps;
         //directions = recipeDetail.getDirections();
+        // get the text from the textviews and recreate the directionsForCooking array
     }
 
     @Override
