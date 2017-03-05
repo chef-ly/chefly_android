@@ -1,43 +1,29 @@
 package com.se491.chef_ly.activity;
 
 import android.content.Intent;
+
 import android.content.IntentFilter;
 import android.os.Bundle;
-
-import android.support.v4.content.LocalBroadcastManager;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-
 import android.text.Editable;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import com.se491.chef_ly.R;
-import com.se491.chef_ly.http.MyService;
-import com.se491.chef_ly.http.RequestMethod;
-import com.se491.chef_ly.model.Recipe;
 import com.se491.chef_ly.model.User;
-import com.se491.chef_ly.utils.NetworkHelper;
-
-import java.util.ArrayList;
-
+import com.se491.chef_ly.utils.AlarmReceiver;
+import com.se491.chef_ly.utils.CheflyTimer;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
 
     private EditText username;
     private EditText password;
-    private Button signInBtn;
-    private TextView continueAsGuest;
-    private TextView signUp;
+
     private final String TAG = "MainActivity";
-   private static final String urlString ="https://chefly-prod.herokuapp.com/list";
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,20 +33,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Toast.makeText(getApplicationContext(), "Welcome To Chef.ly", Toast.LENGTH_SHORT).show();
         //displayDataItems(category); in a list for to manage sliding navigation
 
-        if(NetworkHelper.hasNetworkAccess(MainActivity.this)) //returns true if internet available
-        {
-            //Toast.makeText(MainActivity.this,"Internet Connection",Toast.LENGTH_LONG).show();
-            Log.d(TAG,"Internet Connection" );
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        /*  Register receiver for Alarm
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("alarm");
+        final CheflyTimer c = CheflyTimer.getInstance(getApplicationContext());
+        registerReceiver(new AlarmReceiver(c), filter);
+        // Timer test
 
-        }
-        else {
-            //Toast.makeText(MainActivity.this, "No Internet Connection", Toast.LENGTH_LONG).show();
-            Log.d(TAG,"No Internet Connection" );
-
-        }
+        c.setTimer("test",60, getApplicationContext());
+        c.setTimer("test2",10, getApplicationContext());
+        //  simulate checking a timer after 30 seconds
+        Handler h = new Handler();
+        h.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(MainActivity.this, "time remaining = " + c.getTimerStatus("test"), Toast.LENGTH_SHORT).show();
+            }
+        },30*1000);
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        */
     }
 
     private void setupViews() {
+        Button signInBtn;
+        TextView continueAsGuest;
+        TextView signUp;
 
         username = (EditText) findViewById(R.id.username);
         password = (EditText) findViewById(R.id.password);
@@ -100,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 break;
             case R.id.continueAsGuest:
+
                 Intent recipeListIntent = new Intent(MainActivity.this, RecipeListActivity.class);
                 recipeListIntent.putExtra("name", "guest");
                 startActivity(recipeListIntent);
