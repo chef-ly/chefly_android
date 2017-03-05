@@ -118,35 +118,40 @@ public class CreateRecipeActivity extends FragmentActivity
 
         Level recipeLevel = secondFragment.getRecipeLevel();
         String[] recipeCategories = secondFragment.getRecipeCategories();
-
-        ArrayList<Ingredient> ingredients = thirdFragment.getIngredients();
-        ArrayList<String> directions = fourthFragment.getDirections();
-
-
-        if(recipeTitle.isEmpty()){
-            Toast.makeText(this, "Recipe Title cannot be blank", Toast.LENGTH_SHORT).show();
-
-        }else if(ingredients.isEmpty()){
-            Toast.makeText(this, "Recipe must contain at least 1 ingredient", Toast.LENGTH_SHORT).show();
-
-        }else if(directions.isEmpty()){
-            Toast.makeText(this, "Recipe must contain at least 1 direction", Toast.LENGTH_SHORT).show();
-
-        }else{
-            result = new RecipeDetail(recipeTitle, recipeAuthor, recipeDescription, recipeServings, recipeTime, recipeLevel,
-                    recipeCategories, recipeImage, ingredients.toArray(new Ingredient[ingredients.size()]), directions.toArray(new String[directions.size()]));
-
-            GsonBuilder builder = new GsonBuilder();
-            builder.registerTypeAdapter(RecipeDetail.class, new RecipeDetailSerializer());
-            Gson gson = builder.create();
-            String msg = gson.toJson(result);
-            Log.d(TAG, msg);
-            sendToServer(msg);
-            //sendToLocalDB(result);
+        try {
+            ArrayList<Ingredient> ingredients = thirdFragment.getIngredients();
+            ArrayList<String> directions = fourthFragment.getDirections();
 
 
+            if (recipeTitle.isEmpty()) {
+                Toast.makeText(this, "Recipe Title cannot be blank", Toast.LENGTH_SHORT).show();
+
+            } else if (ingredients.isEmpty()) {
+                Toast.makeText(this, "Recipe must contain at least 1 ingredient", Toast.LENGTH_SHORT).show();
+
+            } else if (directions.isEmpty()) {
+                Toast.makeText(this, "Recipe must contain at least 1 direction", Toast.LENGTH_SHORT).show();
+
+            } else {
+                result = new RecipeDetail(recipeTitle, recipeAuthor, recipeDescription, recipeServings, recipeTime, recipeLevel,
+                        recipeCategories, recipeImage, ingredients.toArray(new Ingredient[ingredients.size()]), directions.toArray(new String[directions.size()]));
+
+                GsonBuilder builder = new GsonBuilder();
+                builder.registerTypeAdapter(RecipeDetail.class, new RecipeDetailSerializer());
+                Gson gson = builder.create();
+                String msg = gson.toJson(result);
+                Log.d(TAG, msg);
+                sendToServer(msg);
+                //sendToLocalDB(result);
+                Intent recipeDetailIntent = new Intent(getApplicationContext(), RecipeDetailActivity.class);
+                recipeDetailIntent.putExtra("recipeDetail", result);
+                startActivity(recipeDetailIntent);
+
+
+            }
+        }catch (Exception e){
+            Toast.makeText(this, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
         }
-
     }
     private void sendToLocalDB(RecipeDetail r){
         DatabaseHandler dbh = new DatabaseHandler(getApplicationContext());
@@ -186,9 +191,7 @@ public class CreateRecipeActivity extends FragmentActivity
                     }else{
                         Log.d(TAG, "Response -> " + resp);
 
-                        Intent recipeDetailIntent = new Intent(getApplicationContext(), RecipeDetailActivity.class);
-                        recipeDetailIntent.putExtra("recipe", "58b48862ebe26300042f2f5e"); //TODO change to dynamically get id
-                        startActivity(recipeDetailIntent);
+
                         finish();
                     }
 

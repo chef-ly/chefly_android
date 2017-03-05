@@ -82,8 +82,8 @@ public class FourthFragment extends Fragment {
 
         directions.add(step);
 
-        TextView fragTitle = (TextView) v.findViewById(R.id.fragTitle);
-        fragTitle.setText(title);
+        //TextView fragTitle = (TextView) v.findViewById(R.id.fragTitle);
+        //fragTitle.setText(title);
         //  the layout holding the add and remove buttons
         buttons = (LinearLayout) v.findViewById(R.id.buttons);
         //  Button to remove the last ingredient line

@@ -1,79 +1,80 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/fourthFrag"
-    tools:context="com.se491.chef_ly.activity.create_recipe_fragments.FourthFragment">
 
-    <LinearLayout
-        android:id="@+id/root"
-        android:orientation="vertical"
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/fourthFrag"
+        tools:context="com.se491.chef_ly.activity.create_recipe_fragments.FourthFragment"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:id="@+id/fragTitle"
-            android:textColor="@color/white"
-            android:textSize="30sp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="20dp"
+        android:layout_height="match_parent">
+
+        <ScrollView
+            android:id="@+id/scrollView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_above="@+id/completeRecipeBtn">
+            <LinearLayout
+                android:id="@+id/root"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:text="@string/directions"
+                    android:textSize="24sp"
+                    android:textColor="@color/white"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
 
-        <TextView
-            android:text="@string/directions"
-            android:textSize="24sp"
-            android:textColor="@color/white"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+                <EditText
+                    android:id="@+id/step"
+                    android:textSize="22sp"
+                    android:textColor="@color/white"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
-        <EditText
-            android:id="@+id/step"
+
+                <LinearLayout
+                    android:id="@+id/buttons"
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <Button
+                        android:id="@+id/newLineBtn"
+                        android:text="+"
+                        android:padding="3dp"
+                        android:textSize="30sp"
+                        android:textStyle="bold"
+                        android:textColor="#236701"
+                        android:layout_marginEnd="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                    <Button
+                        android:id="@+id/removeLineBtn"
+                        android:text="-"
+                        android:padding="3dp"
+                        android:textSize="30sp"
+                        android:textStyle="bold"
+                        android:textColor="#670401"
+                        android:layout_marginStart="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+
+
+        <Button
+            android:id="@+id/completeRecipeBtn"
+            android:background="@color/btnGray"
+            android:text="@string/createRecipe"
             android:textSize="22sp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_alignParentBottom="true"
             android:textColor="@color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-
-        <LinearLayout
-            android:id="@+id/buttons"
-            android:orientation="horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <Button
-                android:id="@+id/newLineBtn"
-                android:text="+"
-                android:padding="3dp"
-                android:textSize="30sp"
-                android:textStyle="bold"
-                android:textColor="#236701"
-                android:layout_marginEnd="10dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <Button
-                android:id="@+id/removeLineBtn"
-                android:text="-"
-                android:padding="3dp"
-                android:textSize="30sp"
-                android:textStyle="bold"
-                android:textColor="#670401"
-                android:layout_marginStart="10dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
+    </RelativeLayout>
 
 
-
-    </LinearLayout>
-    <Button
-        android:id="@+id/completeRecipeBtn"
-        android:background="@color/btnGray"
-        android:text="@string/createRecipe"
-        android:textSize="22sp"
-        android:layout_gravity="bottom"
-        android:layout_marginBottom="10dp"
-        android:textColor="@color/white"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-
-</FrameLayout>
