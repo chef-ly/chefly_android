@@ -11,24 +11,13 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static android.support.test.espresso.action.ViewActions.typeText;
-import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
-import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static org.hamcrest.core.AllOf.allOf;
+
 @RunWith(AndroidJUnit4.class)
 @LargeTest // filter for >2s execution time
 public class TestMainActivity {
     @Rule
     public MainActivityTestRule<MainActivity> mainActivityActivityTestRule = new MainActivityTestRule<MainActivity>(MainActivity.class);
-//
-//   @Test
-//    public void clickSignUpButton_opensRegisterScreen() {
-//        //Locate the Signup button using the withId ViewMatcher
-//        onView(withId(R.id.signUp)).perform(click()); //click on it to perform action
-//        //Assert that the register screen is displayed
-//        onView(withId(R.id.registerInput)).check(matches(allOf(isDescendantOfA(withId(R.id.activity_register)), isDisplayed())));
-//    }
 
     @Test
     public void clickSignInButton_openRecipeScreen() { //continue to recipe screen
