@@ -43,12 +43,12 @@ public class TestMainActivity {
         //onView(withId(R.id.list)).check(matches(withId(R.id.activity_recipe_list)));
     }
 
-    @Test
-    public void clickGuestButton_openRecipeScreen() {
-        //locate and click on the login button
-        onView(withId(R.id.continueAsGuest)).perform(click());
-
-        //check that the recipe screen is displayed
-        // onView(withId(R.id.list)).check(matches(allOf(isDescendantOfA(withId(R.id.activity_recipe_list)), isDisplayed())));
-    }
+//    @Test
+//    public void clickGuestButton_openRecipeScreen() {
+//        //locate and click on the login button
+//        onView(withId(R.id.continueAsGuest)).perform(click());
+//
+//        //check that the recipe screen is displayed
+//        // onView(withId(R.id.list)).check(matches(allOf(isDescendantOfA(withId(R.id.activity_recipe_list)), isDisplayed())));
+//    }
 }

@@ -23,7 +23,6 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withParent;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
@@ -31,13 +30,13 @@ import static org.hamcrest.Matchers.allOf;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class TestUi {
+public class TestUI {
 
     @Rule
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
 
     @Test
-    public void testUi() {
+    public void testUI() {
         ViewInteraction appCompatTextView = onView(
                 allOf(withId(R.id.continueAsGuest), withText("Continue As Guest"), isDisplayed()));
         appCompatTextView.perform(click());
@@ -50,63 +49,39 @@ public class TestUi {
                         isDisplayed()));
         linearLayout.perform(click());
 
-        ViewInteraction checkBox = onView(
-                allOf(withText("garlic, minced - 3.0 cloves"),
-                        withParent(withId(R.id.ingredientGroup))));
-        checkBox.perform(scrollTo(), click());
 
-        ViewInteraction checkBox2 = onView(
-                allOf(withText("garlic, minced - 3.0 cloves"),
-                        withParent(withId(R.id.ingredientGroup))));
-        checkBox2.perform(scrollTo(), click());
-
-        ViewInteraction checkBox3 = onView(
-                allOf(withText("olive Oil - 2.0 tablespoon"),
-                        withParent(withId(R.id.ingredientGroup))));
-        checkBox3.perform(scrollTo(), click());
-
-        ViewInteraction appCompatButton = onView(
-                allOf(withId(R.id.addToListBtn), withText("Add Selected to Grocery List")));
-        appCompatButton.perform(scrollTo(), click());
-
-        ViewInteraction checkBox4 = onView(
-                allOf(withText("ricotta cheese - 1.0 cup"),
-                        withParent(withId(R.id.ingredientGroup))));
-        checkBox4.perform(scrollTo(), click());
 
         ViewInteraction appCompatButton2 = onView(
-                allOf(withId(R.id.addToListBtn), withText("Add Selected to Grocery List")));
+                allOf(withId(R.id.getCookingBtn), withText("Let's get cooking!")));
         appCompatButton2.perform(scrollTo(), click());
 
-        ViewInteraction appCompatButton3 = onView(
-                allOf(withId(R.id.backBtn), withText("Back")));
-        appCompatButton3.perform(scrollTo(), click());
-
-        ViewInteraction appCompatImageButton = onView(
-                allOf(withContentDescription("Open navigation drawer"),
-                        withParent(withId(R.id.toolbar)),
-                        isDisplayed()));
-        appCompatImageButton.perform(click());
-
-        ViewInteraction appCompatCheckedTextView = onView(
-                allOf(withId(R.id.design_menu_item_text), withText("Shopping List"), isDisplayed()));
-        appCompatCheckedTextView.perform(click());
-
-        ViewInteraction linearLayout2 = onView(
-                allOf(childAtPosition(
-                        allOf(withId(android.R.id.list),
-                                withParent(withId(R.id.activity_shopping_list))),
-                        0),
-                        isDisplayed()));
-        linearLayout2.perform(click());
-
         ViewInteraction button = onView(
-                allOf(withId(R.id.clearPurchasedBtn), withText("Remove Purchased"), isDisplayed()));
+                allOf(withId(R.id.next), withText("Next"),
+                        withParent(allOf(withId(R.id.activity_get_cooking),
+                                withParent(withId(android.R.id.content)))),
+                        isDisplayed()));
         button.perform(click());
 
         ViewInteraction button2 = onView(
-                allOf(withId(R.id.finishedBtn), withText("Finished"), isDisplayed()));
+                allOf(withId(R.id.repeat), withText("Repeat"),
+                        withParent(allOf(withId(R.id.activity_get_cooking),
+                                withParent(withId(android.R.id.content)))),
+                        isDisplayed()));
         button2.perform(click());
+
+        ViewInteraction button3 = onView(
+                allOf(withId(R.id.prev), withText("Prev"),
+                        withParent(allOf(withId(R.id.activity_get_cooking),
+                                withParent(withId(android.R.id.content)))),
+                        isDisplayed()));
+        button3.perform(click());
+
+        ViewInteraction button4 = onView(
+                allOf(withId(R.id.exit), withText("X"),
+                        withParent(allOf(withId(R.id.activity_get_cooking),
+                                withParent(withId(android.R.id.content)))),
+                        isDisplayed()));
+        button4.perform(click());
 
     }
 
