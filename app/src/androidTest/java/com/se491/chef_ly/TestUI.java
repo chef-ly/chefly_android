@@ -37,9 +37,8 @@ public class TestUI {
 
     @Test
     public void testUI() {
-        ViewInteraction appCompatTextView = onView(
-                allOf(withId(R.id.continueAsGuest), withText("Continue As Guest"), isDisplayed()));
-        appCompatTextView.perform(click());
+        onView(withId(R.id.continueAsGuest)).perform(click());
+
 
         ViewInteraction linearLayout = onView(
                 allOf(childAtPosition(
@@ -51,33 +50,32 @@ public class TestUI {
 
 
 
-        ViewInteraction appCompatButton2 = onView(
-                allOf(withId(R.id.getCookingBtn), withText("Let's get cooking!")));
-        appCompatButton2.perform(scrollTo(), click());
-
+        onView(withId(R.id.getCookingBtn)).perform(scrollTo(), click());
+        //onView(withId(R.id.next)).perform(click());
+        onView(withId(R.id.next)).perform(click());
         ViewInteraction button = onView(
-                allOf(withId(R.id.next), withText("Next"),
+                allOf(withId(R.id.next),
                         withParent(allOf(withId(R.id.activity_get_cooking),
                                 withParent(withId(android.R.id.content)))),
                         isDisplayed()));
         button.perform(click());
 
         ViewInteraction button2 = onView(
-                allOf(withId(R.id.repeat), withText("Repeat"),
+                allOf(withId(R.id.repeat),
                         withParent(allOf(withId(R.id.activity_get_cooking),
                                 withParent(withId(android.R.id.content)))),
                         isDisplayed()));
         button2.perform(click());
 
         ViewInteraction button3 = onView(
-                allOf(withId(R.id.prev), withText("Prev"),
+                allOf(withId(R.id.prev),
                         withParent(allOf(withId(R.id.activity_get_cooking),
                                 withParent(withId(android.R.id.content)))),
                         isDisplayed()));
         button3.perform(click());
 
         ViewInteraction button4 = onView(
-                allOf(withId(R.id.exit), withText("X"),
+                allOf(withId(R.id.exit),
                         withParent(allOf(withId(R.id.activity_get_cooking),
                                 withParent(withId(android.R.id.content)))),
                         isDisplayed()));
