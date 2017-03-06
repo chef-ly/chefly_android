@@ -56,11 +56,11 @@ public class RecipeDetailActivity extends AppCompatActivity {
     private EditText editTextDesciption;
     private RecipeDetail recipeDetail;
     private Ingredient[] ingredients;
-    private String[] directions;
+
     private String[] directionsForCooking;
     private String steps;
     private static final String TAG = "RecipeDetailActivity";
-    private static final String urlString ="https://chefly-prod.herokuapp.com/recipe/";
+    private static final String urlString = "https://chefly-prod.herokuapp.com/recipe/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,10 +70,10 @@ public class RecipeDetailActivity extends AppCompatActivity {
 
         recipeTitle = (TextView) findViewById(R.id.recipeName);
         imageView = (ImageView) findViewById(R.id.image);
-        editTextDesciption=(EditText)findViewById(R.id.hidden_edit_view);
+        editTextDesciption = (EditText) findViewById(R.id.hidden_edit_view);
         directionView = (TextView) findViewById(R.id.directionView);
         backBtn = (Button) findViewById(R.id.backBtn);
-        backBtn.setOnClickListener(new View.OnClickListener(){
+        backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setResult(RESULT_OK);
@@ -88,12 +88,12 @@ public class RecipeDetailActivity extends AppCompatActivity {
             public void onClick(View view) {
                 int count = 0;
                 DatabaseHandler handler = new DatabaseHandler(c);
-                for(CheckBox cb : checkBoxes){
-                    if(cb.isChecked()){
+                for (CheckBox cb : checkBoxes) {
+                    if (cb.isChecked()) {
                         handler.addItemToShoppingList(ingredients[cb.getId()], false);
                         count++;
                         cb.setChecked(false);
-                        Log.d(TAG,"Added to list -> " +String.valueOf(cb.getText()));
+                        Log.d(TAG, "Added to list -> " + String.valueOf(cb.getText()));
                     }
                 }
                 Toast.makeText(RecipeDetailActivity.this, count + " items added to list", Toast.LENGTH_SHORT).show();
@@ -104,11 +104,11 @@ public class RecipeDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent cookingIntent = new Intent(RecipeDetailActivity.this, GetCookingActivity.class);
-                if(directionsForCooking != null){
+                if (directionsForCooking != null) {
                     cookingIntent.putExtra("directions", directionsForCooking);
                     startActivity(cookingIntent);
                     finish();
-                }else{
+                } else {
                     Toast.makeText(RecipeDetailActivity.this, "Could not find recipe directions", Toast.LENGTH_SHORT).show();
                 }
 
@@ -116,7 +116,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
             }
         });
         addremove = (Button) findViewById(R.id.addremove);
-        addremove.setOnClickListener(new View.OnClickListener(){
+        addremove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent addRemoveIntent = new Intent(RecipeDetailActivity.this, EditActivity.class);
@@ -125,7 +125,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
             }
         });
         editBtn = (Button) findViewById(R.id.edit);
-        editBtn.setOnClickListener(new View.OnClickListener(){
+        editBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 TextViewClicked();
@@ -134,28 +134,29 @@ public class RecipeDetailActivity extends AppCompatActivity {
         });
 
     }
+
     public void TextViewClicked() {
         ViewSwitcher switcher = (ViewSwitcher) findViewById(R.id.my_switcher);
         View newView = switcher.getNextView();
         //switcher.showNext(); //or switcher.showPrevious();
         TextView step = (TextView) switcher.findViewById(R.id.directionView);
-        EditText editText = (EditText)findViewById(R.id.hidden_edit_view);
-       // editText.requestFocus();
-       // editText.setText("sss", TextView.BufferType.EDITABLE );
+        EditText editText = (EditText) findViewById(R.id.hidden_edit_view);
+        // editText.requestFocus();
+        // editText.setText("sss", TextView.BufferType.EDITABLE );
         //editText.setSelection(editText.getText().length());
         //String newSteps = editText.getText().toString();//save new steps
-       // step.setText(newSteps) ;
+        // step.setText(newSteps) ;
         if (newView instanceof TextView) {
             ((TextView) newView).setText(steps);
         } else if (newView instanceof EditText) {
             ((EditText) newView).setText(steps);
-            ((EditText) newView).setFocusableInTouchMode(true);
-            ((EditText) newView).requestFocus();
+            newView.setFocusableInTouchMode(true);
+            newView.requestFocus();
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         }
         String newSteps = editText.getText().toString();//save new steps
-        step.setText(newSteps) ;
+        step.setText(newSteps);
         directionView.setText(newSteps);
         switcher.showNext();
 //        DatabaseHandler handler = new DatabaseHandler(this);
@@ -170,8 +171,11 @@ public class RecipeDetailActivity extends AppCompatActivity {
         super.onStart();
         Intent intent = getIntent();
         final String recipeID = intent.getStringExtra("recipe");
-        final Context c = getApplicationContext();
-        if(NetworkHelper.hasNetworkAccess(RecipeDetailActivity.this)) //returns true if internet available
+        RecipeDetail result = intent.getParcelableExtra("recipeDetail");
+        if (result != null) {
+            recipeDetail = result;
+            setRecipeInfo();
+        } else if (NetworkHelper.hasNetworkAccess(RecipeDetailActivity.this)) //returns true if internet available
         {
             //register to listen the data
             RequestMethod requestPackage = new RequestMethod();
@@ -180,11 +184,12 @@ public class RecipeDetailActivity extends AppCompatActivity {
             requestPackage.setMethod("GET"); //  or requestPackage.setMethod("POST");
 
 
-            new AsyncTask<RequestMethod, Integer, Long>(){
+            new AsyncTask<RequestMethod, Integer, Long>() {
                 String resp = "";
+
                 @Override
                 protected Long doInBackground(RequestMethod... params) {
-                    for(RequestMethod r : params){
+                    for (RequestMethod r : params) {
                         try {
                             resp = HttpConnection.downloadFromFeed(r);
                             //resp = "{\"_id\":\"58b34ba5b4bc390004204d78\",\"name\":\"Cajun Chicken Pasta\",\"author\":\"Tom\",\"description\":\"Chicken, Pasta, Cajun\",\"feeds\":1,\"time\":3,\"rating\":5,\"level\":\"Easy\",\"__v\":0,\"instructions\":[{\"step\":1,\"instruction\":\"Bring a large pot of lightly salted water to a boil. Add linguini pasta, and cook for 8 to 10 minutes, or until al dente; drain.\",\"_id\":\"58b34ba5b4bc390004204d7c\",\"verbs\":[],\"nouns\":[]},{\"step\":2,\"instruction\":\"Meanwhile, place chicken and Cajun seasoning in a bowl, and toss to coat.\",\"_id\":\"58b34ba5b4bc390004204d7b\",\"verbs\":[],\"nouns\":[]},{\"step\":3,\"instruction\":\"In a large skillet over medium heat, saute chicken in butter until no longer pink and juices run clear, about 5 to 7 minutes. Add green and red bell peppers, sliced mushrooms and green onions; cook for 2 to 3 minutes. Reduce heat, and stir in heavy cream. Season the sauce with basil, lemon pepper, salt, garlic powder and ground black pepper, and heat through.\",\"_id\":\"58b34ba5b4bc390004204d7a\",\"verbs\":[],\"nouns\":[]},{\"step\":4,\"instruction\":\"In a large bowl, toss linguini with sauce. Sprinkle with grated Parmesan cheese.\",\"_id\":\"58b34ba5b4bc390004204d79\",\"verbs\":[],\"nouns\":[]}],\"ingredients\":[{\"name\":\"toast\", \"uom\":\"slice\", \"qty\": 2 },{\"name\":\"jelly\", \"uom\":\"tbsp\", \"qty\": 1}],\"categories\":[\"snack\",\"lunch\",\"tasty\",\"easy\"]}";
@@ -193,10 +198,11 @@ public class RecipeDetailActivity extends AppCompatActivity {
 
                             Gson gson = builder.create();
                             Type type;
-                            type = new TypeToken<RecipeDetail>(){}.getType();
+                            type = new TypeToken<RecipeDetail>() {
+                            }.getType();
                             recipeDetail = gson.fromJson(resp, type);
                             Log.d(TAG, recipeDetail.toString());
-                        } catch (Exception e){ //IOException e) {
+                        } catch (Exception e) { //IOException e) {
                             //e.printStackTrace();
                             return -1L;
                         }
@@ -208,78 +214,76 @@ public class RecipeDetailActivity extends AppCompatActivity {
                 @Override
                 protected void onPostExecute(Long aLong) {
                     super.onPostExecute(aLong);
-
-                    if(recipeDetail == null){
-                        recipeTitle.setText(R.string.recipeNotFound);
-                    }else{
-                        recipeTitle.setText(recipeDetail.getName());
-
-                        try{
-                            imageView.setImageBitmap(MediaStore.Images.Media.getBitmap(getContentResolver(), recipeDetail.getImage()));
-
-                        }catch (IOException e){
-                            Log.d(TAG, "IOException on load image");
-                            Log.d(TAG, e.getMessage());
-
-                        }
-
-                        ingredients = recipeDetail.getIngredients();
-                        directions = recipeDetail.getDirections();
-                        if(ingredients == null){
-                            ingredients = new Ingredient[0];
-                        }
-                        if(directions == null){
-                            directions = new String[0];
-                        }
-
-                        checkBoxes = new CheckBox[ingredients.length];
-                        int states[][] = {{android.R.attr.state_checked}, {}};
-                        int white = getColor(c,R.color.white);
-                        int colors[] = {white, white};
-                        int count = 0;
-                        for(Ingredient s : ingredients){
-                            CheckBox temp  = new CheckBox(c);
-                            temp.setId(count);
-                            temp.setText(s.toString());
-                            temp.setTextColor(white);
-                            temp.setTextSize(20);
-                            CompoundButtonCompat.setButtonTintList(temp ,new ColorStateList(states,colors));
-                            checkBoxes[count] = temp;
-                            ingredientGroup.addView(temp);
-                            count++;
-                        }
-                        //
-                        directionsForCooking = new String[directions.length];
-                        StringBuilder sb = new StringBuilder();
-                        count = 1;
-                        for(String s : directions){
-                            sb.append(count);
-                            sb.append(":  ");
-                            sb.append(s);
-                            sb.append("\n");
-
-                            directionsForCooking[count-1] = s;
-                            count++;
-                        }
-                        steps=sb.toString();
-                        directionView.setText(steps);
-
-                    }
-
-
+                    setRecipeInfo();
                 }
             }.execute(requestPackage);
-        }
-        else
-        {
+        } else {
             //Toast.makeText(RecipeListActivity.this,"No Internet Connection",Toast.LENGTH_LONG).show();
             Log.d(TAG, "No Internet Connection");
         }
 
 
-
     }
+    void setRecipeInfo(){
+        Context c = getApplicationContext();
+        String[] directions;
+        if (recipeDetail == null) {
+            recipeTitle.setText(R.string.recipeNotFound);
+        } else {
+            recipeTitle.setText(recipeDetail.getName());
 
+            try {
+                imageView.setImageBitmap(MediaStore.Images.Media.getBitmap(getContentResolver(), recipeDetail.getImage()));
+
+            } catch (IOException e) {
+                Log.d(TAG, "IOException on load image");
+                Log.d(TAG, e.getMessage());
+
+            }
+
+            ingredients = recipeDetail.getIngredients();
+            directions = recipeDetail.getDirections();
+            if (ingredients == null) {
+                ingredients = new Ingredient[0];
+            }
+            if (directions == null) {
+                directions = new String[0];
+            }
+
+            checkBoxes = new CheckBox[ingredients.length];
+            int states[][] = {{android.R.attr.state_checked}, {}};
+            int white = getColor(c, R.color.white);
+            int colors[] = {white, white};
+            int count = 0;
+            for (Ingredient s : ingredients) {
+                CheckBox temp = new CheckBox(c);
+                temp.setId(count);
+                temp.setText(s.toString());
+                temp.setTextColor(white);
+                temp.setTextSize(20);
+                CompoundButtonCompat.setButtonTintList(temp, new ColorStateList(states, colors));
+                checkBoxes[count] = temp;
+                ingredientGroup.addView(temp);
+                count++;
+            }
+            //
+            directionsForCooking = new String[directions.length];
+            StringBuilder sb = new StringBuilder();
+            count = 1;
+            for (String s : directions) {
+                sb.append(count);
+                sb.append(":  ");
+                sb.append(s);
+                sb.append("\n");
+
+                directionsForCooking[count - 1] = s;
+                count++;
+            }
+            steps = sb.toString();
+            directionView.setText(steps);
+
+        }
+    }
 
     @SuppressWarnings("deprecation")
     public static int getColor(Context context, int id) {
