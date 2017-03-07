@@ -53,6 +53,6 @@
 
         <activity android:name=".activity.nav_activities.ShoppingListActivity" />
         <activity android:name=".activity.CreateRecipeActivity" />
+        <activity android:name=".activity.TestInterpreterActivity"></activity>
     </application>
-
 </manifest>
