@@ -7,7 +7,7 @@ import android.test.ActivityInstrumentationTestCase2;
 
 public class login extends ActivityInstrumentationTestCase2<MainActivity> {
   	private Solo solo;
-  	
+
   	public login() {
 		super(MainActivity.class);
   	}
@@ -17,13 +17,13 @@ public class login extends ActivityInstrumentationTestCase2<MainActivity> {
 		solo = new Solo(getInstrumentation());
 		getActivity();
   	}
-  
+
    	@Override
    	public void tearDown() throws Exception {
         solo.finishOpenedActivities();
         super.tearDown();
   	}
-  
+
 	public void testRun() {
         //Wait for activity: 'com.se491.chef_ly.activity.MainActivity'
 		solo.waitForActivity(com.se491.chef_ly.activity.MainActivity.class, 2000);

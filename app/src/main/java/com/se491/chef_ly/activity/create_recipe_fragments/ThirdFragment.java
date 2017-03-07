@@ -133,7 +133,7 @@ public class ThirdFragment extends Fragment {
                 newIngredientUom.setLayoutParams(params1);
                 newIngredientName.setLayoutParams(params2);
 
-                newIngredientQty.setInputType(InputType.TYPE_CLASS_NUMBER);
+                newIngredientQty.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
                 newIngredientUom.setInputType(InputType.TYPE_CLASS_TEXT);
                 newIngredientName.setInputType(InputType.TYPE_CLASS_TEXT);
 
@@ -202,11 +202,20 @@ public class ThirdFragment extends Fragment {
     }
 
 
-    public ArrayList<Ingredient> getIngredients(){
-
+    public ArrayList<Ingredient> getIngredients() throws Exception{
+    //TODO handle fractions ie 1/4 from user input
         ArrayList<Ingredient> result = new ArrayList<>();
         for(EditText[] array : ingredients){
-            Ingredient i = new Ingredient(array[2].getText().toString(),array[1].getText().toString(), Integer.valueOf(array[0].getText().toString()));
+            String qtyString = array[0].getText().toString();
+            double qty = 0;
+            if(qtyString.contains("/")){
+                String[] split = qtyString.split("/");
+                if(split.length != 2) throw new Exception("Invalid Quantity format [" + qtyString + "]" );
+                qty = Double.valueOf(split[0]) / Double.valueOf(split[1]);
+            }else{
+                qty = Double.valueOf(qtyString);
+            }
+            Ingredient i = new Ingredient(array[2].getText().toString(),array[1].getText().toString(), qty);
             result.add(i);
         }
 

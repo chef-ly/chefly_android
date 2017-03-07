@@ -53,6 +53,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
                 android:gravity="center" />
+
             <LinearLayout
                 android:id="@+id/ingredientGroup"
                 android:orientation="vertical"
@@ -79,28 +80,50 @@
                 android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
-            <TextView
-                android:id="@+id/directionView"
-                android:textColor="@color/white"
-                android:textSize="20sp"
+
+            <ViewSwitcher android:id="@+id/my_switcher"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="match_parent" >
+                <TextView
+                    android:id="@+id/directionView"
+                    android:clickable="true"
+                    android:onClick="TextViewClicked"
+                    android:text="@string/edit_directionView"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+                <EditText
+                    android:id="@+id/hidden_edit_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/edit_directionView" />
+
+
+            </ViewSwitcher>
+
+
+
+
+
+            <Button
+                android:id="@+id/getCookingBtn"
+                android:layout_weight="0.1"
+                android:text="@string/getCooking"
+                android:textColor="@color/white"
+                android:background="@color/btnGray"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="5dp"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <Button
-                    android:id="@+id/getCookingBtn"
-                    android:layout_weight="0.1"
-                    android:text="@string/getCooking"
-                    android:textColor="@color/white"
-                    android:background="@color/btnGray"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_margin="5dp"
-                    android:paddingStart="5dp"
-                    android:paddingEnd="5dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+
                 <Button
                     android:id="@+id/edit"
                     android:layout_weight="0.1"
@@ -114,11 +137,23 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
                 <Button
+                    android:id="@+id/addremove"
+                    android:layout_weight="0.1"
+                    android:text="@string/addremove"
+                    android:textColor="@color/white"
+                    android:background="@color/btnGray"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <Button
                     android:id="@+id/backBtn"
                     android:layout_weight="0.1"
                     android:text="@string/back"
                     android:textColor="@color/white"
                     android:background="@color/btnGray"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="5dp"
+                    android:paddingStart="5dp"
+                    android:paddingEnd="5dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 

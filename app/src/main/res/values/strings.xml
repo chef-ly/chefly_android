@@ -18,6 +18,14 @@
     <string name="addToGroceryList">Add Selected to Grocery List</string>
     <string name="getCooking">Let\'s get cooking!</string>
     <string name="edit">Edit</string>
+    <string name="addremove">Add Remove</string>
+    <string name="removeIngredientBtn">Remove selected Ingredient</string>
+    <string name="EditIngredient">Edit Ingredients</string>
+    <string name="EditDescription">Edit Description</string>
+    <string name="AddIngredientBtn">Add another ingredient</string>
+    <string name="AddStep">Add another Step</string>
+    <string name="RemoveStep">Remove  Step</string>
+    <string name="edit_directionView">edit direction step</string>
     <string name="x">X</string>
     <string name="prev">Prev</string>
     <string name="next">Next</string>
@@ -69,5 +77,6 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_edit">EditActivity</string>
 
 </resources>

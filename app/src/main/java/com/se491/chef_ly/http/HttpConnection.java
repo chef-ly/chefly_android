@@ -4,7 +4,6 @@ import android.util.Log;
 
 import java.io.IOException;
 import java.util.Map;
-import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -18,7 +17,7 @@ import com.se491.chef_ly.model.User;
 
 public class HttpConnection {
     private static final String TAG = "HttpConnection";
-    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     public static String downloadFromFeed(RequestMethod requestPackage)
             throws IOException {

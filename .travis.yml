@@ -4,9 +4,19 @@ sudo: false
 dist: precise
 env:
     matrix:
+        #- ANDROID_TARGET=android-19 ANDROID_ABI=armeabi-v7a
         - ANDROID_TARGET=android-21 ANDROID_ABI=armeabi-v7a
     global:
         - ADB_INSTALL_TIMEOUT=10    #Time out to 10 mins
+
+before_cache:
+        - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+
+cache:
+    directories:      #Cache all dirs under .gradle folder
+        - $HOME/.gradle/daemon      #Cache daemon logs
+        - $HOME/.gradle/native      #Cache library downloaded from the gradle dependency
+        - $HOME/.gradle/wrapper     #Cache the gradle
 android:
   components:
     - tools # to get the new `repository-11.xml`
@@ -14,6 +24,9 @@ android:
     - platform-tools
     - build-tools-25.0.2
     - android-25
+    # Additional components
+    - extra-android-m2repository
+    #- sys-img-armeabi-v7a-android-19
     - sys-img-armeabi-v7a-android-21
     - extra
 
@@ -25,18 +38,22 @@ before_script:
         - chmod +x gradlew      #Grand permissions
         - android list targets
         - echo no | android create avd --force --name test --target $ANDROID_TARGET --abi $ANDROID_ABI    #Create AVD for given api
-       # - echo no | android create avd --force -n test -t android-21 --abi armeabi-v7a --skin 480x800
-        - emulator -avd test -no-skin -no-audio -no-window &    #Start emulator
+        - emulator -avd test -no-audio -no-window &    #Start emulator
 
 script:
   - echo "Travis branch is $TRAVIS_BRANCH"
   - echo "Travis branch is in pull request $TRAVIS_PULL+REQUEST"
   - android-wait-for-emulator
   - adb devices   #Display list of devices
-  - adb shell input keyevent 82 &
-  - ./gradlew build connectedCheck
+  #- adb shell input keyevent 82 &
+  - adb shell input tap 650 300
+  - ./gradlew build connectedCheck -PdisablePreDex --stacktrace
+   #- ./gradlew connectedAndroidTest
   #- ./gradlew build -x lint
   # './gradlew clean build'
 
 before_install:
    - chmod +x gradlew
+   - pip install --user codecov    #Install codecov
+after_success:
+   - codecov                       #Run codecov
