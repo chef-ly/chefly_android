@@ -2,20 +2,25 @@ package com.se491.chef_ly.activity;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.Voice;
+import android.speech.RecognizerIntent;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.se491.chef_ly.R;
 
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Set;
 
@@ -28,8 +33,10 @@ public class GetCookingActivity extends Activity implements View.OnClickListener
     private TextView text;
     private TextView stepText;
     private TextToSpeech textToSpeech;
+    private ImageButton btnSpeak;
 
     private final String TAG = "GetCookingActivity";
+    private final int REQ_CODE_SPEECH_INPUT = 100;
     private String[] directions;
     private int disabledBackground;
     private int disabledText;
@@ -63,6 +70,15 @@ public class GetCookingActivity extends Activity implements View.OnClickListener
         prev.setEnabled(false);
         prev.setBackgroundColor(disabledBackground);
         prev.setTextColor(disabledText);
+
+        btnSpeak = (ImageButton) findViewById(R.id.btnSpeak);
+
+        btnSpeak.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                promptSpeechInput();
+            }
+        });
 
         textToSpeech = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
             @Override
@@ -210,5 +226,46 @@ public class GetCookingActivity extends Activity implements View.OnClickListener
         sb.append(String.valueOf(directions.length));
         stepText.setText(sb.toString());
 
+    }
+
+    /**
+     * Showing google speech input dialog
+     * */
+    private void promptSpeechInput() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+                getString(R.string.speech_prompt));
+        try {
+            startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
+        } catch (ActivityNotFoundException a) {
+            Toast.makeText(getApplicationContext(),
+                    getString(R.string.speech_not_supported),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * Receiving speech input
+     * */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+            case REQ_CODE_SPEECH_INPUT: {
+                if (resultCode == RESULT_OK && null != data) {
+
+                    ArrayList<String> result = data
+                            .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+
+                    Toast.makeText(this, result.get(0), Toast.LENGTH_LONG).show();
+                }
+                break;
+            }
+
+        }
     }
 }
