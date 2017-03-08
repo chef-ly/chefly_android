@@ -9,7 +9,7 @@ buildscript {
 
 apply plugin: 'com.android.application'
 apply plugin: 'jacoco-android'
-        android {
+android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
@@ -40,6 +40,10 @@ apply plugin: 'jacoco-android'
             abortOnError false
             }
 }
+
+ant.importBuild 'assets.xml'
+preBuild.dependsOn(list, checksum)
+clean.dependsOn(clean_assets)
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
