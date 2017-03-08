@@ -3,6 +3,7 @@ package com.se491.chef_ly.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.net.Uri;
 import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -36,9 +37,14 @@ import com.se491.chef_ly.model.Ingredient;
 import com.se491.chef_ly.model.RecipeDetail;
 import com.se491.chef_ly.utils.NetworkHelper;
 
+import org.w3c.dom.Text;
+
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.List;
+
+import static com.se491.chef_ly.R.id.user;
 
 
 public class RecipeDetailActivity extends AppCompatActivity {
@@ -56,7 +62,8 @@ public class RecipeDetailActivity extends AppCompatActivity {
     private EditText editTextDesciption;
     private RecipeDetail recipeDetail;
     private Ingredient[] ingredients;
-
+    private String  recipeName;
+    private Uri recipeIm;
     private String[] directionsForCooking;
     private String steps;
     private static final String TAG = "RecipeDetailActivity";
@@ -120,8 +127,14 @@ public class RecipeDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent addRemoveIntent = new Intent(RecipeDetailActivity.this, EditActivity.class);
+                // Intent createRecipeIntent = new Intent(getApplicationContext(), CreateRecipeActivity.class);
+                // addRemoveIntent.putExtra("user",user);
+                addRemoveIntent.putExtra("title",recipeName);
+                //addRemoveIntent.putExtra("author",recipeIm);
+                addRemoveIntent.putExtra("image",recipeIm);
+                //  addRemoveIntent.putExtra("service",recipeName);
+                addRemoveIntent.putExtra("directions",steps);
                 startActivity(addRemoveIntent);
-                finish();
             }
         });
         editBtn = (Button) findViewById(R.id.edit);
@@ -137,33 +150,52 @@ public class RecipeDetailActivity extends AppCompatActivity {
 
     public void TextViewClicked() {
         ViewSwitcher switcher = (ViewSwitcher) findViewById(R.id.my_switcher);
-        View newView = switcher.getNextView();
+        View currentView = switcher.getCurrentView();
         //switcher.showNext(); //or switcher.showPrevious();
-        TextView step = (TextView) switcher.findViewById(R.id.directionView);
+        TextView viewText = (TextView) switcher.findViewById(R.id.directionView);
         EditText editText = (EditText) findViewById(R.id.hidden_edit_view);
-        // editText.requestFocus();
-        // editText.setText("sss", TextView.BufferType.EDITABLE );
-        //editText.setSelection(editText.getText().length());
-        //String newSteps = editText.getText().toString();//save new steps
-        // step.setText(newSteps) ;
-        if (newView instanceof TextView) {
-            ((TextView) newView).setText(steps);
-        } else if (newView instanceof EditText) {
-            ((EditText) newView).setText(steps);
-            newView.setFocusableInTouchMode(true);
-            newView.requestFocus();
-            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
+        if (currentView instanceof EditText) {
+            //Save steps and prepare next view (Text view)
+            String[] instructionsForCooking = editText.getText().toString().split("\n");
+            directionsForCooking = instructionsForCooking;
+            StringBuilder sb = new StringBuilder();
+            int count = 1;
+            for (String s : directionsForCooking) {
+                sb.append(count);
+                sb.append(":  ");
+                sb.append(s);
+                sb.append("\n");
+
+                directionsForCooking[count - 1] = s;
+                count++;
+            }
+            steps = sb.toString();
+            ((TextView) viewText).setText(steps);
         }
-        String newSteps = editText.getText().toString();//save new steps
-        step.setText(newSteps);
-        directionView.setText(newSteps);
+        else if (currentView instanceof TextView) {
+            // Prepare next view (Edit view)
+            String tmpSteps = implode("\n", directionsForCooking);
+            editText.setText(tmpSteps);
+            editText.setFocusableInTouchMode(true);
+            editText.requestFocus();
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        }
         switcher.showNext();
-//        DatabaseHandler handler = new DatabaseHandler(this);
-//        handler.recipeUpdate(directionsForCooking[newSteps],false);
-        //recipeDetail=newSteps;
-        //directions = recipeDetail.getDirections();
-        // get the text from the textviews and recreate the directionsForCooking array
+
+    }
+
+    public static String implode(String separator, String... data) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < data.length - 1; i++) {
+            //data.length - 1 => to not add separator at the end
+            if (!data[i].matches(" *")) {//empty string are ""; " "; "  "; and so on
+                sb.append(data[i]);
+                sb.append(separator);
+            }
+        }
+        sb.append(data[data.length - 1].trim());
+        return sb.toString();
     }
 
     @Override
@@ -230,10 +262,12 @@ public class RecipeDetailActivity extends AppCompatActivity {
         if (recipeDetail == null) {
             recipeTitle.setText(R.string.recipeNotFound);
         } else {
-            recipeTitle.setText(recipeDetail.getName());
+            recipeName=recipeDetail.getName();
+            recipeTitle.setText(recipeName);
 
             try {
-                imageView.setImageBitmap(MediaStore.Images.Media.getBitmap(getContentResolver(), recipeDetail.getImage()));
+                recipeIm=recipeDetail.getImage();
+                imageView.setImageBitmap(MediaStore.Images.Media.getBitmap(getContentResolver(),recipeIm));
 
             } catch (IOException e) {
                 Log.d(TAG, "IOException on load image");
@@ -295,3 +329,4 @@ public class RecipeDetailActivity extends AppCompatActivity {
         }
     }
 }
+

@@ -26,49 +26,49 @@ public class RegisterTest {
     @Rule
     public MainActivityTestRule<RegisterActivity>RegisterTestRule = new MainActivityTestRule<RegisterActivity>(RegisterActivity.class);
 
-   @Test
+    @Test
     public void clickSignUpButton_opensRegisterScreen() {
         //Locate the Signup button using the withId ViewMatcher
-       // onView(withId(R.id.signUp)).perform(click()); //click on it to perform action
+        // onView(withId(R.id.signUp)).perform(click()); //click on it to perform action
 
 
-       //Assert that the register screen is displayed
+        //Assert that the register screen is displayed
         onView(withId(R.id.registerInput)).check(matches(allOf(isDescendantOfA(withId(R.id.activity_register)), isDisplayed()))).perform(replaceText("a"), closeSoftKeyboard());;
 
-       onView(allOf(withId(R.id.registerButton), withParent(allOf(withId(R.id.activity_register),
-                               withParent(withId(android.R.id.content)))),
-                       isDisplayed())).perform(click());
+        onView(allOf(withId(R.id.registerButton), withParent(allOf(withId(R.id.activity_register),
+                withParent(withId(android.R.id.content)))),
+                isDisplayed())).perform(click());
 
 
-       ViewInteraction editText2 = onView(
-               allOf(withId(R.id.registerInput),
-                       withParent(allOf(withId(R.id.activity_register),
-                               withParent(withId(android.R.id.content)))),
-                       isDisplayed()));
-       editText2.perform(replaceText("a"), closeSoftKeyboard());
+        ViewInteraction editText2 = onView(
+                allOf(withId(R.id.registerInput),
+                        withParent(allOf(withId(R.id.activity_register),
+                                withParent(withId(android.R.id.content)))),
+                        isDisplayed()));
+        editText2.perform(replaceText("a"), closeSoftKeyboard());
 
-       ViewInteraction button2 = onView(
-               allOf(withId(R.id.registerButton),
-                       withParent(allOf(withId(R.id.activity_register),
-                               withParent(withId(android.R.id.content)))),
-                       isDisplayed()));
-       button2.perform(click());
+        ViewInteraction button2 = onView(
+                allOf(withId(R.id.registerButton),
+                        withParent(allOf(withId(R.id.activity_register),
+                                withParent(withId(android.R.id.content)))),
+                        isDisplayed()));
+        button2.perform(click());
 
-       ViewInteraction editText3 = onView(
-               allOf(withId(R.id.registerInput),
-                       withParent(allOf(withId(R.id.activity_register),
-                               withParent(withId(android.R.id.content)))),
-                       isDisplayed()));
-       editText3.perform(replaceText("a"), closeSoftKeyboard());
+        ViewInteraction editText3 = onView(
+                allOf(withId(R.id.registerInput),
+                        withParent(allOf(withId(R.id.activity_register),
+                                withParent(withId(android.R.id.content)))),
+                        isDisplayed()));
+        editText3.perform(replaceText("a"), closeSoftKeyboard());
 
-       ViewInteraction button3 = onView(
-               allOf(withId(R.id.registerButton),
-                       withParent(allOf(withId(R.id.activity_register),
-                               withParent(withId(android.R.id.content)))),
-                       isDisplayed()));
-       button3.perform(click());
+        ViewInteraction button3 = onView(
+                allOf(withId(R.id.registerButton),
+                        withParent(allOf(withId(R.id.activity_register),
+                                withParent(withId(android.R.id.content)))),
+                        isDisplayed()));
+        button3.perform(click());
 
-   }
+    }
 
 
 }
@@ -81,5 +81,4 @@ public class RegisterTest {
 //        onView(withId(R.id.registerButton)).perform(click()); //click on it to perform action
 //        //onView(withId(R.id.registerButton)).check(matches(isDisplayed()));
 //         }
-
 
