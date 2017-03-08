@@ -1,4 +1,4 @@
-package com.se491.chef_ly.test;
+package com.se491.chef_ly;
 
 import com.se491.chef_ly.activity.MainActivity;
 import com.robotium.solo.*;
