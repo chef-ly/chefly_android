@@ -4,6 +4,8 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application
         android:allowBackup="true"
@@ -53,6 +55,6 @@
 
         <activity android:name=".activity.nav_activities.ShoppingListActivity" />
         <activity android:name=".activity.CreateRecipeActivity" />
-        <activity android:name=".activity.TestInterpreterActivity"></activity>
+        <activity android:name=".activity.TestInterpreterActivity" />
     </application>
 </manifest>
