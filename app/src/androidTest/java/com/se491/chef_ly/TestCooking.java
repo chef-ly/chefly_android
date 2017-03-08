@@ -1,6 +1,7 @@
 package com.se491.chef_ly;
 
 
+import android.os.SystemClock;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -40,16 +41,12 @@ public class TestCooking {
 
         // We need to wait for the data to be retrieved from the server. A 10 second interval
         // should be more than enough for the action to complete.
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
         ViewInteraction appCompatTextView = onView(
                 allOf(withId(R.id.continueAsGuest), withText("Continue As Guest"), isDisplayed()));
         appCompatTextView.perform(click());
 
+        SystemClock.sleep(15000);
         ViewInteraction linearLayout = onView(
                 allOf(childAtPosition(
                         allOf(withId(R.id.list),
