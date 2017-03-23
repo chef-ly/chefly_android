@@ -113,13 +113,31 @@ public class FirstFragment extends Fragment {
     }
 
     public String getRecipeTitle(){
-        return recipeTitle.getText().toString();
+        try{
+            return recipeTitle.getText().toString();
+        }catch(NullPointerException e){
+            return "";
+        }
     }
-    public String getRecipeAuthor(){ return recipeAuthor.getText().toString();}
+    public String getRecipeAuthor(){
+        try{
+            return recipeAuthor.getText().toString();
+        }catch(NullPointerException e){
+            return "";
+        }
+    }
     public String getRecipeImage(){
-        return  recipeImage.getText().toString();
+        try{
+            return  recipeImage.getText().toString();
+        }catch(NullPointerException e){
+            return "";
+        }
     }
     public String getRecipeDescription(){
-        return recipeDescription.getText().toString();
+        try{
+            return recipeDescription.getText().toString();
+        }catch(NullPointerException e){
+            return "";
+        }
     }
 }

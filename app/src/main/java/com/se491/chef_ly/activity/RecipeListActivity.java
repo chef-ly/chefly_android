@@ -35,11 +35,13 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestListener;
 
+import com.se491.chef_ly.Databases.DatabaseHandler;
 import com.se491.chef_ly.R;
 import com.se491.chef_ly.activity.nav_activities.ShoppingListActivity;
 import com.se491.chef_ly.http.MyService;
 import com.se491.chef_ly.http.RequestMethod;
 import com.se491.chef_ly.model.Recipe;
+import com.se491.chef_ly.model.RecipeDetail;
 import com.se491.chef_ly.utils.NetworkHelper;
 
 import java.util.ArrayList;
@@ -51,6 +53,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
     private String user;
 
     private static final String TAG = "RecipeListActivity";
+    private final int CREATE_RECIPE_CODE = 7212;
     private static List<Recipe> recipes = new ArrayList<>();
 
     private static final String urlString ="https://chefly-prod.herokuapp.com/list";
@@ -60,8 +63,16 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            recipes = intent.getParcelableArrayListExtra(MyService.MY_SERVICE_PAYLOAD);
-
+            ArrayList<Recipe> fromServer;
+            // Get recipes from server
+            fromServer = intent.getParcelableArrayListExtra(MyService.MY_SERVICE_PAYLOAD);
+            // Only add the recipes we do not have in our list already
+            for(Recipe r : fromServer){
+                if(!recipes.contains(r)){
+                    recipes.add(r);
+                }
+            }
+            // Notify the list view adapter that the list has changed
             ((BaseAdapter) listview.getAdapter()).notifyDataSetChanged();
 
         }
@@ -96,7 +107,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -109,7 +120,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
             RequestMethod requestPackage = new RequestMethod();
 
             requestPackage.setEndPoint(urlString);
-            requestPackage.setParam("name", "Pepperoni Pizza");//filter data if i want
+            //requestPackage.setParam("name", "Pepperoni Pizza");//filter data if i want
             requestPackage.setMethod("GET"); //  or requestPackage.setMethod("POST");
             Intent intent = new Intent(this, MyService.class);
             intent.putExtra(MyService.REQUEST_PACKAGE, requestPackage);
@@ -142,109 +153,29 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         user = extras.getString("name");
+
+        // Get recipes from local db
+        DatabaseHandler db = new DatabaseHandler(getApplicationContext());
+        recipes.addAll(db.getRecipes());
+        // Notify list view adapter that the list has changed
+        ((BaseAdapter) listview.getAdapter()).notifyDataSetChanged();
     }
 
-    static class RecipeAdapter extends BaseAdapter{
-        private Context context;
-        private LayoutInflater inflater;
-        static class ViewHolder{
-            ImageView icon;
-            TextView name;
-            TextView author;
-            TextView time;
-            TextView level;
-            TextView rating;
-        }
-
-        RecipeAdapter(Context context){
-            this.context = context;
-            inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        }
-        @Override
-        public int getCount() {
-            return recipes.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return recipes.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View row = convertView;
-            final ViewHolder holder;
-            if(convertView == null){
-                row = inflater.inflate(R.layout.recipe_list_item, parent, false);
-                holder = new ViewHolder();
-                holder.icon = (ImageView) row.findViewById(R.id.image);
-                holder.name = (TextView) row.findViewById(R.id.recipeName);
-                holder.author = (TextView) row.findViewById(R.id.recipeAuthor);
-                holder.time = (TextView) row.findViewById(R.id.recipeTime);
-                holder.level = (TextView) row.findViewById(R.id.recipeLevel);
-                holder.rating = (TextView) row.findViewById(R.id.recipeRating);
-
-
-                row.setTag(holder);
-            }else{
-                holder = (ViewHolder) row.getTag();
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == CREATE_RECIPE_CODE) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                Log.d(TAG, "Result from CreateRecipe");
+                RecipeDetail temp = data.getParcelableExtra("recipe");
+                Recipe r = new Recipe(temp.getId(), temp.getName(), temp.getAuthor(),temp.getImage().toString(), 0.0, temp.getTime(), temp.getCategories(), temp.getLevel().toString());
+                recipes.add(r);
+                ((BaseAdapter) listview.getAdapter()).notifyDataSetChanged();
             }
-
-            Recipe r = recipes.get(position);
-            holder.name.setText(r.getName());
-            holder.author.setText(r.getAuthor());
-            int time = r.getTime();
-            int hour = 0;
-            while(time >= 60){
-                hour++;
-                time = time - 60;
-            }
-            String newTime = (hour != 0)? hour + " hrs ": ""  + ((time != 0) ? time + " min" : "") ;
-            holder.time.setText(String.valueOf(newTime));
-            holder.level.setText(String.valueOf(r.getLevel()));
-            holder.rating.setText(String.valueOf(r.getRating()));
-
-
-            try{
-               Uri uri=r.getImage(); //take the url
-                String image = uri.toString(); //make the url into a string
-                if(!image.isEmpty()){
-                    image = image.substring(1, image.length()-1);  //remove the quotes from uri string
-                    final String tag = "ListView";
-                    Glide.with(context)
-                            .load(image).asBitmap()
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .dontAnimate()
-                            .listener(new RequestListener<String, Bitmap>() {
-                                @Override
-                                public boolean onException(Exception e, String model, com.bumptech.glide.request.target.Target<Bitmap> target, boolean isFirstResource) {
-                                    Log.d(tag, e.getMessage());
-                                    return false;
-                                }
-
-                                @Override
-                                public boolean onResourceReady(Bitmap resource, String model, com.bumptech.glide.request.target.Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                                    Log.d(tag, "Image resource ready");
-                                    return false;
-                                }
-                            })
-                            .error(R.drawable.noimageavailable)
-                            .into(holder.icon);
-                }else{
-                    holder.icon.setImageResource(R.drawable.noimageavailable);
-                }
-
-            } catch (Exception e) {
-            e.printStackTrace();
-        }
-            return row;
         }
     }
+
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -330,7 +261,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
                 Toast.makeText(this, "Create RecipeDetail", Toast.LENGTH_SHORT).show();
                 Intent createRecipeIntent = new Intent(getApplicationContext(), CreateRecipeActivity.class);
                 createRecipeIntent.putExtra("user",user);
-                startActivity(createRecipeIntent);
+                startActivityForResult(createRecipeIntent, CREATE_RECIPE_CODE);
 
                 break;
             case R.id.nav_import_recipe:
@@ -359,4 +290,108 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+
+    static private class RecipeAdapter extends BaseAdapter{
+        private Context context;
+        private LayoutInflater inflater;
+        static class ViewHolder{
+            ImageView icon;
+            TextView name;
+            TextView author;
+            TextView time;
+            TextView level;
+            TextView rating;
+        }
+
+        RecipeAdapter(Context context){
+            this.context = context;
+            inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        }
+        @Override
+        public int getCount() {
+            return recipes.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return recipes.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View row = convertView;
+            final ViewHolder holder;
+            if(convertView == null){
+                row = inflater.inflate(R.layout.recipe_list_item, parent, false);
+                holder = new ViewHolder();
+                holder.icon = (ImageView) row.findViewById(R.id.image);
+                holder.name = (TextView) row.findViewById(R.id.recipeName);
+                holder.author = (TextView) row.findViewById(R.id.recipeAuthor);
+                holder.time = (TextView) row.findViewById(R.id.recipeTime);
+                holder.level = (TextView) row.findViewById(R.id.recipeLevel);
+                holder.rating = (TextView) row.findViewById(R.id.recipeRating);
+
+
+                row.setTag(holder);
+            }else{
+                holder = (ViewHolder) row.getTag();
+            }
+
+            Recipe r = recipes.get(position);
+            holder.name.setText(r.getName());
+            holder.author.setText(r.getAuthor());
+            int time = r.getTime();
+            int hour = 0;
+            while(time >= 60){
+                hour++;
+                time = time - 60;
+            }
+            String newTime = (hour != 0)? hour + " hrs ": ""  + ((time != 0) ? time + " min" : "") ;
+            holder.time.setText(String.valueOf(newTime));
+            holder.level.setText(String.valueOf(r.getLevel()));
+            holder.rating.setText(String.valueOf(r.getRating()));
+
+
+            try{
+                Uri uri=r.getImage(); //take the url
+                String image = uri.toString(); //make the url into a string
+                if(!image.isEmpty()){
+                    image = image.substring(1, image.length()-1);  //remove the quotes from uri string
+                    final String tag = "ListView";
+                    Glide.with(context)
+                            .load(image).asBitmap()
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .dontAnimate()
+                            .listener(new RequestListener<String, Bitmap>() {
+                                @Override
+                                public boolean onException(Exception e, String model, com.bumptech.glide.request.target.Target<Bitmap> target, boolean isFirstResource) {
+                                    Log.d(tag, e.getMessage());
+                                    return false;
+                                }
+
+                                @Override
+                                public boolean onResourceReady(Bitmap resource, String model, com.bumptech.glide.request.target.Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                                    Log.d(tag, "Image resource ready");
+                                    return false;
+                                }
+                            })
+                            .error(R.drawable.noimageavailable)
+                            .into(holder.icon);
+                }else{
+                    holder.icon.setImageResource(R.drawable.noimageavailable);
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return row;
+        }
+    }
+
 }

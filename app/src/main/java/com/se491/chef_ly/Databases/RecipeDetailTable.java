@@ -14,10 +14,11 @@ class RecipeDetailTable {
     protected static final String COLUMN_RECIPE_DETAIL_DIRECTIONS = "ListDirections";
     protected static final String  COLUMN_RECIPE_DETAIL_CATEGORIES= "RecipeCategories";
     protected static final String  COLUMN_RECIPE_DETAIL_LEVEL= "RecipeLevel";
+    protected static final String  COLUMN_RECIPE_DETAIL_RATING= "RecipeRating";
 
     public static final String[] ALL_COLUMNS =
             {COLUMN_RECIPE_DETAIL_ID ,COLUMN_RECIPE_DETAIL_NAME,COLUMN_RECIPE_DETAIL_AUTHOR,COLUMN_RECIPE_DETAIL_DESCRIPTION,COLUMN_RECIPE_DETAIL_SERVES,
-                    COLUMN_RECIPE_DETAIL_TIME, COLUMN_RECIPE_DETAIL_IMAGE, COLUMN_RECIPE_DETAIL_INGREDIENTS,COLUMN_RECIPE_DETAIL_DIRECTIONS};
+                    COLUMN_RECIPE_DETAIL_TIME, COLUMN_RECIPE_DETAIL_IMAGE, COLUMN_RECIPE_DETAIL_INGREDIENTS,COLUMN_RECIPE_DETAIL_DIRECTIONS,COLUMN_RECIPE_DETAIL_RATING};
 
     public static final String SQL_CREATE =
             "CREATE TABLE " + RECIPE_DETAIL_TABLE_ITEMS + "(" +
@@ -29,6 +30,7 @@ class RecipeDetailTable {
                     COLUMN_RECIPE_DETAIL_LEVEL + " TEXT," +
                     COLUMN_RECIPE_DETAIL_SERVES + " INTEGER," +
                     COLUMN_RECIPE_DETAIL_TIME + " INTEGER," +
+                    COLUMN_RECIPE_DETAIL_RATING + " REAL," +
                     COLUMN_RECIPE_DETAIL_IMAGE + " TEXT," +
                     COLUMN_RECIPE_DETAIL_INGREDIENTS + " TEXT," +
                     COLUMN_RECIPE_DETAIL_DIRECTIONS + " TEXT" + ");";

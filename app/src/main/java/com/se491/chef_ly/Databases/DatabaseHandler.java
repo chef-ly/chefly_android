@@ -14,14 +14,12 @@ import com.se491.chef_ly.model.RecipeDetail;
 import com.se491.chef_ly.model.ShoppingListItem;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-
 //http://stackoverflow.com/questions/26375184/inserting-and-deleting-values-in-with-my-dbhelper-class
 public class DatabaseHandler extends SQLiteOpenHelper {
 
     private final String TAG = "DatabaseHandler";
     private static final String DB_FILE_NAME = "chefly.db";
-    private static final int DB_VERSION = 5;
+    private static final int DB_VERSION = 7;
 
     public DatabaseHandler(Context context) {
         super(context, DB_FILE_NAME, null, DB_VERSION);
@@ -40,11 +38,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL(RecipeDetailTable.SQL_DELETE);
         db.execSQL(ShoppingList.SQL_DELETE);
         onCreate(db);
-    }
-    public Recipe createRecipeItem(Recipe item) {
-        //ContentValues values = item.getRecipes();
-        // db.insert(RecipeTable.RECIPE_TABLE_ITEMS, null, values);
-        return item;
     }
 
     public void createDetailedRecipe(RecipeDetail recipe){
@@ -70,6 +63,36 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.insert(RecipeDetailTable.RECIPE_DETAIL_TABLE_ITEMS, "", values);
         db.close();
 
+    }
+    public ArrayList<Recipe> getRecipes(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ArrayList<Recipe> list = new ArrayList<>();
+        String[] columns = {RecipeDetailTable.COLUMN_RECIPE_DETAIL_ID, RecipeDetailTable.COLUMN_RECIPE_DETAIL_NAME,RecipeDetailTable.COLUMN_RECIPE_DETAIL_AUTHOR,
+                RecipeDetailTable.COLUMN_RECIPE_DETAIL_CATEGORIES,RecipeDetailTable.COLUMN_RECIPE_DETAIL_LEVEL, RecipeDetailTable.COLUMN_RECIPE_DETAIL_TIME,
+                RecipeDetailTable.COLUMN_RECIPE_DETAIL_RATING,RecipeDetailTable.COLUMN_RECIPE_DETAIL_IMAGE };
+
+        Cursor cursor = db.query(RecipeDetailTable.RECIPE_DETAIL_TABLE_ITEMS, columns , null, null, null, null, RecipeDetailTable.COLUMN_RECIPE_DETAIL_NAME);
+        if (cursor.moveToFirst()) {
+            do {
+                String id = cursor.getString(cursor.getColumnIndex(RecipeDetailTable.COLUMN_RECIPE_DETAIL_ID));
+                String name = cursor.getString(cursor.getColumnIndex(RecipeDetailTable.COLUMN_RECIPE_DETAIL_NAME));
+                String author = cursor.getString(cursor.getColumnIndex(RecipeDetailTable.COLUMN_RECIPE_DETAIL_AUTHOR));
+                String cats = cursor.getString(cursor.getColumnIndex(RecipeDetailTable.COLUMN_RECIPE_DETAIL_CATEGORIES));
+                String level = cursor.getString(cursor.getColumnIndex(RecipeDetailTable.COLUMN_RECIPE_DETAIL_LEVEL));
+                int time = cursor.getInt(cursor.getColumnIndex(RecipeDetailTable.COLUMN_RECIPE_DETAIL_TIME));
+                int rating = cursor.getInt(cursor.getColumnIndex(RecipeDetailTable.COLUMN_RECIPE_DETAIL_RATING));
+                String image = cursor.getString(cursor.getColumnIndex(RecipeDetailTable.COLUMN_RECIPE_DETAIL_IMAGE));
+
+                Gson gson = new Gson();
+                String[] categories = gson.fromJson(cats, String[].class);
+                list.add(new Recipe(id,name,author,image, rating, time, categories, level));
+
+            } while (cursor.moveToNext());
+
+        }
+        cursor.close();
+        db.close();
+        return list;
     }
 
     public long getRecipeItemsCount() {
@@ -113,7 +136,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(ShoppingList.COLUMN_UNIT, i.getUom());
         values.put(ShoppingList.COLUMN_PURCHASED, purchased);
 
-        long result = db.insert(ShoppingList.TABLE_LIST_ITEMS, null, values);
+        db.insert(ShoppingList.TABLE_LIST_ITEMS, null, values);
 
         db.close();
     }
@@ -131,6 +154,22 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void recipeUpdate(RecipeDetail recipe){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
+        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_ID, recipe.getId());
+        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_NAME, recipe.getName());
+        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_AUTHOR, recipe.getAuthor());
+        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_SERVES, recipe.getServes());
+        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_TIME, recipe.getTime());
+        Gson gson = new Gson();
+        String json = gson.toJson(recipe.getCategories());
+        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_CATEGORIES, json);
+        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_DESCRIPTION, recipe.getDescription());
+        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_IMAGE, recipe.getImage().toString());
+        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_LEVEL, recipe.getLevel().toString());
+        json = gson.toJson(recipe.getDirections());
+        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_DIRECTIONS, json);
+        json = gson.toJson(recipe.getIngredients());
+        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_INGREDIENTS, json);
+
         db.update(RecipeDetailTable.RECIPE_DETAIL_TABLE_ITEMS, values,RecipeDetailTable.COLUMN_RECIPE_DETAIL_ID + " = " + recipe.getId(), null);
         db.close();
     }

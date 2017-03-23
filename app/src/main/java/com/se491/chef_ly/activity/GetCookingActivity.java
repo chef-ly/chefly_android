@@ -7,11 +7,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.speech.tts.TextToSpeech;
-import android.speech.tts.Voice;
 import android.speech.RecognizerIntent;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -22,7 +20,6 @@ import com.se491.chef_ly.R;
 
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.Set;
 
 public class GetCookingActivity extends Activity implements View.OnClickListener {
 
@@ -206,7 +203,7 @@ public class GetCookingActivity extends Activity implements View.OnClickListener
     }
     @TargetApi(23)
     @SuppressWarnings("deprecation")
-    private static final int getColor(Context context, int id) {
+    private static int getColor(Context context, int id) {
         final int version = Build.VERSION.SDK_INT;
         if (version >= 23) {
             return ContextCompat.getColor(context, id);

@@ -133,6 +133,7 @@ public class CreateRecipeActivity extends FragmentActivity
                 Toast.makeText(this, "Recipe must contain at least 1 direction", Toast.LENGTH_SHORT).show();
 
             } else {
+
                 result = new RecipeDetail(recipeTitle, recipeAuthor, recipeDescription, recipeServings, recipeTime, recipeLevel,
                         recipeCategories, recipeImage, ingredients.toArray(new Ingredient[ingredients.size()]), directions.toArray(new String[directions.size()]));
 
@@ -141,7 +142,7 @@ public class CreateRecipeActivity extends FragmentActivity
                 Gson gson = builder.create();
                 String msg = gson.toJson(result);
                 Log.d(TAG, msg);
-                sendToServer(msg);
+                sendToServer(msg, result);
                 //sendToLocalDB(result);
                 Intent recipeDetailIntent = new Intent(getApplicationContext(), RecipeDetailActivity.class);
                 recipeDetailIntent.putExtra("recipeDetail", result);
@@ -150,14 +151,11 @@ public class CreateRecipeActivity extends FragmentActivity
 
             }
         }catch (Exception e){
-            Toast.makeText(this, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "Exception :" + e.getMessage());
         }
     }
-    private void sendToLocalDB(RecipeDetail r){
-        DatabaseHandler dbh = new DatabaseHandler(getApplicationContext());
-        dbh.createDetailedRecipe(r);
-    }
-    private void sendToServer(String msg) {
+
+    private void sendToServer(String msg, final RecipeDetail r) {
 
         if (NetworkHelper.hasNetworkAccess(CreateRecipeActivity.this)) //returns true if internet available
         {
@@ -176,6 +174,7 @@ public class CreateRecipeActivity extends FragmentActivity
                     for (RequestMethod r : params) {
                         try {
                             resp = HttpConnection.downloadFromFeed(r);
+                            resp = resp.substring(1,resp.length()-1); //Remove quotes
                         }catch(IOException e){
                             Log.d(TAG, "Error posting recipe -> " + e.getMessage());
                         }
@@ -188,10 +187,17 @@ public class CreateRecipeActivity extends FragmentActivity
                     super.onPostExecute(aLong);
                     if(resp == null){
                         Log.d(TAG, "Recipe not sent to server");
+                        Toast.makeText(CreateRecipeActivity.this, "There was an error processing your request, please check your recipe and try again", Toast.LENGTH_SHORT).show();
                     }else{
                         Log.d(TAG, "Response -> " + resp);
+                        RecipeDetail local = new RecipeDetail(resp, r.getName(), r.getAuthor(), r.getDescription(), r.getServes(), r.getTime(), r.getLevel(), r.getCategories(), r.getImage().toString(), r.getIngredients(), r.getDirections());
+                        // Save to local db
+                        DatabaseHandler dbh = new DatabaseHandler(getApplicationContext());
+                        dbh.createDetailedRecipe(local);
 
-
+                        Intent returnIntent = new Intent();
+                        setResult(CreateRecipeActivity.RESULT_OK,returnIntent);
+                        returnIntent.putExtra("recipe", local);
                         finish();
                     }
 
@@ -201,7 +207,7 @@ public class CreateRecipeActivity extends FragmentActivity
             Log.d(TAG,"No internet connection");
         }
     }
-    public static class MyAdapter extends FragmentPagerAdapter{
+    private static class MyAdapter extends FragmentPagerAdapter{
         private List<Fragment> fragments;
         //page 1 -> FirstFragment - recipe title, image, and description
         //page 2 -> SecondFragment -time, serves, categories

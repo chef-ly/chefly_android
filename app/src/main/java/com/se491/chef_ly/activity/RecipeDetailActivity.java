@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.net.Uri;
-import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.provider.MediaStore;
@@ -12,8 +11,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.CompoundButtonCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -37,15 +34,8 @@ import com.se491.chef_ly.model.Ingredient;
 import com.se491.chef_ly.model.RecipeDetail;
 import com.se491.chef_ly.utils.NetworkHelper;
 
-import org.w3c.dom.Text;
-
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.Arrays;
-import java.util.List;
-
-import static com.se491.chef_ly.R.id.user;
-
 
 public class RecipeDetailActivity extends AppCompatActivity {
 
@@ -157,8 +147,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
 
         if (currentView instanceof EditText) {
             //Save steps and prepare next view (Text view)
-            String[] instructionsForCooking = editText.getText().toString().split("\n");
-            directionsForCooking = instructionsForCooking;
+            directionsForCooking = editText.getText().toString().split("\n");
             StringBuilder sb = new StringBuilder();
             int count = 1;
             for (String s : directionsForCooking) {
@@ -171,7 +160,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
                 count++;
             }
             steps = sb.toString();
-            ((TextView) viewText).setText(steps);
+            viewText.setText(steps);
         }
         else if (currentView instanceof TextView) {
             // Prepare next view (Edit view)

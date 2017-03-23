@@ -3,6 +3,8 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.Arrays;
+
 public class Recipe implements Parcelable {
 
     private String _id;
@@ -109,5 +111,35 @@ public class Recipe implements Parcelable {
 
     public String getLevel() {
         return level;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Recipe recipe = (Recipe) o;
+
+        if (_id != null ? !_id.equals(recipe._id) : recipe._id != null) return false;
+        if (name != null ? !name.equals(recipe.name) : recipe.name != null) return false;
+        if (author != null ? !author.equals(recipe.author) : recipe.author != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        result = _id != null ? _id.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (author != null ? author.hashCode() : 0);
+        result = 31 * result + (image_url != null ? image_url.hashCode() : 0);
+        temp = Double.doubleToLongBits(rating);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + time;
+        result = 31 * result + Arrays.hashCode(categories);
+        result = 31 * result + (level != null ? level.hashCode() : 0);
+        return result;
     }
 }

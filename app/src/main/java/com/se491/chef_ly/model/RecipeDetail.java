@@ -49,7 +49,7 @@ public class RecipeDetail implements Parcelable{
         this.instructions = directions;
     }
 
-    RecipeDetail(Parcel in){   //TODO test
+    private RecipeDetail(Parcel in){   //TODO test
         _id = in.readString();
         name = in.readString();
         author = in.readString();
