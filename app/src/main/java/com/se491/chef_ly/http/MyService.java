@@ -3,7 +3,6 @@ package com.se491.chef_ly.http;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v4.content.LocalBroadcastManager;
@@ -11,22 +10,15 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
-import com.se491.chef_ly.model.Recipe;
-import com.se491.chef_ly.model.RecipeDetail;
 import com.se491.chef_ly.model.RecipeList;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 
 //manage request with the use of IntentService
 public class MyService extends IntentService {
-    public static final String TAG = "MyService";
+    private static final String TAG = "MyService";
     public static final String MY_SERVICE_MESSAGE = "myServiceMessage";
     public static final String MY_SERVICE_RESPONSE_STRING = "myServiceResponseString";
     public static final String MY_SERVICE_PAYLOAD = "myServicePayload";
@@ -62,7 +54,7 @@ public class MyService extends IntentService {
         //});
         Gson gson = builder.create();
 
-        RecipeList dataItems = null;
+        RecipeList dataItems;
         Type type = new TypeToken<RecipeList>(){}.getType();
         dataItems = gson.fromJson(response, type);
 

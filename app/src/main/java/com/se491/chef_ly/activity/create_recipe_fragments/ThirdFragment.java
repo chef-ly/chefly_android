@@ -207,7 +207,7 @@ public class ThirdFragment extends Fragment {
         ArrayList<Ingredient> result = new ArrayList<>();
         for(EditText[] array : ingredients){
             String qtyString = array[0].getText().toString();
-            double qty = 0;
+            double qty;
             if(qtyString.contains("/")){
                 String[] split = qtyString.split("/");
                 if(split.length != 2) throw new Exception("Invalid Quantity format [" + qtyString + "]" );
@@ -223,7 +223,7 @@ public class ThirdFragment extends Fragment {
     }
 
     @SuppressWarnings("deprecation")
-    public static int getColor(Context context, int id) {
+    private static int getColor(Context context, int id) {
         final int version = Build.VERSION.SDK_INT;
         if (version >= 23) {
             return ContextCompat.getColor(context, id);

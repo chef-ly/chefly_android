@@ -12,8 +12,8 @@ import java.util.ArrayList;
 
 public class CheflyTimer {
     private static CheflyTimer mInstance = null;
-    private AlarmManager alarmManager;
-    private ArrayList<TimerInfo> timers;
+    private final AlarmManager alarmManager;
+    private final ArrayList<TimerInfo> timers;
     private final String TAG = "CheflyTimer";
 
     private CheflyTimer(Context c){
@@ -77,9 +77,9 @@ public class CheflyTimer {
 
 
     private class TimerInfo{
-        private String name;
-        private PendingIntent pending;
-        private long end;
+        private final String name;
+        private final PendingIntent pending;
+        private final long end;
 
         TimerInfo(String name, PendingIntent p, long e){
             this.name = name;

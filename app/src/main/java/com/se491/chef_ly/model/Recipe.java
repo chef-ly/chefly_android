@@ -8,13 +8,13 @@ import java.util.Arrays;
 public class Recipe implements Parcelable {
 
     private String _id;
-    private String name;
-    private String author;
-    private String image_url;
-    private double rating;
-    private int time;
-    private String[] categories;
-    private String level;
+    private final String name;
+    private final String author;
+    private final String image_url;
+    private final double rating;
+    private final int time;
+    private final String[] categories;
+    private final String level;
 
     public Recipe(String name, String author, String image_url, double rating, int time, String[] categories, String level) {
         this.name = name;
@@ -36,7 +36,7 @@ public class Recipe implements Parcelable {
         this.categories = categories;
         this.level = level;
     }
-    protected Recipe(Parcel in) {
+    private Recipe(Parcel in) {
         this._id=in.readString();
         this.name = in.readString();
         this.author = in.readString();

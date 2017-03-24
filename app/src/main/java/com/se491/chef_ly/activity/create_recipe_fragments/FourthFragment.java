@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.se491.chef_ly.R;
@@ -181,7 +180,7 @@ public class FourthFragment extends Fragment {
     }
 
     @SuppressWarnings("deprecation")
-    public static int getColor(Context context, int id) {
+    private static int getColor(Context context, int id) {
         final int version = Build.VERSION.SDK_INT;
         if (version >= 23) {
             return ContextCompat.getColor(context, id);

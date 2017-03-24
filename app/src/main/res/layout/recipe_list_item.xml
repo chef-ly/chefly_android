@@ -64,6 +64,7 @@
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 android:paddingStart="3dp"
+                android:paddingEnd="3dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
@@ -90,6 +91,7 @@
                     android:textColor="@color/white"
                     android:textSize="16sp"
                     android:paddingStart="3dp"
+                    android:paddingEnd="3dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </LinearLayout>
@@ -109,6 +111,7 @@
                     android:textColor="@color/white"
                     android:textSize="16sp"
                     android:paddingStart="3dp"
+                    android:paddingEnd="3dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </LinearLayout>

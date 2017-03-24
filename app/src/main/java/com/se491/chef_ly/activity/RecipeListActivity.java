@@ -54,12 +54,12 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
 
     private static final String TAG = "RecipeListActivity";
     private final int CREATE_RECIPE_CODE = 7212;
-    private static List<Recipe> recipes = new ArrayList<>();
+    private static final List<Recipe> recipes = new ArrayList<>();
 
     private static final String urlString ="https://chefly-prod.herokuapp.com/list";
 
 
-    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
 
@@ -293,8 +293,8 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
 
 
     static private class RecipeAdapter extends BaseAdapter{
-        private Context context;
-        private LayoutInflater inflater;
+        private final Context context;
+        private final LayoutInflater inflater;
         static class ViewHolder{
             ImageView icon;
             TextView name;

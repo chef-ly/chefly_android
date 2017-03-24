@@ -1,10 +1,5 @@
 package com.se491.chef_ly.model;
-import android.os.Parcel;
-import android.os.Parcelable;
 
-/**
- * Created by davidchang on 2/19/17.
- */
 
 public class User {
     private static String username = null;

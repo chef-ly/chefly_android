@@ -10,13 +10,11 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static android.support.test.espresso.action.ViewActions.replaceText;
-import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withParent;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 
 @RunWith(AndroidJUnit4.class)
@@ -24,7 +22,7 @@ import static org.hamcrest.Matchers.allOf;
 public class RegisterTest {
 
     @Rule
-    public MainActivityTestRule<RegisterActivity>RegisterTestRule = new MainActivityTestRule<RegisterActivity>(RegisterActivity.class);
+    public MainActivityTestRule<RegisterActivity>RegisterTestRule = new MainActivityTestRule<>(RegisterActivity.class);
 
     @Test
     public void clickSignUpButton_opensRegisterScreen() {

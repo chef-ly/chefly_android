@@ -77,11 +77,11 @@ public class RequestMethod implements Parcelable {
     public RequestMethod() {
     }
 
-    protected RequestMethod(Parcel in) {
+    private RequestMethod(Parcel in) {
         this.endPoint = in.readString();
         this.method = in.readString();
         int paramsSize = in.readInt();
-        this.params = new HashMap<String, String>(paramsSize);
+        this.params = new HashMap<>(paramsSize);
         for (int i = 0; i < paramsSize; i++) {
             String key = in.readString();
             String value = in.readString();

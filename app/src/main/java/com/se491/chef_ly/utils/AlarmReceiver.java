@@ -21,11 +21,6 @@ public class AlarmReceiver extends BroadcastReceiver {
     }
 
     @Override
-    public IBinder peekService(Context myContext, Intent service) {
-        return super.peekService(myContext, service);
-    }
-
-    @Override
     public void onReceive(Context context, Intent intent) {
         String name = intent.getStringExtra("name");
         Toast.makeText(context, "Alarm!!! " + name, Toast.LENGTH_LONG).show();

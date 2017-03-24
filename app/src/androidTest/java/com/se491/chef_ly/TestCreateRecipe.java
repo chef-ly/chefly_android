@@ -19,13 +19,11 @@ package com.se491.chef_ly;
         import static android.support.test.espresso.action.ViewActions.replaceText;
         import static android.support.test.espresso.action.ViewActions.scrollTo;
         import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
-        import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
         import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
         import static android.support.test.espresso.matcher.ViewMatchers.withId;
         import static android.support.test.espresso.matcher.ViewMatchers.withParent;
         import static android.support.test.espresso.matcher.ViewMatchers.withText;
         import static org.hamcrest.Matchers.allOf;
-        import static org.hamcrest.Matchers.is;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)

@@ -6,15 +6,15 @@ import android.os.Parcelable;
 import java.util.HashMap;
 
 public class IngredientItem implements Parcelable{
-    private String name;
-    private String uom;
+    private final String name;
+    private final String uom;
     private HashMap<String, Integer> nutrition;
 
     public IngredientItem(String name, String uom) {
         this.name = name;
         this.uom = uom;
     }
-    public IngredientItem(Parcel in){
+    private IngredientItem(Parcel in){
         this.name = in.readString();
         this.uom = in.readString();
     }

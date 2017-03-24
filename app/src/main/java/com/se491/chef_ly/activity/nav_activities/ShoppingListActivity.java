@@ -73,7 +73,6 @@ public class ShoppingListActivity extends ListActivity {
         TextView uom = (TextView) v.findViewById(R.id.uom);
         TextView name = (TextView) v.findViewById(R.id.name);
         ShoppingListItem item = shoppingList.get(position);
-        DatabaseHandler h = new DatabaseHandler(getApplicationContext());
 
         if(item.isPurchased()){
             item.setPurchased(false);
@@ -91,8 +90,8 @@ public class ShoppingListActivity extends ListActivity {
     }
 
     static class myAdapter extends BaseAdapter{
-        private LayoutInflater inflater;
-        private Context context;
+        private final LayoutInflater inflater;
+        private final Context context;
 
         myAdapter(Context context){
             inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);

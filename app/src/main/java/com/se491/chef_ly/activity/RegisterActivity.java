@@ -8,7 +8,6 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -17,7 +16,7 @@ import android.widget.Toast;
 
 import com.se491.chef_ly.http.MyService;
 import com.se491.chef_ly.http.RequestMethod;
-import com.se491.chef_ly.model.User;
+
 import android.util.Log;
 import com.se491.chef_ly.R;
 import com.se491.chef_ly.model.User;
@@ -29,7 +28,7 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
 
     private final String TAG = "RegisterActivity";
 
-    private static String urlString = "https://pure-fortress-13559.herokuapp.com/user/register";
+    private static final String urlString = "https://pure-fortress-13559.herokuapp.com/user/register";
 
     private String token;
 
@@ -40,15 +39,15 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
     private String username;
     private String password;
 
-    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            try {
+            //try {
                 token = intent.getStringExtra(MyService.MY_SERVICE_RESPONSE_STRING);
                 Log.d(TAG, token);
 
                 if (token != null) {
-                    JSONObject jsonToken = new JSONObject(token);
+                    //JSONObject jsonToken = new JSONObject(token);
                     User.saveAuthentication(username, token);
 
                     // Direct user to list view
@@ -62,9 +61,9 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
                     startActivity(mainIntent);
                     finish();
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            //} catch (JSONException e) {
+            //    e.printStackTrace();
+            //}
         }
     };
 
@@ -121,8 +120,6 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
             } else {
                 Toast.makeText(getApplicationContext(), "Your passwords did not match. Please try again", Toast.LENGTH_SHORT).show();
             }
-        } else {
-            // TODO error handler......
         }
     }
 

@@ -13,7 +13,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="100dp"
         android:textColor="@color/white"
-        android:textSize="26dp"
+        android:textSize="26sp"
         android:textStyle="normal" />
 
     <LinearLayout
@@ -38,7 +38,7 @@
             android:layout_marginTop="10dp"
             android:text="@string/tap_on_mic"
             android:textColor="@color/white"
-            android:textSize="15dp"
+            android:textSize="15sp"
             android:textStyle="normal" />
     </LinearLayout>
 

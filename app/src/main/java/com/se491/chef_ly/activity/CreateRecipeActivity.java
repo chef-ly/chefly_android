@@ -208,7 +208,7 @@ public class CreateRecipeActivity extends FragmentActivity
         }
     }
     private static class MyAdapter extends FragmentPagerAdapter{
-        private List<Fragment> fragments;
+        private final List<Fragment> fragments;
         //page 1 -> FirstFragment - recipe title, image, and description
         //page 2 -> SecondFragment -time, serves, categories
         //page 3 -> ThirdFragment -ingredients

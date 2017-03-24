@@ -213,15 +213,14 @@ public class GetCookingActivity extends Activity implements View.OnClickListener
     }
 
     private void updateStepText(){
-        StringBuilder sb = new StringBuilder();
-        sb.append(getResources().getString(R.string.step));
-        sb.append(" ");
-        sb.append(String.valueOf(step+1));
-        sb.append(" ");
-        sb.append(getResources().getString(R.string.of));
-        sb.append(" ");
-        sb.append(String.valueOf(directions.length));
-        stepText.setText(sb.toString());
+        String sb = getResources().getString(R.string.step) +
+                " " +
+                String.valueOf(step + 1) +
+                " " +
+                getResources().getString(R.string.of) +
+                " " +
+                String.valueOf(directions.length);
+        stepText.setText(sb);
 
     }
 

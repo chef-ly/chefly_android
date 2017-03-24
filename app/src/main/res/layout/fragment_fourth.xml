@@ -29,6 +29,8 @@
                     android:id="@+id/step"
                     android:textSize="22sp"
                     android:textColor="@color/white"
+                    android:inputType="text"
+                    android:hint="@string/firstStep"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
@@ -40,7 +42,7 @@
                     android:layout_height="wrap_content">
                     <Button
                         android:id="@+id/newLineBtn"
-                        android:text="+"
+                        android:text="@string/plus"
                         android:padding="3dp"
                         android:textSize="30sp"
                         android:textStyle="bold"
@@ -50,14 +52,14 @@
                         android:layout_height="wrap_content" />
                     <Button
                         android:id="@+id/removeLineBtn"
-                        android:text="-"
+                        android:text="@string/minus"
                         android:padding="3dp"
                         android:textSize="30sp"
                         android:textStyle="bold"
                         android:textColor="#670401"
                         android:layout_marginStart="10dp"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"/>
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>

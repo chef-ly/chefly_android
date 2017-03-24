@@ -6,17 +6,17 @@ import android.os.Parcelable;
 
 
 public class RecipeDetail implements Parcelable{
-    private String _id;
-    private String name;
-    private String author;
-    private String description;
-    private int serves;
-    private int time;
-    private Level level;
-    private String[] categories;
-    private String image;
-    private Ingredient[] ingredients;
-    private String[] instructions;
+    private final String _id;
+    private final String name;
+    private final String author;
+    private final String description;
+    private final int serves;
+    private final int time;
+    private final Level level;
+    private final String[] categories;
+    private final String image;
+    private final Ingredient[] ingredients;
+    private final String[] instructions;
 
     // Constructor for client to create new Recipe
     public RecipeDetail(String name, String author, String description, int serves, int time, Level level, String[] categories, String image, Ingredient[] ingredients,String[] directions) {

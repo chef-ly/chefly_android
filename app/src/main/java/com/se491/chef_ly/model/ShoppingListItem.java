@@ -3,9 +3,9 @@ package com.se491.chef_ly.model;
 
 public class ShoppingListItem {
     private int id;
-    private String name;
-    private int qty;
-    private String unitOfMeasure;
+    private final String name;
+    private final int qty;
+    private final String unitOfMeasure;
     private boolean purchased;
 
     public ShoppingListItem(String name, int qty, String unitOfMeasure, boolean purchased) {

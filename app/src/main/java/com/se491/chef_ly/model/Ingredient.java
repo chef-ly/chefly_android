@@ -5,9 +5,9 @@ import android.os.Parcelable;
 
 public class Ingredient implements Parcelable{
     //private IngredientItem item;
-    private String name;
-    private String uom;
-    private double qty;
+    private final String name;
+    private final String uom;
+    private final double qty;
 
    // public Ingredient(IngredientItem item, double qty) {
         //this.item = item;
@@ -16,7 +16,7 @@ public class Ingredient implements Parcelable{
         this.uom = uom;
         this.qty = qty;
     }
-    public Ingredient(Parcel in){
+    private Ingredient(Parcel in){
         //this.item = in.readParcelable(IngredientItem.class.getClassLoader());
         this.name = in.readString();
         this.uom = in.readString();
@@ -38,14 +38,7 @@ public class Ingredient implements Parcelable{
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(name);
-        sb.append(" - ");
-        sb.append(qty);
-        sb.append(" ");
-        sb.append(uom);
-
-        return sb.toString();
+        return name + " - " + qty + " " + uom;
     }
 
     public static final Parcelable.Creator<Ingredient> CREATOR = new Parcelable.Creator<Ingredient>() {

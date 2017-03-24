@@ -131,14 +131,13 @@ public class RecipeDetailActivity extends AppCompatActivity {
         editBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TextViewClicked();
-
+                textViewClicked();
             }
         });
 
     }
 
-    public void TextViewClicked() {
+    private void textViewClicked() {
         ViewSwitcher switcher = (ViewSwitcher) findViewById(R.id.my_switcher);
         View currentView = switcher.getCurrentView();
         //switcher.showNext(); //or switcher.showPrevious();
@@ -174,7 +173,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
 
     }
 
-    public static String implode(String separator, String... data) {
+    private static String implode(String separator, String... data) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < data.length - 1; i++) {
             //data.length - 1 => to not add separator at the end
@@ -245,7 +244,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
 
 
     }
-    void setRecipeInfo(){
+    private void setRecipeInfo(){
         Context c = getApplicationContext();
         String[] directions;
         if (recipeDetail == null) {
@@ -309,7 +308,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
     }
 
     @SuppressWarnings("deprecation")
-    public static int getColor(Context context, int id) {
+    private static int getColor(Context context, int id) {
         final int version = Build.VERSION.SDK_INT;
         if (version >= 23) {
             return ContextCompat.getColor(context, id);

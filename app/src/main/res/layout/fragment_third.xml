@@ -59,6 +59,8 @@
                     android:layout_height="wrap_content">
                     <EditText
                         android:id="@+id/ingredientQty"
+                        android:inputType="numberDecimal"
+                        android:hint="@string/one"
                         android:textSize="22sp"
                         android:textColor="@color/white"
                         android:layout_weight="0.25"
@@ -66,6 +68,8 @@
                         android:layout_height="wrap_content" />
                     <EditText
                         android:id="@+id/ingredientUom"
+                        android:inputType="text"
+                        android:hint="@string/unit"
                         android:textSize="22sp"
                         android:textColor="@color/white"
                         android:layout_weight="0.25"
@@ -73,6 +77,8 @@
                         android:layout_height="wrap_content" />
                     <EditText
                         android:id="@+id/ingredientName"
+                        android:inputType="text"
+                        android:hint="@string/ingredient"
                         android:textSize="22sp"
                         android:textColor="@color/white"
                         android:layout_weight="0.5"
@@ -87,7 +93,7 @@
                     android:layout_height="wrap_content">
                     <Button
                         android:id="@+id/newLineBtn"
-                        android:text="+"
+                        android:text="@string/plus"
                         android:padding="3dp"
                         android:textSize="30sp"
                         android:textStyle="bold"
@@ -97,7 +103,7 @@
                         android:layout_height="wrap_content" />
                     <Button
                         android:id="@+id/removeLineBtn"
-                        android:text="-"
+                        android:text="@string/minus"
                         android:padding="3dp"
                         android:textSize="30sp"
                         android:textStyle="bold"

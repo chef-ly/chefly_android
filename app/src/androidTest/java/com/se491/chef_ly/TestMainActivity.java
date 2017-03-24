@@ -17,7 +17,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 @LargeTest // filter for >2s execution time
 public class TestMainActivity {
     @Rule
-    public MainActivityTestRule<MainActivity> mainActivityActivityTestRule = new MainActivityTestRule<MainActivity>(MainActivity.class);
+    public MainActivityTestRule<MainActivity> mainActivityActivityTestRule = new MainActivityTestRule<>(MainActivity.class);
 
     @Test
     public void clickSignInButton_openRecipeScreen() { //continue to recipe screen

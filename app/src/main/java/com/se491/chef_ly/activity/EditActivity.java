@@ -2,33 +2,24 @@ package com.se491.chef_ly.activity;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.se491.chef_ly.Databases.DatabaseHandler;
 import com.se491.chef_ly.R;
 import com.se491.chef_ly.activity.create_recipe_fragments.FirstFragment;
 import com.se491.chef_ly.activity.create_recipe_fragments.FourthFragment;
 import com.se491.chef_ly.activity.create_recipe_fragments.SecondFragment;
 import com.se491.chef_ly.activity.create_recipe_fragments.ThirdFragment;
-import com.se491.chef_ly.http.HttpConnection;
-import com.se491.chef_ly.http.RequestMethod;
 import com.se491.chef_ly.model.Ingredient;
 import com.se491.chef_ly.model.Level;
 import com.se491.chef_ly.model.RecipeDetail;
-import com.se491.chef_ly.utils.NetworkHelper;
-import com.se491.chef_ly.utils.RecipeDetailSerializer;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -174,7 +165,7 @@ public class EditActivity extends FragmentActivity
 //        }
 //    }
     public static class MyAdapter extends FragmentPagerAdapter{
-        private List<Fragment> fragments;
+        private final List<Fragment> fragments;
         //page 1 -> FirstFragment - recipe title, image, and description
         //page 2 -> SecondFragment -time, serves, categories
         //page 3 -> ThirdFragment -ingredients
