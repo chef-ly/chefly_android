@@ -352,7 +352,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
                 hour++;
                 time = time - 60;
             }
-            String newTime = (hour != 0)? hour + " hrs ": ""  + ((time != 0) ? time + " min" : "") ;
+            String newTime = (hour != 0)? hour + " hrs ": ""  + ((time > 0) ? time + " min" : "") ;
             holder.time.setText(String.valueOf(newTime));
             holder.level.setText(String.valueOf(r.getLevel()));
             holder.rating.setText(String.valueOf(r.getRating()));

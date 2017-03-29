@@ -12,20 +12,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.se491.chef_ly.activity.RecipeDetailActivity">
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:id="@+id/recipeName"
-            android:textSize="32sp"
-            android:textColor="@color/white"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-    </LinearLayout>
 
     <ScrollView
 
@@ -35,19 +21,115 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/recipeName"
+                android:textSize="@dimen/heading_subtitle"
+                android:textColor="@color/color_textHeading"
+                android:gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="1dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/recipeAuthor"
+                android:textSize="@dimen/text_extraSmall"
+                android:textColor="@color/color_text"
+                android:gravity="center_horizontal"
+                android:layout_marginBottom="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
             <ImageView
                 android:id="@+id/image"
                 android:contentDescription="@string/contentDescriptionRecipe"
                 android:scaleType="centerCrop"
                 android:layout_gravity="center_horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="200dp" />
+                android:layout_height="wrap_content" />
+
+            <!-- Serves Time Difficulty-->
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                android:orientation="vertical"
+                android:layout_weight="0.333"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:text="@string/recipeServings"
+                    android:textColor="@color/color_textHeading"
+                    android:textSize="@dimen/text_medium"
+                    android:gravity="center_horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:id="@+id/recipeServings"
+                    android:textColor="@color/color_text"
+                    android:textSize="@dimen/text_small"
+                    android:gravity="center_horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_weight="0.333"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:text="@string/time"
+                        android:textColor="@color/color_textHeading"
+                        android:textSize="@dimen/text_medium"
+                        android:gravity="center_horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+                    <TextView
+                        android:id="@+id/recipeTime"
+                        android:textColor="@color/color_text"
+                        android:textSize="@dimen/text_small"
+                        android:gravity="center_horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_weight="0.333"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:text="@string/level"
+                        android:textColor="@color/color_textHeading"
+                        android:textSize="@dimen/text_medium"
+                        android:gravity="center_horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+                    <TextView
+                        android:id="@+id/recipeLevel"
+                        android:textColor="@color/color_text"
+                        android:textSize="@dimen/text_small"
+                        android:gravity="center_horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Description -->
+            <TextView
+                android:id="@+id/recipeDescription"
+                android:textSize="@dimen/text_small"
+                android:textColor="@color/color_text"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <!-- Ingredients -->
             <TextView
                 android:id="@+id/ingredientTitle"
                 android:text="@string/ingredients"
-                android:textSize="28sp"
+                android:textSize="@dimen/text_large"
                 android:textStyle="bold"
-                android:textColor="@color/white"
+                android:textColor="@color/color_textHeading"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
@@ -63,7 +145,7 @@
             <Button
                 android:id="@+id/addToListBtn"
                 android:text="@string/addToGroceryList"
-                android:textColor="@color/white"
+                android:textColor="@color/color_btnText"
                 android:background="@color/btnGray"
                 android:layout_gravity="center_horizontal"
                 android:layout_margin="5dp"
@@ -71,11 +153,13 @@
                 android:paddingEnd="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
+
+            <!-- Directions -->
             <TextView
                 android:id="@+id/directionTitle"
                 android:text="@string/directions"
-                android:textSize="28sp"
-                android:textColor="@color/white"
+                android:textSize="@dimen/text_large"
+                android:textColor="@color/color_textHeading"
                 android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
@@ -87,8 +171,8 @@
                     android:id="@+id/directionView"
                     android:clickable="true"
                     android:text="@string/edit_directionView"
-                    android:textColor="@color/white"
-                    android:textSize="20sp"
+                    android:textColor="@color/color_text"
+                    android:textSize="@dimen/text_small"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
                 <EditText
@@ -103,12 +187,12 @@
 
 
 
-
+            <!-- Bottom Buttons -->
             <Button
                 android:id="@+id/getCookingBtn"
                 android:layout_weight="0.1"
                 android:text="@string/getCooking"
-                android:textColor="@color/white"
+                android:textColor="@color/color_btnText"
                 android:background="@color/btnGray"
                 android:layout_gravity="center_horizontal"
                 android:layout_margin="5dp"
@@ -126,7 +210,7 @@
                     android:id="@+id/edit"
                     android:layout_weight="0.1"
                     android:text="@string/edit"
-                    android:textColor="@color/white"
+                    android:textColor="@color/color_btnText"
                     android:background="@color/btnGray"
                     android:layout_gravity="center_horizontal"
                     android:layout_margin="5dp"
@@ -137,8 +221,8 @@
                 <Button
                     android:id="@+id/addremove"
                     android:layout_weight="0.1"
-                    android:text="@string/addremove"
-                    android:textColor="@color/white"
+                    android:text="@string/addRemove"
+                    android:textColor="@color/color_btnText"
                     android:background="@color/btnGray"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
@@ -146,7 +230,7 @@
                     android:id="@+id/backBtn"
                     android:layout_weight="0.1"
                     android:text="@string/back"
-                    android:textColor="@color/white"
+                    android:textColor="@color/color_btnText"
                     android:background="@color/btnGray"
                     android:layout_gravity="center_horizontal"
                     android:layout_margin="5dp"

@@ -10,6 +10,12 @@
     <color name="darkGray">#32323c</color>
     <color name="lightGray">#837979</color>
 
+    <color name="color_textTitle">#FFFFFF</color>
+    <color name="color_textHeading">#FFFFFF</color>
+    <color name="color_text">#FFFFFF</color>
+    <color name="color_btnText">#FFFFFF</color>
+
+
     <!-- TODO: For testing interpreter -->
     <color name="bg_gradient_start">#31244e</color>
     <color name="bg_gradient_end">#6b394c</color>

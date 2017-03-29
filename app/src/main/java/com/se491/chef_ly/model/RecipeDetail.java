@@ -4,13 +4,15 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.SerializedName;
+
 
 public class RecipeDetail implements Parcelable{
     private final String _id;
     private final String name;
     private final String author;
     private final String description;
-    private final int serves;
+    @SerializedName("feeds")  private final int serves;
     private final int time;
     private final Level level;
     private final String[] categories;
@@ -19,30 +21,58 @@ public class RecipeDetail implements Parcelable{
     private final String[] instructions;
 
     // Constructor for client to create new Recipe
-    public RecipeDetail(String name, String author, String description, int serves, int time, Level level, String[] categories, String image, Ingredient[] ingredients,String[] directions) {
+    public RecipeDetail(String name, String author, String description, int serves, int time, String level, String[] categories, String image, Ingredient[] ingredients,String[] directions) {
         this.name = name;
         this.author = author;
         this.description = description;
         this.serves = serves;
         this.time = time;
-        this.level = level;
+        String tempLevel = level.toUpperCase();
+        switch (tempLevel){
+            case "EASY":
+                this.level = Level.EASY;
+                break;
+            case "MEDIUM":
+                this.level = Level.MEDIUM;
+                break;
+            case "HARD":
+                this.level = Level.HARD;
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
+
         this.categories = categories;
         this.image = image;
         this.ingredients = ingredients;
         this.instructions = directions;
-        this._id = ""; // TODO get available id from server
+        this._id = "";
     }
     // Constructor for recpie from server
 
 
-    public RecipeDetail(String id, String name, String author, String description, int serves, int time, Level level, String[] categories, String image, Ingredient[] ingredients, String[] directions) {
+    public RecipeDetail(String id, String name, String author, String description, int serves, int time, String level, String[] categories, String image, Ingredient[] ingredients, String[] directions) {
         this._id = id;
         this.name = name;
         this.author = author;
         this.description = description;
         this.serves = serves;
         this.time = time;
-        this.level = level;
+
+        String tempLevel = level.toUpperCase();
+        switch (tempLevel){
+            case "EASY":
+                this.level = Level.EASY;
+                break;
+            case "MEDIUM":
+                this.level = Level.MEDIUM;
+                break;
+            case "HARD":
+                this.level = Level.HARD;
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
         this.categories = categories;
         this.image = image;
         this.ingredients = ingredients;

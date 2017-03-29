@@ -134,7 +134,7 @@ public class CreateRecipeActivity extends FragmentActivity
 
             } else {
 
-                result = new RecipeDetail(recipeTitle, recipeAuthor, recipeDescription, recipeServings, recipeTime, recipeLevel,
+                result = new RecipeDetail(recipeTitle, recipeAuthor, recipeDescription, recipeServings, recipeTime, recipeLevel.toString(),
                         recipeCategories, recipeImage, ingredients.toArray(new Ingredient[ingredients.size()]), directions.toArray(new String[directions.size()]));
 
                 GsonBuilder builder = new GsonBuilder();
@@ -190,7 +190,7 @@ public class CreateRecipeActivity extends FragmentActivity
                         Toast.makeText(CreateRecipeActivity.this, "There was an error processing your request, please check your recipe and try again", Toast.LENGTH_SHORT).show();
                     }else{
                         Log.d(TAG, "Response -> " + resp);
-                        RecipeDetail local = new RecipeDetail(resp, r.getName(), r.getAuthor(), r.getDescription(), r.getServes(), r.getTime(), r.getLevel(), r.getCategories(), r.getImage().toString(), r.getIngredients(), r.getDirections());
+                        RecipeDetail local = new RecipeDetail(resp, r.getName(), r.getAuthor(), r.getDescription(), r.getServes(), r.getTime(), r.getLevel().toString(), r.getCategories(), r.getImage().toString(), r.getIngredients(), r.getDirections());
                         // Save to local db
                         DatabaseHandler dbh = new DatabaseHandler(getApplicationContext());
                         dbh.createDetailedRecipe(local);

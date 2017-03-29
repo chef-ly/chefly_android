@@ -153,7 +153,7 @@ public class GetCookingActivity extends Activity implements View.OnClickListener
                             text.setText(nextStep);
                             read(nextStep);
                         } else if (step == directions.length) {
-                            String t = getResources().getString(R.string.bonappetit);
+                            String t = getResources().getString(R.string.bonAppetit);
                             text.setText(t);
                             read(t);
                             next.setText(getResources().getString(R.string.done));
@@ -171,7 +171,7 @@ public class GetCookingActivity extends Activity implements View.OnClickListener
                         if (step < directions.length) {
                             read(directions[step]);
                         } else {
-                            read(getResources().getString(R.string.bonappetit));
+                            read(getResources().getString(R.string.bonAppetit));
                         }
 
                         break;

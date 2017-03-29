@@ -96,7 +96,7 @@ public class EditActivity extends FragmentActivity
                 Toast.makeText(this, "Recipe must contain at least 1 direction", Toast.LENGTH_SHORT).show();
 
             } else {
-                result = new RecipeDetail(recipeTitle, recipeAuthor, recipeDescription, recipeServings, recipeTime, recipeLevel,
+                result = new RecipeDetail(recipeTitle, recipeAuthor, recipeDescription, recipeServings, recipeTime, recipeLevel.toString(),
                         recipeCategories, recipeImage, ingredients.toArray(new Ingredient[ingredients.size()]), directions.toArray(new String[directions.size()]));
 
 //                GsonBuilder builder = new GsonBuilder();
