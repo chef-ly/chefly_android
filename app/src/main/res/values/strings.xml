@@ -66,6 +66,29 @@
     <string name="minus">-</string>
     <string name="plus">+</string>
 
+    <string-array name="unitsOfMeasure">
+        <item>c</item>
+        <item>cup</item>
+        <item>fl oz</item>
+        <item>gram</item>
+        <item>kg</item>
+        <item>kilogram</item>
+        <item>l</item>
+        <item>lb</item>
+        <item>liter</item>
+        <item>milliliter</item>
+        <item>ml</item>
+        <item>ounce</item>
+        <item>oz</item>
+        <item>pint</item>
+        <item>pound</item>
+        <item>pt</item>
+        <item>tablespoon</item>
+        <item>tb</item>
+        <item>tbsp</item>
+        <item>teaspoon</item>
+        <item>tsp</item>
+    </string-array>
 
     <!-- TODO: For testing interpreter only -->
     <string name="action_settings_settings">Settings</string>

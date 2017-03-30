@@ -12,7 +12,8 @@ public class RecipeDetail implements Parcelable{
     private final String name;
     private final String author;
     private final String description;
-    @SerializedName("feeds")  private final int serves;
+    @SerializedName(value="serves", alternate={"feeds"})
+    private final int serves;
     private final int time;
     private final Level level;
     private final String[] categories;
@@ -86,7 +87,7 @@ public class RecipeDetail implements Parcelable{
         description = in.readString();
         serves = in.readInt();
         time = in.readInt();
-        level = Level.valueOf(in.readString());
+        level = Level.valueOf(in.readString().toUpperCase());
         categories = in.createStringArray();
         image = in.readString();
 

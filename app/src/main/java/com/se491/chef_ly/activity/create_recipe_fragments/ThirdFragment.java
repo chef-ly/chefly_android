@@ -10,6 +10,8 @@ import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -34,9 +36,10 @@ public class ThirdFragment extends Fragment {
     private String title;
     //private int pageNum;
 
-    private ArrayList<EditText[]> ingredients;
+    private ArrayList<View[]> ingredients;
     private ArrayList<LinearLayout> ingredientRows;
     private LinearLayout buttons;
+    private ArrayAdapter<String> arrayAdapter;
 
     private OnFragmentInteractionListener mListener;
 
@@ -60,6 +63,9 @@ public class ThirdFragment extends Fragment {
             title = getArguments().getString("title");
             //pageNum = getArguments().getInt("pageNum",0);
         }
+        arrayAdapter = new ArrayAdapter<String>(
+                getActivity(), android.R.layout.simple_dropdown_item_1line,
+                getResources().getStringArray(R.array.unitsOfMeasure));
 
         ingredients = new ArrayList<>();
         ingredientRows = new ArrayList<>();
@@ -77,15 +83,17 @@ public class ThirdFragment extends Fragment {
         final LinearLayout root = (LinearLayout) v.findViewById(R.id.root);
 
         EditText ingredientQty;
-        EditText ingredientUom;
+        AutoCompleteTextView ingredientUom;
         EditText ingredientName;
         Button newLineBtn;
         Button removeLineBtn;
 
         ingredientQty = (EditText) v.findViewById(R.id.ingredientQty);
-        ingredientUom = (EditText) v.findViewById(R.id.ingredientUom);
+        ingredientUom = (AutoCompleteTextView) v.findViewById(R.id.ingredientUom);
+        ingredientUom.setAdapter(arrayAdapter);
+
         ingredientName = (EditText) v.findViewById(R.id.ingredientName);
-        EditText[] temparray = new EditText[]{ingredientQty, ingredientUom, ingredientName};
+        View[] temparray = new View[]{ingredientQty, ingredientUom, ingredientName};
         ingredients.add(temparray);
 
         TextView fragTitle = (TextView) v.findViewById(R.id.fragTitle);
@@ -116,7 +124,8 @@ public class ThirdFragment extends Fragment {
                 LinearLayout ll = new LinearLayout(getActivity());
                 ll.setOrientation(LinearLayout.HORIZONTAL);
                 EditText newIngredientQty = new EditText(v.getContext());
-                EditText newIngredientUom = new EditText(v.getContext());
+                AutoCompleteTextView newIngredientUom = new AutoCompleteTextView(v.getContext());
+                newIngredientUom.setAdapter(arrayAdapter);
                 EditText newIngredientName = new EditText(v.getContext());
 
                 temp[0] = newIngredientQty;
@@ -205,8 +214,8 @@ public class ThirdFragment extends Fragment {
     public ArrayList<Ingredient> getIngredients() throws Exception{
     //TODO handle fractions ie 1/4 from user input
         ArrayList<Ingredient> result = new ArrayList<>();
-        for(EditText[] array : ingredients){
-            String qtyString = array[0].getText().toString();
+        for(View[] array : ingredients){
+            String qtyString = ((EditText)array[0]).getText().toString();
             double qty;
             if(qtyString.contains("/")){
                 String[] split = qtyString.split("/");
@@ -215,7 +224,7 @@ public class ThirdFragment extends Fragment {
             }else{
                 qty = Double.valueOf(qtyString);
             }
-            Ingredient i = new Ingredient(array[2].getText().toString(),array[1].getText().toString(), qty);
+            Ingredient i = new Ingredient(((EditText)array[2]).getText().toString(), ((AutoCompleteTextView)array[1]).getText().toString(), qty);
             result.add(i);
         }
 

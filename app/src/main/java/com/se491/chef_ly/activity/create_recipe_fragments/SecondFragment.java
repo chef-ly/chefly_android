@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -128,15 +129,26 @@ public class SecondFragment extends Fragment {
     }
 
     public String getRecipeTime(){
-        return recipeTime.getText().toString();
+        Editable temp = recipeTime.getText();
+        if(temp != null){
+            return temp.toString();
+        }else{
+            return "";
+        }
+
     }
     public Level getRecipeLevel(){  return level;}
     public String getRecipeServings(){
-        return  recipeServings.getText().toString();
+        Editable temp = recipeServings.getText();
+        if(temp != null){
+            return temp.toString();
+        }else{
+            return  "";
+        }
+
     }
     public String[] getRecipeCategories(){
         //TODO  use better regex, users may not always use ','
-
         String temp = recipeCategories.getText().toString();
         return temp.split(",");
     }

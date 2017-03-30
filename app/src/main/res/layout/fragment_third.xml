@@ -66,8 +66,9 @@
                         android:layout_weight="0.25"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content" />
-                    <EditText
+                    <AutoCompleteTextView
                         android:id="@+id/ingredientUom"
+
                         android:inputType="text"
                         android:hint="@string/unit"
                         android:textSize="22sp"

@@ -19,7 +19,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     private final String TAG = "DatabaseHandler";
     private static final String DB_FILE_NAME = "chefly.db";
-    private static final int DB_VERSION = 7;
+    private static final int DB_VERSION = 8;
 
     public DatabaseHandler(Context context) {
         super(context, DB_FILE_NAME, null, DB_VERSION);

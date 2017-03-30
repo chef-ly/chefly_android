@@ -107,12 +107,13 @@ public class CreateRecipeActivity extends FragmentActivity
         int recipeServings;
         try{
             String recipeServingsString = secondFragment.getRecipeServings();
-            if(recipeServingsString.isEmpty()){
+            if(!recipeServingsString.isEmpty()){
                 recipeServings = Integer.parseInt(recipeServingsString);
             } else{
                 recipeServings = 0;
             }
         }catch (NumberFormatException e ){
+            Log.d(TAG,"NumberFormatException - " + e.getMessage());
             recipeServings = 0;
         }
 
@@ -142,16 +143,18 @@ public class CreateRecipeActivity extends FragmentActivity
                 Gson gson = builder.create();
                 String msg = gson.toJson(result);
                 Log.d(TAG, msg);
+
                 sendToServer(msg, result);
-                //sendToLocalDB(result);
+
                 Intent recipeDetailIntent = new Intent(getApplicationContext(), RecipeDetailActivity.class);
                 recipeDetailIntent.putExtra("recipeDetail", result);
                 startActivity(recipeDetailIntent);
+                finish();
 
 
             }
         }catch (Exception e){
-            Log.d(TAG, "Exception :" + e.getMessage());
+            Log.d(TAG, "Exception :" + e.getMessage() + e.getStackTrace());
         }
     }
 
@@ -198,7 +201,7 @@ public class CreateRecipeActivity extends FragmentActivity
                         Intent returnIntent = new Intent();
                         setResult(CreateRecipeActivity.RESULT_OK,returnIntent);
                         returnIntent.putExtra("recipe", local);
-                        finish();
+
                     }
 
                 }
