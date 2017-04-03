@@ -16,8 +16,10 @@ import com.se491.chef_ly.model.User;
 import com.se491.chef_ly.utils.AlarmReceiver;
 import com.se491.chef_ly.utils.CheflyTimer;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+import static android.view.View.X;
 
+public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+    private static final String urlString = "https://pure-fortress-13559.herokuapp.com/user/register";
 
     private EditText username;
     private EditText password;
@@ -87,6 +89,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 } else {
                     boolean isAllowed = authenticate(user, pword);
                     if (isAllowed) {
+                       // curl -X POST -d "access_token=123456789" \
+                       // "http://localhost:3000/api/auth/facebook"
+
                         Intent recipeListIntent = new Intent(MainActivity.this, RecipeListActivity.class);
                         recipeListIntent.putExtra("name", user.toString());
                         startActivity(recipeListIntent);
