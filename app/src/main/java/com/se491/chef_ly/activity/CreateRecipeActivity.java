@@ -138,13 +138,16 @@ public class CreateRecipeActivity extends FragmentActivity
                 result = new RecipeDetail(recipeTitle, recipeAuthor, recipeDescription, recipeServings, recipeTime, recipeLevel.toString(),
                         recipeCategories, recipeImage, ingredients.toArray(new Ingredient[ingredients.size()]), directions.toArray(new String[directions.size()]));
 
+                //Remove call to saveToDB if lines below are uncommented, it will save the recipe twice
+                /*
                 GsonBuilder builder = new GsonBuilder();
                 builder.registerTypeAdapter(RecipeDetail.class, new RecipeDetailSerializer());
                 Gson gson = builder.create();
                 String msg = gson.toJson(result);
                 Log.d(TAG, msg);
-
                 sendToServer(msg, result);
+                */
+                saveToDB(result);
 
                 Intent recipeDetailIntent = new Intent(getApplicationContext(), RecipeDetailActivity.class);
                 recipeDetailIntent.putExtra("recipeDetail", result);
@@ -154,10 +157,21 @@ public class CreateRecipeActivity extends FragmentActivity
 
             }
         }catch (Exception e){
-            Log.d(TAG, "Exception :" + e.getMessage() + e.getStackTrace());
+            Log.d(TAG, "Exception :" + e.getMessage());
         }
     }
+    private void saveToDB(final RecipeDetail result){
+        new AsyncTask<RecipeDetail, Integer, Long>(){
+            @Override
+            protected Long doInBackground(RecipeDetail... params) {
+                DatabaseHandler dbh = new DatabaseHandler(getApplicationContext());
+                dbh.createDetailedRecipe(params[0]);
+                return null;
+            }
+        }.execute(result);
 
+    }
+    /*
     private void sendToServer(String msg, final RecipeDetail r) {
 
         if (NetworkHelper.hasNetworkAccess(CreateRecipeActivity.this)) //returns true if internet available
@@ -209,7 +223,8 @@ public class CreateRecipeActivity extends FragmentActivity
         }else{
             Log.d(TAG,"No internet connection");
         }
-    }
+    } */
+
     private static class MyAdapter extends FragmentPagerAdapter{
         private final List<Fragment> fragments;
         //page 1 -> FirstFragment - recipe title, image, and description
