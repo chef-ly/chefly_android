@@ -20,6 +20,8 @@ import com.se491.chef_ly.R;
 
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 public class GetCookingActivity extends Activity implements View.OnClickListener {
 
@@ -250,6 +252,8 @@ public class GetCookingActivity extends Activity implements View.OnClickListener
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        Pattern p = Pattern.compile("\\b(next|previous|repeat)\\b");
+
         switch (requestCode) {
             case REQ_CODE_SPEECH_INPUT: {
                 if (resultCode == RESULT_OK && null != data) {
@@ -257,7 +261,27 @@ public class GetCookingActivity extends Activity implements View.OnClickListener
                     ArrayList<String> result = data
                             .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 
-                    Toast.makeText(this, result.get(0), Toast.LENGTH_LONG).show();
+                    Matcher m = p.matcher(result.get(0));
+                    if (m.find()) {
+                        String s = m.group(1);
+                        Button btn;
+                        switch (s.trim()) {
+                            case "next":
+                                btn = (Button)findViewById(R.id.next);
+                                btn.performClick();
+                                break;
+                            case "previous":
+                                btn = (Button)findViewById(R.id.prev);
+                                btn.performClick();
+                                break;
+                            case "repeat":
+                                btn = (Button)findViewById(R.id.repeat);
+                                btn.performClick();
+                                break;
+                        }
+                    } else {
+                        Toast.makeText(this, "Sorry, I didn't understand what you meant by " + result.get(0), Toast.LENGTH_LONG).show();
+                    }
                 }
                 break;
             }
