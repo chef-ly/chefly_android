@@ -44,6 +44,9 @@ public class GetCookingActivity extends Activity implements View.OnClickListener
     private int step;
     private boolean hasDirections = false;
 
+
+    private Pattern commandRegex = Pattern.compile("\\b(next|previous|repeat)\\b");
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -252,8 +255,6 @@ public class GetCookingActivity extends Activity implements View.OnClickListener
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        Pattern p = Pattern.compile("\\b(next|previous|repeat)\\b");
-
         switch (requestCode) {
             case REQ_CODE_SPEECH_INPUT: {
                 if (resultCode == RESULT_OK && null != data) {
@@ -261,7 +262,7 @@ public class GetCookingActivity extends Activity implements View.OnClickListener
                     ArrayList<String> result = data
                             .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 
-                    Matcher m = p.matcher(result.get(0));
+                    Matcher m = commandRegex.matcher(result.get(0));
                     if (m.find()) {
                         String s = m.group(1);
                         Button btn;
