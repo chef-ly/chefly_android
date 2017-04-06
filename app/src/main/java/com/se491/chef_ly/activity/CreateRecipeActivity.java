@@ -31,6 +31,7 @@ import com.se491.chef_ly.utils.RecipeDetailSerializer;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class CreateRecipeActivity extends FragmentActivity
         implements FirstFragment.OnFragmentInteractionListener,
@@ -134,8 +135,8 @@ public class CreateRecipeActivity extends FragmentActivity
                 Toast.makeText(this, "Recipe must contain at least 1 direction", Toast.LENGTH_SHORT).show();
 
             } else {
-
-                result = new RecipeDetail(recipeTitle, recipeAuthor, recipeDescription, recipeServings, recipeTime, recipeLevel.toString(),
+                String id = UUID.randomUUID().toString();
+                result = new RecipeDetail(id, recipeTitle, recipeAuthor, recipeDescription, recipeServings, recipeTime, recipeLevel.toString(),
                         recipeCategories, recipeImage, ingredients.toArray(new Ingredient[ingredients.size()]), directions.toArray(new String[directions.size()]));
 
                 //Remove call to saveToDB if lines below are uncommented, it will save the recipe twice
