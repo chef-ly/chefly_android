@@ -19,10 +19,6 @@ import com.se491.chef_ly.http.RequestMethod;
 
 import android.util.Log;
 import com.se491.chef_ly.R;
-import com.se491.chef_ly.model.User;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class RegisterActivity extends Activity implements View.OnClickListener {
 
@@ -47,9 +43,6 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
                 Log.d(TAG, token);
 
                 if (token != null) {
-                    //JSONObject jsonToken = new JSONObject(token);
-                    User.saveAuthentication(username, token);
-
                     // Direct user to list view
                     Intent recipeListIntent = new Intent(RegisterActivity.this, RecipeListActivity.class);
                     recipeListIntent.putExtra("name", username);

@@ -40,8 +40,8 @@ import com.se491.chef_ly.R;
 import com.se491.chef_ly.activity.nav_activities.ShoppingListActivity;
 import com.se491.chef_ly.http.MyService;
 import com.se491.chef_ly.http.RequestMethod;
-import com.se491.chef_ly.model.Recipe;
-import com.se491.chef_ly.model.RecipeDetail;
+import com.se491.chef_ly.model.RecipeInformation;
+import com.se491.chef_ly.model.RecipeList;
 import com.se491.chef_ly.utils.NetworkHelper;
 
 import java.util.ArrayList;
@@ -50,28 +50,19 @@ import java.util.List;
 public class RecipeListActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener  {
 
     private ListView listview;
-    private String user;
 
     private static final String TAG = "RecipeListActivity";
-    private final int CREATE_RECIPE_CODE = 7212;
-    private static final List<Recipe> recipes = new ArrayList<>();
+    private static RecipeList recipes = null;
 
-    private static final String urlString ="https://chefly-prod.herokuapp.com/list";
+    private static final String urlString ="https://chefly-dev.herokuapp.com/list/random/10";
 
 
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-
-            ArrayList<Recipe> fromServer;
             // Get recipes from server
-            fromServer = intent.getParcelableArrayListExtra(MyService.MY_SERVICE_PAYLOAD);
-            // Only add the recipes we do not have in our list already
-            for(Recipe r : fromServer){
-                if(!recipes.contains(r)){
-                    recipes.add(r);
-                }
-            }
+            recipes = intent.getParcelableExtra(MyService.MY_SERVICE_PAYLOAD);
+
             // Notify the list view adapter that the list has changed
             ((BaseAdapter) listview.getAdapter()).notifyDataSetChanged();
 
@@ -93,7 +84,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
             @Override
             public void onItemClick(AdapterView l, View v, int position, long id) {
                 Intent intent = new Intent(c, RecipeDetailActivity.class);
-                String recipeID = ((Recipe) l.getAdapter().getItem(position)).getId();
+                Integer recipeID = ((RecipeInformation) l.getAdapter().getItem(position)).getId();
                 intent.putExtra("recipe", recipeID);
 
                 startActivity(intent);
@@ -120,7 +111,6 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
             RequestMethod requestPackage = new RequestMethod();
 
             requestPackage.setEndPoint(urlString);
-            //requestPackage.setParam("name", "Pepperoni Pizza");//filter data if i want
             requestPackage.setMethod("GET"); //  or requestPackage.setMethod("POST");
             Intent intent = new Intent(this, MyService.class);
             intent.putExtra(MyService.REQUEST_PACKAGE, requestPackage);
@@ -152,28 +142,14 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         super.onStart();
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
-        user = extras.getString("name");
 
-        // Get recipes from local db
-        DatabaseHandler db = new DatabaseHandler(getApplicationContext());
-        recipes.addAll(db.getRecipes());
         // Notify list view adapter that the list has changed
         ((BaseAdapter) listview.getAdapter()).notifyDataSetChanged();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // Check which request we're responding to
-        if (requestCode == CREATE_RECIPE_CODE) {
-            // Make sure the request was successful
-            if (resultCode == RESULT_OK) {
-                Log.d(TAG, "Result from CreateRecipe");
-                RecipeDetail temp = data.getParcelableExtra("recipe");
-                Recipe r = new Recipe(temp.getId(), temp.getName(), temp.getAuthor(),temp.getImage().toString(), 0.0, temp.getTime(), temp.getCategories(), temp.getLevel().toString());
-                recipes.add(r);
-                ((BaseAdapter) listview.getAdapter()).notifyDataSetChanged();
-            }
-        }
+
     }
 
 
@@ -257,13 +233,6 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
             case R.id.nav_profile:
                 Toast.makeText(this, "Profile", Toast.LENGTH_SHORT).show();
                 break;
-            case R.id.nav_create_recipe:
-                Toast.makeText(this, "Create RecipeDetail", Toast.LENGTH_SHORT).show();
-                Intent createRecipeIntent = new Intent(getApplicationContext(), CreateRecipeActivity.class);
-                createRecipeIntent.putExtra("user",user);
-                startActivityForResult(createRecipeIntent, CREATE_RECIPE_CODE);
-
-                break;
             case R.id.nav_import_recipe:
                 Toast.makeText(this, "Import RecipeDetail", Toast.LENGTH_SHORT).show();
                 break;
@@ -276,10 +245,6 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
                 break;
             case R.id.nav_share:
                 Toast.makeText(this, "Share", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.nav_interpreter:
-                Intent interpreter_intent = new Intent(this.getApplicationContext(), TestInterpreterActivity.class);
-                startActivity(interpreter_intent);
                 break;
             case R.id.nav_log_out:
                 Toast.makeText(this, "Log Out", Toast.LENGTH_SHORT).show();
@@ -310,12 +275,16 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         }
         @Override
         public int getCount() {
-            return recipes.size();
+            if (recipes == null) {
+                return 0;
+            } else {
+                return recipes.getRecipes().length;
+            }
         }
 
         @Override
         public Object getItem(int position) {
-            return recipes.get(position);
+            return recipes.getRecipes()[position];
         }
 
         @Override
@@ -343,10 +312,10 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
                 holder = (ViewHolder) row.getTag();
             }
 
-            Recipe r = recipes.get(position);
-            holder.name.setText(r.getName());
-            holder.author.setText(r.getAuthor());
-            int time = r.getTime();
+            RecipeInformation r = recipes.getRecipes()[position];
+            holder.name.setText(r.getTitle());
+            holder.author.setText(r.getCreditText());
+            int time = r.getReadyInMinutes();
             int hour = 0;
             while(time >= 60){
                 hour++;
@@ -354,15 +323,12 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
             }
             String newTime = (hour != 0)? hour + " hrs ": ""  + ((time > 0) ? time + " min" : "") ;
             holder.time.setText(String.valueOf(newTime));
-            holder.level.setText(String.valueOf(r.getLevel()));
-            holder.rating.setText(String.valueOf(r.getRating()));
+            holder.rating.setText(String.valueOf(r.getAggregateLikes()));
 
 
             try{
-                Uri uri=r.getImage(); //take the url
-                String image = uri.toString(); //make the url into a string
-                if(!image.isEmpty()){
-                    image = image.substring(1, image.length()-1);  //remove the quotes from uri string
+                String image = r.getImage(); //make the url into a string
+                if(!image.isEmpty()){  //remove the quotes from uri string
                     final String tag = "ListView";
                     Glide.with(context)
                             .load(image).asBitmap()

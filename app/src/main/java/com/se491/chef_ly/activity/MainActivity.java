@@ -3,7 +3,6 @@ package com.se491.chef_ly.activity;
 import android.content.Intent;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.view.View;
@@ -12,9 +11,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.se491.chef_ly.R;
-import com.se491.chef_ly.model.User;
-import com.se491.chef_ly.utils.AlarmReceiver;
-import com.se491.chef_ly.utils.CheflyTimer;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -112,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private boolean authenticate(Editable user, Editable password) {
-        return User.authenticateExisting(user.toString(), password.toString());
+        return false;
     }
 
 }

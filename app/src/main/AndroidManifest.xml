@@ -38,7 +38,6 @@
         </activity>
         <activity android:name=".activity.RecipeDetailActivity" />
         <activity android:name=".activity.GetCookingActivity" />
-        <activity android:name=".activity.EditActivity" />
         <activity
             android:name=".activity.RegisterActivity"
             android:windowSoftInputMode="stateAlwaysVisible" />
@@ -55,7 +54,5 @@
             android:exported="false" />
 
         <activity android:name=".activity.nav_activities.ShoppingListActivity" />
-        <activity android:name=".activity.CreateRecipeActivity" />
-        <activity android:name=".activity.TestInterpreterActivity" />
     </application>
 </manifest>
