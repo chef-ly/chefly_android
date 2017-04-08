@@ -6,7 +6,8 @@ import android.content.res.ColorStateList;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.provider.MediaStore;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.CompoundButtonCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -36,6 +37,7 @@ import com.se491.chef_ly.utils.NetworkHelper;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.net.URL;
 
 public class RecipeDetailActivity extends AppCompatActivity {
 
@@ -237,7 +239,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
         TextView time = (TextView) findViewById(R.id.recipeTime);
         TextView level = (TextView) findViewById(R.id.recipeLevel);
 
-        AnalyzedInstruction[] directions;
+        Step[] directions;
         if (recipeDetail == null) {
             recipeTitle.setText(R.string.recipeNotFound);
         } else {
@@ -272,20 +274,31 @@ public class RecipeDetailActivity extends AppCompatActivity {
                 time.setText(newTime);
             }
 
-            try {
-                Uri.Builder rb = new Uri.Builder();
-                rb.path(recipeDetail.getImage());
+            new AsyncTask<RequestMethod, Integer, Long>() {
+                Bitmap image = null;
+                @Override
+                protected Long doInBackground(RequestMethod... params) {
+                    try {
+                        URL url = new URL(recipeDetail.getImage());
+                        image = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+                    } catch (IOException e) {
+                        Log.d(TAG, "IOException on load image");
+                        Log.d(TAG, e.getMessage());
+                    }
+                    return 1L;
+                }
 
-                imageView.setImageBitmap(MediaStore.Images.Media.getBitmap(getContentResolver(), rb.build()));
+                @Override
+                protected void onPostExecute(Long aLong) {
+                    if (image != null) {
+                        imageView.setImageBitmap(image);
+                    }
+                }
+            }.execute();
 
-            } catch (IOException e) {
-                Log.d(TAG, "IOException on load image");
-                Log.d(TAG, e.getMessage());
-
-            }
 
             ingredients = recipeDetail.getExtendedIngredients();
-            directions = recipeDetail.getAnalyzedInstructions();
+            directions = recipeDetail.getAnalyzedInstructions()[0].getSteps();
 
             checkBoxes = new CheckBox[ingredients.length];
             int states[][] = {{android.R.attr.state_checked}, {}};
@@ -295,7 +308,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
             for (ExtendedIngredient s : ingredients) {
                 CheckBox temp = new CheckBox(c);
                 temp.setId(count);
-                temp.setText(s.toString());
+                temp.setText(s.getOriginalString());
                 temp.setTextColor(textColor);
                 temp.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                         getResources().getDimension(R.dimen.text_small));
@@ -308,8 +321,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
             directionsForCooking = new String[directions.length];
             StringBuilder sb = new StringBuilder();
             count = 1;
-            AnalyzedInstruction i = directions[0];
-            for (Step s : i.getSteps()) {
+            for (Step s : directions) {
                 sb.append(count);
                 sb.append(":  ");
                 sb.append(s.getStep());

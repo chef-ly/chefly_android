@@ -84,8 +84,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
             @Override
             public void onItemClick(AdapterView l, View v, int position, long id) {
                 Intent intent = new Intent(c, RecipeDetailActivity.class);
-                Integer recipeID = ((RecipeInformation) l.getAdapter().getItem(position)).getId();
-                intent.putExtra("recipe", recipeID);
+                intent.putExtra("recipeDetail", (RecipeInformation)l.getAdapter().getItem(position));
 
                 startActivity(intent);
             }
@@ -328,7 +327,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
 
             try{
                 String image = r.getImage(); //make the url into a string
-                if(!image.isEmpty()){  //remove the quotes from uri string
+                if(!image.isEmpty()){
                     final String tag = "ListView";
                     Glide.with(context)
                             .load(image).asBitmap()
