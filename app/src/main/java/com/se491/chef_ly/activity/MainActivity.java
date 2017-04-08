@@ -15,6 +15,8 @@ import android.widget.Toast;
 import com.auth0.android.Auth0;
 import com.auth0.android.authentication.AuthenticationAPIClient;
 import com.auth0.android.authentication.AuthenticationException;
+import com.auth0.android.callback.BaseCallback;
+import com.auth0.android.result.Credentials;
 import com.se491.chef_ly.R;
 import com.se491.chef_ly.model.User;
 import com.se491.chef_ly.utils.AlarmReceiver;
@@ -85,7 +87,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void login(String email, String password) {
         Auth0 auth0 = new Auth0("AcrZOhtTF6oQEPQAL93Eud0HuLWKQ8fb", "athina.auth0.com");
         AuthenticationAPIClient client = new AuthenticationAPIClient(auth0);
+        String connectionName = "Username-Password-Authentication";
+        client.login(email, password, connectionName)
+                .start(new BaseCallback<Credentials, AuthenticationException>() {
+                    @Override
+                    public void onSuccess(Credentials payload) {
+                        // Store credentials
+                        // Navigate to your main activity
+                        Intent recipeListIntent = new Intent(MainActivity.this, RecipeListActivity.class);
+                        recipeListIntent.putExtra("name", "aaa");
+                        startActivity(recipeListIntent);
+                    }
 
+                    @Override
+                    public void onFailure(AuthenticationException error) {
+                        // Show error to user
+
+                    }
+                });
         // proper login
     }
     @Override
@@ -95,39 +114,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
 
             case R.id.signInBtn:
+      Editable user = username.getText();
+              Editable pword = password.getText();
+               // login(email,password);
 
-                Editable user = username.getText();
-                Editable pword = password.getText();
-                if (user.length() == 0) {
-                    Toast.makeText(this, "Username cannot be blank", Toast.LENGTH_SHORT).show();
-                } else if (pword.length() == 0) {
-                    Toast.makeText(this, "Password cannot be blank", Toast.LENGTH_SHORT).show();
-                } else {
-                    boolean isAllowed = authenticate(user, pword);
-                    if (isAllowed) {
-                       // curl -X POST -d "access_token=123456789" \
-                       // "http://localhost:3000/api/auth/facebook"
-//                        String connectionName = "Username-Password-Authentication";
-//                        client.login(email, password, connectionName)
-//                                .start(new BaseCallback<Credentials, AuthenticationException>() {
-//                                    @Override
-//                                    public void onSuccess(Credentials payload) {
-//                                        // Store credentials
-//                                        // Navigate to your main activity
-//                                    }
+//                if (user.length() == 0) {
+//                    Toast.makeText(this, "Username cannot be blank", Toast.LENGTH_SHORT).show();
+//                } else if (pword.length() == 0) {
+//                    Toast.makeText(this, "Password cannot be blank", Toast.LENGTH_SHORT).show();
+//                } else {
+//                    login(user,password);
+//                    boolean isAllowed = authenticate(user, pword);
+//                    if (isAllowed) {
+//                       // curl -X POST -d "access_token=123456789" \
+//                       // "http://localhost:3000/api/auth/facebook"
 //
-//                                    @Override
-//                                    public void onFailure(AuthenticationException error) {
-//                                        // Show error to user
-//                                    }
-//                                });
-                        Intent recipeListIntent = new Intent(MainActivity.this, RecipeListActivity.class);
-                        recipeListIntent.putExtra("name", user.toString());
-                        startActivity(recipeListIntent);
-                    } else {
-                        Toast.makeText(this, "Invalid Username or password", Toast.LENGTH_SHORT).show();
-                    }
-                }
+//                        Intent recipeListIntent = new Intent(MainActivity.this, RecipeListActivity.class);
+//                        recipeListIntent.putExtra("name", user.toString());
+//                        startActivity(recipeListIntent);
+//                    } else {
+//                        Toast.makeText(this, "Invalid Username or password", Toast.LENGTH_SHORT).show();
+//                    }
+//                }
 
                 break;
             case R.id.continueAsGuest:
