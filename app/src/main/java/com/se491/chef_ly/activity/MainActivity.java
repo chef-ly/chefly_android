@@ -11,10 +11,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.auth0.android.Auth0;
+import com.auth0.android.authentication.AuthenticationAPIClient;
+import com.auth0.android.authentication.AuthenticationException;
 import com.se491.chef_ly.R;
 import com.se491.chef_ly.model.User;
 import com.se491.chef_ly.utils.AlarmReceiver;
 import com.se491.chef_ly.utils.CheflyTimer;
+
+import java.util.concurrent.locks.Lock;
 
 import static android.view.View.X;
 
@@ -54,6 +60,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         },30*1000);
         ////////////////////////////////////////////////////////////////////////////////////////////
         */
+
+//        Auth0 auth0 = new Auth0("AcrZOhtTF6oQEPQAL93Eud0HuLWKQ8fb", "athina.auth0.com");
+//        lock = Lock.newBuilder(auth0, callback)
+//                // Add parameters to the Lock Builder
+//                .build(this);
     }
 
     private void setupViews() {
@@ -71,7 +82,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         signUp.setOnClickListener(this);
 
     }
+    private void login(String email, String password) {
+        Auth0 auth0 = new Auth0("AcrZOhtTF6oQEPQAL93Eud0HuLWKQ8fb", "athina.auth0.com");
+        AuthenticationAPIClient client = new AuthenticationAPIClient(auth0);
 
+        // proper login
+    }
     @Override
     public void onClick(View v) {
 
@@ -91,7 +107,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if (isAllowed) {
                        // curl -X POST -d "access_token=123456789" \
                        // "http://localhost:3000/api/auth/facebook"
-
+//                        String connectionName = "Username-Password-Authentication";
+//                        client.login(email, password, connectionName)
+//                                .start(new BaseCallback<Credentials, AuthenticationException>() {
+//                                    @Override
+//                                    public void onSuccess(Credentials payload) {
+//                                        // Store credentials
+//                                        // Navigate to your main activity
+//                                    }
+//
+//                                    @Override
+//                                    public void onFailure(AuthenticationException error) {
+//                                        // Show error to user
+//                                    }
+//                                });
                         Intent recipeListIntent = new Intent(MainActivity.this, RecipeListActivity.class);
                         recipeListIntent.putExtra("name", user.toString());
                         startActivity(recipeListIntent);

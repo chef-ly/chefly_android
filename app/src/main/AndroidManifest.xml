@@ -19,6 +19,10 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+                <data
+                    android:host="athina.auth0.com"
+                    android:pathPrefix="/android/{YOUR_APP_PACKAGE_NAME}/callback"
+                    android:scheme="https" />
             </intent-filter>
 
             <meta-data
@@ -57,5 +61,10 @@
         <activity android:name=".activity.nav_activities.ShoppingListActivity" />
         <activity android:name=".activity.CreateRecipeActivity" />
         <activity android:name=".activity.TestInterpreterActivity" />
+
+
+
+
     </application>
+
 </manifest>
