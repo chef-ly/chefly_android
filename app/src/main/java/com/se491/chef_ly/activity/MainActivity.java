@@ -86,19 +86,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    private void login(String email, String password) {
+    private void login(String emailOrUsername, String password) {
         Log.d(TAG, "LOGIN ENTERED");
-        Auth0 auth0 = new Auth0(getString(R.string.auth0_client_id), getString(R.string.auth0_client_id));
+        Auth0 auth0 = new Auth0(getString(R.string.auth0_client_id), getString(R.string.auth0_domain));
         AuthenticationAPIClient client = new AuthenticationAPIClient(auth0);
         String connectionName = getString(R.string.auth0_databaseConnection);
-        client.login(email, password, connectionName)
+        client.login(emailOrUsername, password, connectionName)
                 .start(new BaseCallback<Credentials, AuthenticationException>() {
                     @Override
                     public void onSuccess(Credentials payload) {
                         Log.d(TAG, "LOGIN SUCCESS!");
                         // Store credentials- how do we want to do this? Store in shared preferences?
 
-                        // Navigate to your main activity
+                        // Navigate to your next activity
                         Intent recipeListIntent = new Intent(MainActivity.this, RecipeListActivity.class);
                         recipeListIntent.putExtra("name", "aaa");
                         startActivity(recipeListIntent);
