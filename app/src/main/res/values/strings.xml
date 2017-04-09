@@ -1,6 +1,6 @@
 <resources>
-    <string name="auth0_client_id">AcrZOhtTF6oQEPQAL93Eud0HuLWKQ8fb</string>
-    <string name="auth0_domain">athina.auth0.com</string>
+    <string name="auth0_client_id">zeCz4YI9I8nAHSZg2q4wnMIExGvENAu4</string>
+    <string name="auth0_domain">chefly.auth0.com</string>
     <string name="addRemove">Add Remove</string>
     <string name="addToGroceryList">Add Selected to Grocery List</string>
     <string name="app_name">Chef-ly</string>
@@ -21,6 +21,7 @@
     <string name="edit">Edit</string>
     <string name="edit_directionView">edit direction step</string>
     <string name="email">heinsd@hotmail.com</string>
+    <string name="enterUserEmail">Enter user email</string>
     <string name="finished">Finished</string>
     <string name="firstStep">First Step</string>
     <string name="getCooking">Let\'s get cooking!</string>

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -84,15 +85,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         signUp.setOnClickListener(this);
 
     }
+
     private void login(String email, String password) {
-        Auth0 auth0 = new Auth0("AcrZOhtTF6oQEPQAL93Eud0HuLWKQ8fb", "athina.auth0.com");
+        Log.d(TAG, "LOGIN ENTERED");
+        Auth0 auth0 = new Auth0(getString(R.string.auth0_client_id), getString(R.string.auth0_client_id));
         AuthenticationAPIClient client = new AuthenticationAPIClient(auth0);
         String connectionName = "Username-Password-Authentication";
         client.login(email, password, connectionName)
                 .start(new BaseCallback<Credentials, AuthenticationException>() {
                     @Override
                     public void onSuccess(Credentials payload) {
-                        // Store credentials
+                        Log.d(TAG, "LOGIN SUCCESS!");
+                        // Store credentials- how do we want to do this? Store in shared preferences?
+
                         // Navigate to your main activity
                         Intent recipeListIntent = new Intent(MainActivity.this, RecipeListActivity.class);
                         recipeListIntent.putExtra("name", "aaa");
@@ -102,40 +107,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     @Override
                     public void onFailure(AuthenticationException error) {
                         // Show error to user
-
+                        Log.d(TAG, "LOGIN FAIL");
+                        String errorMsg = "Sign in request failed";
+                        showToast(errorMsg);
                     }
                 });
         // proper login
     }
+
+    public void showToast(final String toast) {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                Toast.makeText(MainActivity.this, toast, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     @Override
     public void onClick(View v) {
-
 
         switch (v.getId()) {
 
             case R.id.signInBtn:
-      Editable user = username.getText();
-              Editable pword = password.getText();
-               // login(email,password);
+                Editable user = username.getText();
+                Editable pword = password.getText();
 
-//                if (user.length() == 0) {
-//                    Toast.makeText(this, "Username cannot be blank", Toast.LENGTH_SHORT).show();
-//                } else if (pword.length() == 0) {
-//                    Toast.makeText(this, "Password cannot be blank", Toast.LENGTH_SHORT).show();
-//                } else {
-//                    login(user,password);
-//                    boolean isAllowed = authenticate(user, pword);
-//                    if (isAllowed) {
-//                       // curl -X POST -d "access_token=123456789" \
-//                       // "http://localhost:3000/api/auth/facebook"
-//
-//                        Intent recipeListIntent = new Intent(MainActivity.this, RecipeListActivity.class);
-//                        recipeListIntent.putExtra("name", user.toString());
-//                        startActivity(recipeListIntent);
-//                    } else {
-//                        Toast.makeText(this, "Invalid Username or password", Toast.LENGTH_SHORT).show();
-//                    }
-//                }
+                if (user.length() == 0) {
+                    Toast.makeText(this, "Username cannot be blank", Toast.LENGTH_SHORT).show();
+                } else if (pword.length() == 0) {
+                    Toast.makeText(this, "Password cannot be blank", Toast.LENGTH_SHORT).show();
+                } else {
+                  login(user.toString(), pword.toString());
+                }
 
                 break;
             case R.id.continueAsGuest:
@@ -153,9 +156,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private boolean authenticate(Editable user, Editable password) {
+    /*private boolean authenticate(Editable user, Editable password) {
         return User.authenticateExisting(user.toString(), password.toString());
-    }
+    }*/
 
 }
 
