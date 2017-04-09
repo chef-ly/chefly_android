@@ -1,6 +1,7 @@
 <resources>
     <string name="auth0_client_id">zeCz4YI9I8nAHSZg2q4wnMIExGvENAu4</string>
     <string name="auth0_domain">chefly.auth0.com</string>
+    <string name="auth0_databaseConnection">Username-Password-Authentication</string>
     <string name="addRemove">Add Remove</string>
     <string name="addToGroceryList">Add Selected to Grocery List</string>
     <string name="app_name">Chef-ly</string>

@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Log.d(TAG, "LOGIN ENTERED");
         Auth0 auth0 = new Auth0(getString(R.string.auth0_client_id), getString(R.string.auth0_client_id));
         AuthenticationAPIClient client = new AuthenticationAPIClient(auth0);
-        String connectionName = "Username-Password-Authentication";
+        String connectionName = getString(R.string.auth0_databaseConnection);
         client.login(email, password, connectionName)
                 .start(new BaseCallback<Credentials, AuthenticationException>() {
                     @Override

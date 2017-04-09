@@ -34,7 +34,7 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
 
     private final String TAG = "RegisterActivity";
 
-    private static final String urlString = "https://chefly-dev.herokuapp.com/user/register";
+    private static final String urlString = "https://chefly.auth0.com/dbconnections/signup";
 
     private String token;
 
@@ -141,12 +141,10 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
 
     private void registerNewUser() throws UnirestException {
         Log.d(TAG, "Register new user entered");
-        HttpResponse<String> response = Unirest.post("https://chefly.auth0.com/dbconnections/signup")
+        /*HttpResponse<String> response = Unirest.post("")
                 .header("content-type", "application/json")
                 .body("{\"client_id\": \"zeCz4YI9I8nAHSZg2q4wnMIExGvENAu4\",\"email\": \"$('#userEmail').val()\",\"password\": \"$('#password').val()\",\"user_metadata\": {\"username\": \"$('#username').val()\"}}")
-                .asString();
-
-        Log.d(TAG,response.getStatusText().concat(" | ").concat(response.getBody()));
+                .asString();*/
 
        /* window.auth0 = new Auth0({
                 domain: 'chefly.auth0.com',
@@ -155,13 +153,17 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
                 callbackURL: 'http://chefly-dev.herokuapp.com*//*',
         });*/
 
-        //RequestMethod requestPackage = new RequestMethod();
-        //requestPackage.setEndPoint(urlString);
-        //requestPackage.setParam("username", username);
+        RequestMethod requestPackage = new RequestMethod();
+        requestPackage.setEndPoint(urlString);
+        requestPackage.setParam("client_id", getResources().getText(R.string.auth0_client_id).toString());
+        requestPackage.setParam("connection", getResources().getText(R.string.auth0_databaseConnection).toString());
+        requestPackage.setParam("email",userEmail);
+        requestPackage.setParam("password",password);
+        requestPackage.setParam("username", username);
         //requestPackage.setParam("password", password); //filter data if i want
-        //requestPackage.setMethod("POST");
+        requestPackage.setMethod("POST");
         Intent intent = new Intent(this, MyService.class);
-        //intent.putExtra(MyService.REQUEST_PACKAGE, requestPackage);
+        intent.putExtra(MyService.REQUEST_PACKAGE, requestPackage);
         startService(intent);
     }
 }
