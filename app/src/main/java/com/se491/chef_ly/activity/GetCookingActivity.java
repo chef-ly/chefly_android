@@ -133,7 +133,7 @@ public class GetCookingActivity extends Activity implements View.OnClickListener
 
 
         // -- end pocketsphinx
-        /*
+
         textToSpeech = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
@@ -143,7 +143,7 @@ public class GetCookingActivity extends Activity implements View.OnClickListener
                     // Causes nullPointerException on Nexus_5_API_22
                    // Log.d(TAG, "Quality -> " + textToSpeech.getVoice().getQuality());
                     if(directions.length > 0){
-                        read(directions[0]);
+                        //read(directions[0]);
                     }else{
                         next.setText(getResources().getString(R.string.done));
                     }
@@ -151,7 +151,7 @@ public class GetCookingActivity extends Activity implements View.OnClickListener
                 }
             }
         });
-        */
+
 
         //TODO - run recognizer after text is done being read
         runRecognizerSetup();
@@ -226,12 +226,13 @@ public class GetCookingActivity extends Activity implements View.OnClickListener
         if (text.equals(KEYPHRASE))
             switchSearch(MENU_SEARCH);
         else if (text.equals(FORWARD)) {
-            //TODO - Put call to next button function here
-            next.performClick();
+            //TODO - DONT make calls here in partial
+            Toast.makeText(this, "parital "+ text, Toast.LENGTH_LONG).show();
+            //next.performClick();
             switchSearch(KWS_SEARCH);
         }
         else if (text.equals(BACK)) {
-            // TODO - put call to back button fuction
+
             prev.performClick();
             switchSearch(KWS_SEARCH);
         }
@@ -240,6 +241,7 @@ public class GetCookingActivity extends Activity implements View.OnClickListener
             switchSearch(QUESTION_SEARCH);
         else
             //((TextView) findViewById(R.id.text)).setText(text);
+            // TODO- dont show text from here.  ONly show text from Final results
             Toast.makeText(this, "parital "+ text, Toast.LENGTH_LONG).show();
     }
 
@@ -251,7 +253,21 @@ public class GetCookingActivity extends Activity implements View.OnClickListener
         //((TextView) findViewById(R.id.text)).setText("");
         if (hypothesis != null) {
             String text = hypothesis.getHypstr();
+            //TODO - here is where you should be making calls and doing stuff, not partial
             makeText(getApplicationContext(), "full " + text, Toast.LENGTH_SHORT).show();
+
+            if (text.equals(FORWARD)) {
+                //TODO - DONT make calls here in partial
+
+                next.performClick();
+                switchSearch(KWS_SEARCH);
+            }
+            else if (text.equals(BACK)) {
+
+                prev.performClick();
+                switchSearch(KWS_SEARCH);
+            }
+
         }
     }
 
