@@ -55,8 +55,8 @@ public class HttpConnection {
 
         Request request = requestBuilder.build();
 
-        //get responce with the use of the method newCall
-        Response response = client.newCall(request).execute(); //synchornous request
+        //get response with the use of the method newCall
+        Response response = client.newCall(request).execute(); //synchronous request
         //check if the request is successful
         if (response.isSuccessful()) {
             return response.body().string();

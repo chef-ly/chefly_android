@@ -58,5 +58,15 @@
             android:exported="false" />
 
         <activity android:name=".activity.nav_activities.ShoppingListActivity" />
+<<<<<<< HEAD
+=======
+        <activity android:name=".activity.CreateRecipeActivity" />
+        <activity android:name=".activity.TestInterpreterActivity" />
+
+
+
+
+>>>>>>> master
     </application>
+
 </manifest>
