@@ -62,7 +62,7 @@ public class MyService extends IntentService {
         messageIntent.putExtra(MY_SERVICE_RESPONSE_STRING, response);
         // messageIntent.putExtra(MY_SERVICE_PAYLOAD, "Service all done!"); //pass data back, set key value and message
         if(dataItems != null){
-            messageIntent.putParcelableArrayListExtra(MY_SERVICE_PAYLOAD, dataItems.getRecipes()); //pass back the data
+            messageIntent.putExtra(MY_SERVICE_PAYLOAD, dataItems); //pass back the data
         }else{
             // unidentified sender - send empty parcel back
             messageIntent.putExtra(MY_SERVICE_PAYLOAD, new Parcelable() {

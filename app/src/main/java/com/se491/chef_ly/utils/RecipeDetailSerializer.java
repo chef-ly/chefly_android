@@ -4,29 +4,26 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import com.se491.chef_ly.model.RecipeDetail;
+import com.se491.chef_ly.model.RecipeInformation;
 
 import java.lang.reflect.Type;
 
-public class RecipeDetailSerializer implements JsonSerializer<RecipeDetail> {
+public class RecipeDetailSerializer implements JsonSerializer<RecipeInformation> {
 
     public RecipeDetailSerializer(){
         super();
     }
     @Override
-    public JsonElement serialize(RecipeDetail src, Type typeOfSrc, JsonSerializationContext context) {
+    public JsonElement serialize(RecipeInformation src, Type typeOfSrc, JsonSerializationContext context) {
         final JsonObject jsonObj = new JsonObject();
         //jsonObj.add("_id", context.serialize(src.getId()));
-        jsonObj.add("name", context.serialize(src.getName()));
-        jsonObj.add("author", context.serialize(src.getAuthor()));
-        jsonObj.add("description", context.serialize(src.getDescription()));
-        jsonObj.add("serves", context.serialize(src.getServes()));
-        jsonObj.add("time", context.serialize(src.getTime()));
-        jsonObj.add("level", context.serialize(src.getLevel().toString()));
-        jsonObj.add("categories", context.serialize(src.getCategories()));
-        jsonObj.add("image", context.serialize(src.getImage().toString()));
-        jsonObj.add("ingredients", context.serialize(src.getIngredients()));
-        jsonObj.add("instructions", context.serialize(src.getDirections()));
+        jsonObj.add("name", context.serialize(src.getTitle()));
+        jsonObj.add("author", context.serialize(src.getCreditText()));
+        jsonObj.add("serves", context.serialize(src.getServings()));
+        jsonObj.add("time", context.serialize(src.getReadyInMinutes()));
+        jsonObj.add("image", context.serialize(src.getImage()));
+        jsonObj.add("ingredients", context.serialize(src.getExtendedIngredients()));
+        jsonObj.add("instructions", context.serialize(src.getInstructions()));
 
         return jsonObj;
     }

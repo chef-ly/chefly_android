@@ -10,7 +10,6 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.MediaType;
 import org.json.JSONObject;
-import com.se491.chef_ly.model.User;
 
 //Helper class for working with a remote server
 //okhttp is better for failure recoveries
@@ -52,10 +51,6 @@ public class HttpConnection {
 
             requestBuilder.post(body);
             requestBuilder.addHeader("content-type", "application/json; charset=utf-8");
-        }
-
-        if (User.isAuthenticated()) {
-            requestBuilder.addHeader("Authorization", User.getAuthToken());
         }
 
         Request request = requestBuilder.build();

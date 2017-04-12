@@ -3,7 +3,6 @@ package com.se491.chef_ly.activity;
 import android.content.Intent;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.util.Log;
@@ -19,15 +18,13 @@ import com.auth0.android.authentication.AuthenticationException;
 import com.auth0.android.callback.BaseCallback;
 import com.auth0.android.result.Credentials;
 import com.se491.chef_ly.R;
-import com.se491.chef_ly.model.User;
-import com.se491.chef_ly.utils.AlarmReceiver;
-import com.se491.chef_ly.utils.CheflyTimer;
 
 import java.util.concurrent.locks.Lock;
 
 import static android.view.View.X;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+    private static final String urlString = "https://pure-fortress-13559.herokuapp.com/user/register";
 
     private EditText username;
     private EditText password;
@@ -62,6 +59,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         },30*1000);
         ////////////////////////////////////////////////////////////////////////////////////////////
         */
+
+//        Auth0 auth0 = new Auth0("AcrZOhtTF6oQEPQAL93Eud0HuLWKQ8fb", "athina.auth0.com");
+//        lock = Lock.newBuilder(auth0, callback)
+//                // Add parameters to the Lock Builder
+//                .build(this);
     }
 
     private void setupViews() {
@@ -125,6 +127,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.signInBtn:
                 Editable user = username.getText();
                 Editable pword = password.getText();
+
                 if (user.length() == 0) {
                     Toast.makeText(this, "Username cannot be blank", Toast.LENGTH_SHORT).show();
                 } else if (pword.length() == 0) {
@@ -149,9 +152,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+<<<<<<< HEAD
+    private boolean authenticate(Editable user, Editable password) {
+        return false;
+    }
+=======
     /*private boolean authenticate(Editable user, Editable password) {
         return User.authenticateExisting(user.toString(), password.toString());
     }*/
+>>>>>>> master
 
 }
 

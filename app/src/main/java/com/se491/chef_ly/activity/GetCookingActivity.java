@@ -30,6 +30,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import edu.cmu.pocketsphinx.Assets;
 import edu.cmu.pocketsphinx.Hypothesis;
@@ -535,7 +537,27 @@ public class GetCookingActivity extends Activity implements View.OnClickListener
                     ArrayList<String> result = data
                             .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 
-                    Toast.makeText(this, result.get(0), Toast.LENGTH_LONG).show();
+                    Matcher m = commandRegex.matcher(result.get(0));
+                    if (m.find()) {
+                        String s = m.group(1);
+                        Button btn;
+                        switch (s.trim()) {
+                            case "next":
+                                btn = (Button)findViewById(R.id.next);
+                                btn.performClick();
+                                break;
+                            case "previous":
+                                btn = (Button)findViewById(R.id.prev);
+                                btn.performClick();
+                                break;
+                            case "repeat":
+                                btn = (Button)findViewById(R.id.repeat);
+                                btn.performClick();
+                                break;
+                        }
+                    } else {
+                        Toast.makeText(this, "Sorry, I didn't understand what you meant by " + result.get(0), Toast.LENGTH_LONG).show();
+                    }
                 }
                 break;
             }

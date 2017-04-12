@@ -6,7 +6,8 @@ import android.content.res.ColorStateList;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.provider.MediaStore;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.CompoundButtonCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -31,13 +32,12 @@ import com.se491.chef_ly.Databases.DatabaseHandler;
 import com.se491.chef_ly.R;
 import com.se491.chef_ly.http.HttpConnection;
 import com.se491.chef_ly.http.RequestMethod;
-import com.se491.chef_ly.model.Ingredient;
-import com.se491.chef_ly.model.Level;
-import com.se491.chef_ly.model.RecipeDetail;
+import com.se491.chef_ly.model.*;
 import com.se491.chef_ly.utils.NetworkHelper;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.net.URL;
 
 public class RecipeDetailActivity extends AppCompatActivity {
 
@@ -48,8 +48,8 @@ public class RecipeDetailActivity extends AppCompatActivity {
     private LinearLayout ingredientGroup;
 
     private CheckBox[] checkBoxes;
-    private RecipeDetail recipeDetail;
-    private Ingredient[] ingredients;
+    private RecipeInformation recipeDetail;
+    private ExtendedIngredient[] ingredients;
     private String  recipeName;
     private Uri recipeIm;
     private String[] directionsForCooking;
@@ -63,7 +63,6 @@ public class RecipeDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_recipe_detail);
         final Context c = getApplicationContext();
         Button backBtn;
-        Button addremove;
         Button editBtn;
         Button addToListBtn;
         Button getCookingBtn;
@@ -116,21 +115,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
 
             }
         });
-        addremove = (Button) findViewById(R.id.addremove);
-        addremove.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent addRemoveIntent = new Intent(RecipeDetailActivity.this, EditActivity.class);
-                // Intent createRecipeIntent = new Intent(getApplicationContext(), CreateRecipeActivity.class);
-                // addRemoveIntent.putExtra("user",user);
-                addRemoveIntent.putExtra("title",recipeName);
-                //addRemoveIntent.putExtra("author",recipeIm);
-                addRemoveIntent.putExtra("image",recipeIm);
-                //  addRemoveIntent.putExtra("service",recipeName);
-                addRemoveIntent.putExtra("directions",steps);
-                startActivity(addRemoveIntent);
-            }
-        });
+
         editBtn = (Button) findViewById(R.id.edit);
         editBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -195,7 +180,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
         super.onStart();
         Intent intent = getIntent();
         final String recipeID = intent.getStringExtra("recipe");
-        RecipeDetail result = intent.getParcelableExtra("recipeDetail");
+        RecipeInformation result = intent.getParcelableExtra("recipeDetail");
         if (result != null) {
             recipeDetail = result;
             setRecipeInfo();
@@ -206,7 +191,6 @@ public class RecipeDetailActivity extends AppCompatActivity {
 
             requestPackage.setEndPoint(urlString + recipeID);
             requestPackage.setMethod("GET"); //  or requestPackage.setMethod("POST");
-
 
             new AsyncTask<RequestMethod, Integer, Long>() {
                 String resp = "";
@@ -221,7 +205,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
 
                             Gson gson = builder.create();
                             Type type;
-                            type = new TypeToken<RecipeDetail>() {
+                            type = new TypeToken<RecipeInformation>() {
                             }.getType();
                             recipeDetail = gson.fromJson(resp, type);
                             Log.d(TAG, recipeDetail.toString());
@@ -255,16 +239,15 @@ public class RecipeDetailActivity extends AppCompatActivity {
         TextView time = (TextView) findViewById(R.id.recipeTime);
         TextView level = (TextView) findViewById(R.id.recipeLevel);
 
-        String[] directions;
+        Step[] directions;
         if (recipeDetail == null) {
             recipeTitle.setText(R.string.recipeNotFound);
         } else {
-            recipeName=recipeDetail.getName();
+            recipeName=recipeDetail.getTitle();
             recipeTitle.setText(recipeName);
 
-            author.setText(recipeDetail.getAuthor());
-            description.setText(recipeDetail.getDescription());
-            int servings = recipeDetail.getServes();
+            author.setText(recipeDetail.getCreditText());
+            int servings = recipeDetail.getServings();
             Log.d(TAG, "Serves -> " + servings);
             if(servings <= 0){
                 serves.setText(R.string.unknown);
@@ -272,7 +255,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
                 serves.setText(String.valueOf(servings));
             }
 
-            int cookTime = recipeDetail.getTime();
+            int cookTime = recipeDetail.getReadyInMinutes();
             int hour = 0;
             while(cookTime >= 60){
                 hour++;
@@ -291,43 +274,41 @@ public class RecipeDetailActivity extends AppCompatActivity {
                 time.setText(newTime);
             }
 
+            new AsyncTask<RequestMethod, Integer, Long>() {
+                Bitmap image = null;
+                @Override
+                protected Long doInBackground(RequestMethod... params) {
+                    try {
+                        URL url = new URL(recipeDetail.getImage());
+                        image = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+                    } catch (IOException e) {
+                        Log.d(TAG, "IOException on load image");
+                        Log.d(TAG, e.getMessage());
+                    }
+                    return 1L;
+                }
 
-            Level l = recipeDetail.getLevel();
-            if(l == null){
-                level.setText(R.string.unknown);
-            }else{
-                level.setText(l.toString());
-            }
+                @Override
+                protected void onPostExecute(Long aLong) {
+                    if (image != null) {
+                        imageView.setImageBitmap(image);
+                    }
+                }
+            }.execute();
 
 
-            try {
-                recipeIm=recipeDetail.getImage();
-                imageView.setImageBitmap(MediaStore.Images.Media.getBitmap(getContentResolver(),recipeIm));
-
-            } catch (IOException e) {
-                Log.d(TAG, "IOException on load image");
-                Log.d(TAG, e.getMessage());
-
-            }
-
-            ingredients = recipeDetail.getIngredients();
-            directions = recipeDetail.getDirections();
-            if (ingredients == null) {
-                ingredients = new Ingredient[0];
-            }
-            if (directions == null) {
-                directions = new String[0];
-            }
+            ingredients = recipeDetail.getExtendedIngredients();
+            directions = recipeDetail.getAnalyzedInstructions()[0].getSteps();
 
             checkBoxes = new CheckBox[ingredients.length];
             int states[][] = {{android.R.attr.state_checked}, {}};
             int textColor = getColor(c, R.color.color_text);
             int colors[] = {textColor, textColor};
             int count = 0;
-            for (Ingredient s : ingredients) {
+            for (ExtendedIngredient s : ingredients) {
                 CheckBox temp = new CheckBox(c);
                 temp.setId(count);
-                temp.setText(s.toString());
+                temp.setText(s.getOriginalString());
                 temp.setTextColor(textColor);
                 temp.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                         getResources().getDimension(R.dimen.text_small));
@@ -340,13 +321,13 @@ public class RecipeDetailActivity extends AppCompatActivity {
             directionsForCooking = new String[directions.length];
             StringBuilder sb = new StringBuilder();
             count = 1;
-            for (String s : directions) {
+            for (Step s : directions) {
                 sb.append(count);
                 sb.append(":  ");
-                sb.append(s);
+                sb.append(s.getStep());
                 sb.append("\n");
 
-                directionsForCooking[count - 1] = s;
+                directionsForCooking[count - 1] = s.getStep();
                 count++;
             }
             steps = sb.toString();

@@ -8,9 +8,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.se491.chef_ly.model.ExtendedIngredient;
 import com.se491.chef_ly.model.Ingredient;
-import com.se491.chef_ly.model.Recipe;
-import com.se491.chef_ly.model.RecipeDetail;
+import com.se491.chef_ly.model.RecipeInformation;
 import com.se491.chef_ly.model.ShoppingListItem;
 
 import java.util.ArrayList;
@@ -40,33 +40,29 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public void createDetailedRecipe(RecipeDetail recipe){
+    public void createDetailedRecipe(RecipeInformation recipe){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_ID, recipe.getId());
-        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_NAME, recipe.getName());
-        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_AUTHOR, recipe.getAuthor());
-        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_SERVES, recipe.getServes());
-        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_TIME, recipe.getTime());
+        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_NAME, recipe.getTitle());
+        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_AUTHOR, recipe.getCreditText());
+        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_SERVES, recipe.getServings());
+        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_TIME, recipe.getReadyInMinutes());
         Gson gson = new Gson();
-        String json = gson.toJson(recipe.getCategories());
-        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_CATEGORIES, json);
-        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_DESCRIPTION, recipe.getDescription());
         values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_IMAGE, recipe.getImage().toString());
-        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_LEVEL, recipe.getLevel().toString());
-        json = gson.toJson(recipe.getDirections());
+        String json = gson.toJson(recipe.getInstructions());
         values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_DIRECTIONS, json);
-        json = gson.toJson(recipe.getIngredients());
+        json = gson.toJson(recipe.getExtendedIngredients());
         values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_INGREDIENTS, json);
 
         db.insert(RecipeDetailTable.RECIPE_DETAIL_TABLE_ITEMS, "", values);
         db.close();
 
     }
-    public ArrayList<Recipe> getRecipes(){
+    public ArrayList<RecipeInformation> getRecipes(){
         SQLiteDatabase db = this.getWritableDatabase();
-        ArrayList<Recipe> list = new ArrayList<>();
+        ArrayList<RecipeInformation> list = new ArrayList<>();
         String[] columns = {RecipeDetailTable.COLUMN_RECIPE_DETAIL_ID, RecipeDetailTable.COLUMN_RECIPE_DETAIL_NAME,RecipeDetailTable.COLUMN_RECIPE_DETAIL_AUTHOR,
                 RecipeDetailTable.COLUMN_RECIPE_DETAIL_CATEGORIES,RecipeDetailTable.COLUMN_RECIPE_DETAIL_LEVEL, RecipeDetailTable.COLUMN_RECIPE_DETAIL_TIME,
                 RecipeDetailTable.COLUMN_RECIPE_DETAIL_RATING,RecipeDetailTable.COLUMN_RECIPE_DETAIL_IMAGE };
@@ -85,7 +81,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
                 Gson gson = new Gson();
                 String[] categories = gson.fromJson(cats, String[].class);
-                list.add(new Recipe(id,name,author,image, rating, time, categories, level));
+                //list.add(new RecipeInformation(id,name,author,image, rating, time, categories, level));
 
             } while (cursor.moveToNext());
 
@@ -127,13 +123,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
 
-    public void addItemToShoppingList(Ingredient i, boolean purchased){
+    public void addItemToShoppingList(ExtendedIngredient i, boolean purchased){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         values.put(ShoppingList.COLUMN_NAME, i.getName());
-        values.put(ShoppingList.COLUMN_QUANTITY, i.getQty());
-        values.put(ShoppingList.COLUMN_UNIT, i.getUom());
+        values.put(ShoppingList.COLUMN_QUANTITY, i.getAmount());
+        values.put(ShoppingList.COLUMN_UNIT, i.getUnit());
         values.put(ShoppingList.COLUMN_PURCHASED, purchased);
 
         db.insert(ShoppingList.TABLE_LIST_ITEMS, null, values);
@@ -151,23 +147,19 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void recipeUpdate(RecipeDetail recipe){
+    public void recipeUpdate(RecipeInformation recipe){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_ID, recipe.getId());
-        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_NAME, recipe.getName());
-        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_AUTHOR, recipe.getAuthor());
-        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_SERVES, recipe.getServes());
-        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_TIME, recipe.getTime());
+        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_NAME, recipe.getTitle());
+        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_AUTHOR, recipe.getCreditText());
+        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_SERVES, recipe.getServings());
+        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_TIME, recipe.getReadyInMinutes());
         Gson gson = new Gson();
-        String json = gson.toJson(recipe.getCategories());
-        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_CATEGORIES, json);
-        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_DESCRIPTION, recipe.getDescription());
-        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_IMAGE, recipe.getImage().toString());
-        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_LEVEL, recipe.getLevel().toString());
-        json = gson.toJson(recipe.getDirections());
+        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_IMAGE, recipe.getImage());
+        String json = gson.toJson(recipe.getInstructions());
         values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_DIRECTIONS, json);
-        json = gson.toJson(recipe.getIngredients());
+        json = gson.toJson(recipe.getExtendedIngredients());
         values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_INGREDIENTS, json);
 
         db.update(RecipeDetailTable.RECIPE_DETAIL_TABLE_ITEMS, values,RecipeDetailTable.COLUMN_RECIPE_DETAIL_ID + " = " + recipe.getId(), null);
