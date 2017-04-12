@@ -66,6 +66,11 @@
     <string name="userImage">User Image</string>
     <string name="username">Username</string>
     <string name="x">X</string>
+    <string name="kws_caption">Say HEY CHEF to get cheflys attention</string>
+    <string name="menu_caption">Say Forward, Back or Question to Chefly</string>
+    <string name="forward_caption">Going to next step</string>
+    <string name="back_caption">Going back to previous</string>
+    <string name="question_caption">Ask chefly a question about what to do next</string>
 
     <string name="minus">-</string>
     <string name="plus">+</string>
