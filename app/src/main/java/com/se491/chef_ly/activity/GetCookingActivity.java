@@ -11,9 +11,11 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.speech.tts.TextToSpeech;
 import android.speech.RecognizerIntent;
+import android.speech.tts.UtteranceProgressListener;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -26,6 +28,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 import edu.cmu.pocketsphinx.Assets;
@@ -143,7 +146,8 @@ public class GetCookingActivity extends Activity implements View.OnClickListener
                     // Causes nullPointerException on Nexus_5_API_22
                    // Log.d(TAG, "Quality -> " + textToSpeech.getVoice().getQuality());
                     if(directions.length > 0){
-                        //read(directions[0]);
+                        read(directions[0]);
+
                     }else{
                         next.setText(getResources().getString(R.string.done));
                     }
@@ -154,7 +158,7 @@ public class GetCookingActivity extends Activity implements View.OnClickListener
 
 
         //TODO - run recognizer after text is done being read
-        runRecognizerSetup();
+        //runRecognizerSetup();
     }
 
     // --- PocketSphinx functions
@@ -180,6 +184,7 @@ public class GetCookingActivity extends Activity implements View.OnClickListener
                     ((TextView) findViewById(R.id.text))
                             .setText("Failed to init recognizer " + result);
                 } else {
+                    //TODO - move to the listener for textToSpeech to be done
                     switchSearch(KWS_SEARCH);
                 }
             }
@@ -298,6 +303,10 @@ public class GetCookingActivity extends Activity implements View.OnClickListener
         Toast.makeText(this, caption, Toast.LENGTH_LONG).show();
     }
 
+    public void initSwitchSearch(){
+        switchSearch(KWS_SEARCH);
+    }
+
     private void setupRecognizer(File assetsDir) throws IOException {
         // The recognizer can be configured to perform multiple searches
         // of different kind and switch between them
@@ -348,6 +357,7 @@ public class GetCookingActivity extends Activity implements View.OnClickListener
 
 
     // -- END POCKETSPHINX FUNCTIONS
+
 
     @Override
     protected void onStart() {
@@ -442,18 +452,33 @@ public class GetCookingActivity extends Activity implements View.OnClickListener
     }
     @TargetApi(21)
     @SuppressWarnings("deprecation")
-    private void read(String s){
+    private void read(String s) {
         //Toast.makeText(this, s, Toast.LENGTH_SHORT).show();
         final int version = Build.VERSION.SDK_INT;
         if (version >= 21) {
-            textToSpeech.speak(s,TextToSpeech.QUEUE_FLUSH, null, "1");
+            textToSpeech.speak(s, TextToSpeech.QUEUE_FLUSH, null, "1");
         } else {
-            textToSpeech.speak(s,TextToSpeech.QUEUE_FLUSH, null);
+            textToSpeech.speak(s, TextToSpeech.QUEUE_FLUSH, null);
         }
+        //create new listener and add recognizer to it
+        ttsUtteranceListener speechListener = new ttsUtteranceListener();
+//        speechListener.addRecognizer(recognizer);
+
+        int isDone = textToSpeech.setOnUtteranceProgressListener(speechListener);
 
 
-
+        while (isDone == 0) {
+            Log.e("DEBUG", "The code for isDone is: " + isDone);
+            Log.e("DEBUG", "Sleeping 1");
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException exept) {
+                Log.e("DEBUG", "Shit fucked up");
+            }
+            isDone = textToSpeech.setOnUtteranceProgressListener(speechListener);
+        }
     }
+
     @TargetApi(23)
     @SuppressWarnings("deprecation")
     private static int getColor(Context context, int id) {
@@ -517,4 +542,36 @@ public class GetCookingActivity extends Activity implements View.OnClickListener
 
         }
     }
+    class ttsUtteranceListener extends UtteranceProgressListener {
+
+//        private List<SpeechRecognizer> recognizers;
+//
+//        public void addRecognizer(SpeechRecognizer rec1){
+//            recognizers.add(rec1);
+//        }
+
+        @Override
+        public void onDone(String ID){
+            Log.e("DEBUG", "The TTS is done speaking "+ ID);
+            //TODO - figure out how to call something that will start the recognizer there.
+//            initSwitchSearch();
+//            for (SpeechRecognizer recognizer : recognizers) {
+//                recognizer.startListening("wakeup");
+//            }
+
+        }
+
+        @Override
+        public void onError(String ID){
+
+        }
+
+        @Override
+        public void onStart(String ID) {
+            //recognizer.stop();
+            Log.e("DEBUG", "The TTS is starting to speak!");
+
+        }
+    }
 }
+
