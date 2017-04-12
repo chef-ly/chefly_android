@@ -14,6 +14,11 @@ import android.widget.TextView;
 import android.text.InputType;
 import android.widget.Toast;
 
+import com.auth0.android.Auth0;
+import com.auth0.android.authentication.AuthenticationAPIClient;
+import com.auth0.android.authentication.AuthenticationException;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import com.se491.chef_ly.http.MyService;
 import com.se491.chef_ly.http.RequestMethod;
 
@@ -23,12 +28,13 @@ import com.se491.chef_ly.model.User;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import com.mashape.unirest.http.HttpResponse;
 
 public class RegisterActivity extends Activity implements View.OnClickListener {
 
     private final String TAG = "RegisterActivity";
 
-    private static final String urlString = "https://pure-fortress-13559.herokuapp.com/user/register";
+    private static final String urlString = "https://chefly.auth0.com/dbconnections/signup";
 
     private String token;
 
@@ -36,6 +42,7 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
     private TextView instruction;
     private EditText input;
 
+    private String userEmail;
     private String username;
     private String password;
 
@@ -85,7 +92,11 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
     public void onClick(View view) {
         switch(view.getId()){
             case R.id.registerButton:
-                handleRegisterButtonClick();
+                try {
+                    handleRegisterButtonClick();
+                } catch (UnirestException e) {
+                    e.printStackTrace();
+                }
                 break;
             default:
                 // TODO error handler?
@@ -100,14 +111,19 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
                 .unregisterReceiver(mBroadcastReceiver);
     }
 
-    private void handleRegisterButtonClick() {
+    private void handleRegisterButtonClick() throws UnirestException {
         CharSequence currentInstruction = instruction.getText();
 
-        if (currentInstruction.equals(getResources().getText(R.string.chooseUsername))) {
-            username = input.getText().toString(); //save username
-            instruction.setText(R.string.createPassword); // update instruction
+        if (currentInstruction.equals(getResources().getText(R.string.enterUserEmail))) {
+            userEmail = input.getText().toString(); //save user email
+            instruction.setText(R.string.chooseUsername); // update instruction
             input.setText(""); // clear input
             input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD); // hide password
+        } else if (currentInstruction.equals(getResources().getText(R.string.chooseUsername))) {
+            username = input.getText().toString();
+            instruction.setText(R.string.createPassword);
+            input.setText("");
+            nextButton.setText(R.string.next);
         } else if (currentInstruction.equals(getResources().getText(R.string.createPassword))) {
             password = input.getText().toString();
             instruction.setText(R.string.createPasswordAgain); // update instruction
@@ -123,12 +139,28 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    private void registerNewUser() {
-        RequestMethod requestPackage = new RequestMethod();
+    private void registerNewUser() throws UnirestException {
+        Log.d(TAG, "Register new user entered");
+        /*HttpResponse<String> response = Unirest.post("")
+                .header("content-type", "application/json")
+                .body("{\"client_id\": \"zeCz4YI9I8nAHSZg2q4wnMIExGvENAu4\",\"email\": \"$('#userEmail').val()\",\"password\": \"$('#password').val()\",\"user_metadata\": {\"username\": \"$('#username').val()\"}}")
+                .asString();*/
 
+       /* window.auth0 = new Auth0({
+                domain: 'chefly.auth0.com',
+                clientID: 'zeCz4YI9I8nAHSZg2q4wnMIExGvENAu4',
+                // Callback made to your server's callback endpoint
+                callbackURL: 'http://chefly-dev.herokuapp.com*//*',
+        });*/
+
+        RequestMethod requestPackage = new RequestMethod();
         requestPackage.setEndPoint(urlString);
+        requestPackage.setParam("client_id", getResources().getText(R.string.auth0_client_id).toString());
+        requestPackage.setParam("connection", getResources().getText(R.string.auth0_databaseConnection).toString());
+        requestPackage.setParam("email",userEmail);
+        requestPackage.setParam("password",password);
         requestPackage.setParam("username", username);
-        requestPackage.setParam("password", password); //filter data if i want
+        //requestPackage.setParam("password", password); //filter data if i want
         requestPackage.setMethod("POST");
         Intent intent = new Intent(this, MyService.class);
         intent.putExtra(MyService.REQUEST_PACKAGE, requestPackage);

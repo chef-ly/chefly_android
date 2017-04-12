@@ -28,7 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/registerTitle"
-        android:text="@string/chooseUsername"
+        android:text="@string/enterUserEmail"
         android:layout_marginTop="50dp"
         android:textSize="20sp"
         android:textColor="@color/white"
