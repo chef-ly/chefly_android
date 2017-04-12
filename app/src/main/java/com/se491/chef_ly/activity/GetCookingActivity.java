@@ -467,16 +467,16 @@ public class GetCookingActivity extends Activity implements View.OnClickListener
         int isDone = textToSpeech.setOnUtteranceProgressListener(speechListener);
 
 
-        while (isDone == 0) {
-            Log.e("DEBUG", "The code for isDone is: " + isDone);
-            Log.e("DEBUG", "Sleeping 1");
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException exept) {
-                Log.e("DEBUG", "Shit fucked up");
-            }
-            isDone = textToSpeech.setOnUtteranceProgressListener(speechListener);
-        }
+//        while (isDone == 0) {
+//            Log.e("DEBUG", "The code for isDone is: " + isDone);
+//            Log.e("DEBUG", "Sleeping 1");
+//            try {
+//                Thread.sleep(1000);
+//            } catch (InterruptedException exept) {
+//                Log.e("DEBUG", "Shit fucked up");
+//            }
+//            isDone = textToSpeech.setOnUtteranceProgressListener(speechListener);
+//        }
     }
 
     @TargetApi(23)
