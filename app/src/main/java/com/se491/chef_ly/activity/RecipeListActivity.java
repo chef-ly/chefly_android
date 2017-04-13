@@ -5,35 +5,29 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestListener;
 
 import com.se491.chef_ly.Databases.DatabaseHandler;
 import com.se491.chef_ly.R;
@@ -45,13 +39,19 @@ import com.se491.chef_ly.model.RecipeList;
 import com.se491.chef_ly.utils.NetworkHelper;
 
 import java.util.ArrayList;
-import java.util.List;
 
-public class RecipeListActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener  {
-
-    private ListView listview;
+public class RecipeListActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
+                                                                        ListViewFragment.OnFragmentInteractionListener{
 
     private static final String TAG = "RecipeListActivity";
+    private final int CREATE_RECIPE_CODE = 7212;
+    private static ArrayList<Recipe> favoriteRecipes = new ArrayList<>();
+    private static ArrayList<Recipe> serverRecipes = new ArrayList<>();
+    private ListViewFragment favs;
+    private ListViewFragment server;
+    private ViewPager pager;
+    private TextView favoritesHeader;
+    private TextView recipesHeader;
     private static RecipeList recipes = null;
 
     private static final String urlString ="https://chefly-dev.herokuapp.com/list/random/10";
@@ -60,11 +60,20 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+
+            ArrayList<Recipe> fromServer;
             // Get recipes from server
             recipes = intent.getParcelableExtra(MyService.MY_SERVICE_PAYLOAD);
 
+            fromServer = intent.getParcelableArrayListExtra(MyService.MY_SERVICE_PAYLOAD);
+            // Only add the recipes we do not have in our list already
+            for(Recipe r : fromServer){
+                if(!serverRecipes.contains(r)){
+                    serverRecipes.add(r);
+                }
+            }
             // Notify the list view adapter that the list has changed
-            ((BaseAdapter) listview.getAdapter()).notifyDataSetChanged();
+            server.updateListAdapter(serverRecipes);
 
         }
 
@@ -74,26 +83,62 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_list);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-        listview = (ListView) findViewById(R.id.list);
 
-        final Context c = this;
-        listview.setAdapter(new RecipeAdapter(listview.getContext()));
+        // PageViewer
+        pager = (ViewPager) findViewById(R.id.viewpager);
+        favs = ListViewFragment.newInstance("Favorites", "1");
 
-        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        server = ListViewFragment.newInstance("Recipes", "2");
+
+        ListViewFragment[] frags = {server,favs};
+        pager.setAdapter(new RecipeListPagerAdapter(getSupportFragmentManager(), frags));
+
+        pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                if(position == 1){
+                    favoritesHeader.setPaintFlags(favoritesHeader.getPaintFlags()| Paint.UNDERLINE_TEXT_FLAG);
+                    recipesHeader.setPaintFlags(0);
+                }else{
+                    recipesHeader.setPaintFlags(recipesHeader.getPaintFlags()| Paint.UNDERLINE_TEXT_FLAG);
+                    favoritesHeader.setPaintFlags(0);
+                }
+            }
+            @Override
+            public void onPageSelected(int position) { }
 
             @Override
-            public void onItemClick(AdapterView l, View v, int position, long id) {
-                Intent intent = new Intent(c, RecipeDetailActivity.class);
-                intent.putExtra("recipeDetail", (RecipeInformation)l.getAdapter().getItem(position));
-
-                startActivity(intent);
-            }
+            public void onPageScrollStateChanged(int state) {}
         });
 
+        // Header links
+        favoritesHeader = (TextView) findViewById(R.id.favortiesHeader);
+        recipesHeader = (TextView) findViewById(R.id.recipesHeader);
 
+        View.OnClickListener headerListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(v.getId() == favoritesHeader.getId()){
+                    favoritesHeader.setPaintFlags(favoritesHeader.getPaintFlags()| Paint.UNDERLINE_TEXT_FLAG);
+                    recipesHeader.setPaintFlags(0);
+                    //TODO change page to favs
+                    pager.setCurrentItem(1);
+                }else{
+                    recipesHeader.setPaintFlags(recipesHeader.getPaintFlags()| Paint.UNDERLINE_TEXT_FLAG);
+                    favoritesHeader.setPaintFlags(0);
+                    //TODO change page to recipes
+                    pager.setCurrentItem(0);
+                }
+            }
+        };
+        favoritesHeader.setOnClickListener(headerListener);
+        recipesHeader.setOnClickListener(headerListener);
+
+        //Tool/Appbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // Navigation Drawer
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -103,6 +148,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        // Get recipes from server
         if(NetworkHelper.hasNetworkAccess(RecipeListActivity.this)) //returns true if internet available
         {
             //Toast.makeText(RecipeListActivity.this,"Internet Connection",Toast.LENGTH_LONG).show();
@@ -110,6 +156,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
             RequestMethod requestPackage = new RequestMethod();
 
             requestPackage.setEndPoint(urlString);
+            //requestPackage.setParam("name", "Pepperoni Pizza");//filter data if i want
             requestPackage.setMethod("GET"); //  or requestPackage.setMethod("POST");
             Intent intent = new Intent(this, MyService.class);
             intent.putExtra(MyService.REQUEST_PACKAGE, requestPackage);
@@ -141,14 +188,33 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         super.onStart();
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
+        String user = extras.getString("name");
 
+        // Get recipes from local db
+        DatabaseHandler db = new DatabaseHandler(getApplicationContext());
+        favoriteRecipes.addAll(db.getRecipes());
         // Notify list view adapter that the list has changed
-        ((BaseAdapter) listview.getAdapter()).notifyDataSetChanged();
+        favs.updateListAdapter(favoriteRecipes);
+
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
+        // Check which request we're responding to
+        if (requestCode == CREATE_RECIPE_CODE) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                Log.d(TAG, "Result from CreateRecipe");
+                RecipeDetail temp = data.getParcelableExtra("recipe");
+                Recipe r = new Recipe(temp.getId(), temp.getName(), temp.getAuthor(),temp.getImage().toString(), 0.0, temp.getTime(), temp.getCategories(), temp.getLevel().toString());
+                favoriteRecipes.add(r);
+                favs.updateListAdapter(favoriteRecipes);
+            }
+        }
     }
 
 
@@ -167,6 +233,10 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         }
     }
 
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
     //For navigation drawer
     @Override
     public void onBackPressed() {
@@ -232,22 +302,36 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
             case R.id.nav_profile:
                 Toast.makeText(this, "Profile", Toast.LENGTH_SHORT).show();
                 break;
+            case R.id.nav_interpreter:
+                Intent interpreter_intent = new Intent(this.getApplicationContext(), TestInterpreterActivity.class);
+                startActivity(interpreter_intent);
+                break;
+            case R.id.nav_shopping_list:
+                Intent intent = new Intent(this.getApplicationContext(), ShoppingListActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.nav_log_out:
+                Toast.makeText(this, "Log Out", Toast.LENGTH_SHORT).show();
+                break;
+            /*
+            case R.id.nav_create_recipe:
+                Toast.makeText(this, "Create RecipeDetail", Toast.LENGTH_SHORT).show();
+                Intent createRecipeIntent = new Intent(getApplicationContext(), CreateRecipeActivity.class);
+                createRecipeIntent.putExtra("user",user);
+                startActivityForResult(createRecipeIntent, CREATE_RECIPE_CODE);
+
+                break;
             case R.id.nav_import_recipe:
                 Toast.makeText(this, "Import RecipeDetail", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_settings:
                 Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show();
                 break;
-            case R.id.nav_shopping_list:
-                Intent intent = new Intent(this.getApplicationContext(), ShoppingListActivity.class);
-                startActivity(intent);
-                break;
             case R.id.nav_share:
                 Toast.makeText(this, "Share", Toast.LENGTH_SHORT).show();
                 break;
-            case R.id.nav_log_out:
-                Toast.makeText(this, "Log Out", Toast.LENGTH_SHORT).show();
-                break;
+             */
+
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -256,107 +340,32 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
     }
 
 
-    static private class RecipeAdapter extends BaseAdapter{
-        private final Context context;
-        private final LayoutInflater inflater;
-        static class ViewHolder{
-            ImageView icon;
-            TextView name;
-            TextView author;
-            TextView time;
-            TextView level;
-            TextView rating;
+
+    private class RecipeListPagerAdapter extends FragmentPagerAdapter {
+        private ListViewFragment[] pages;
+
+        RecipeListPagerAdapter(FragmentManager m, ListViewFragment[] p){
+            super(m);
+            pages = p;
         }
 
-        RecipeAdapter(Context context){
-            this.context = context;
-            inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        }
         @Override
         public int getCount() {
-            if (recipes == null) {
-                return 0;
-            } else {
-                return recipes.getRecipes().length;
-            }
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return recipes.getRecipes()[position];
+            return pages.length;
         }
 
         @Override
         public long getItemId(int position) {
-            return position;
+            return super.getItemId(position);
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View row = convertView;
-            final ViewHolder holder;
-            if(convertView == null){
-                row = inflater.inflate(R.layout.recipe_list_item, parent, false);
-                holder = new ViewHolder();
-                holder.icon = (ImageView) row.findViewById(R.id.image);
-                holder.name = (TextView) row.findViewById(R.id.recipeName);
-                holder.author = (TextView) row.findViewById(R.id.recipeAuthor);
-                holder.time = (TextView) row.findViewById(R.id.recipeTime);
-                holder.level = (TextView) row.findViewById(R.id.recipeLevel);
-                holder.rating = (TextView) row.findViewById(R.id.recipeRating);
-
-
-                row.setTag(holder);
-            }else{
-                holder = (ViewHolder) row.getTag();
-            }
-
-            RecipeInformation r = recipes.getRecipes()[position];
-            holder.name.setText(r.getTitle());
-            holder.author.setText(r.getCreditText());
-            int time = r.getReadyInMinutes();
-            int hour = 0;
-            while(time >= 60){
-                hour++;
-                time = time - 60;
-            }
-            String newTime = (hour != 0)? hour + " hrs ": ""  + ((time > 0) ? time + " min" : "") ;
-            holder.time.setText(String.valueOf(newTime));
-            holder.rating.setText(String.valueOf(r.getAggregateLikes()));
-
-
-            try{
-                String image = r.getImage(); //make the url into a string
-                if(!image.isEmpty()){
-                    final String tag = "ListView";
-                    Glide.with(context)
-                            .load(image).asBitmap()
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .dontAnimate()
-                            .listener(new RequestListener<String, Bitmap>() {
-                                @Override
-                                public boolean onException(Exception e, String model, com.bumptech.glide.request.target.Target<Bitmap> target, boolean isFirstResource) {
-                                    Log.d(tag, e.getMessage());
-                                    return false;
-                                }
-
-                                @Override
-                                public boolean onResourceReady(Bitmap resource, String model, com.bumptech.glide.request.target.Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                                    Log.d(tag, "Image resource ready");
-                                    return false;
-                                }
-                            })
-                            .error(R.drawable.noimageavailable)
-                            .into(holder.icon);
-                }else{
-                    holder.icon.setImageResource(R.drawable.noimageavailable);
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return row;
+        public Fragment getItem(int position) {
+            return pages[position];
+        }
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return pages[position].getTitle();
         }
     }
-
 }

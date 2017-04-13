@@ -7,6 +7,20 @@
             android:icon="@drawable/batman"
             android:title="Profile" />
         <item
+            android:id="@+id/nav_interpreter"
+            android:icon="@drawable/batman"
+            android:title="Interpreter Test" />
+        <item
+            android:id="@+id/nav_shopping_list"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="Shopping List" />
+        <item
+            android:id="@+id/nav_log_out"
+            android:icon="@drawable/logout"
+            android:title="Log Out" />
+
+        <!--
+        <item
             android:id="@+id/nav_create_recipe"
             android:icon="@drawable/pencil"
             android:title="Create new recipe" />
@@ -18,23 +32,14 @@
             android:id="@+id/nav_settings"
             android:icon="@drawable/settings"
             android:title="Settings" />
-        <item
-            android:id="@+id/nav_shopping_list"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Shopping List" />
+
 
         <item
             android:id="@+id/nav_share"
             android:icon="@drawable/share"
             android:title="Share" />
-        <item
-            android:id="@+id/nav_interpreter"
-            android:icon="@drawable/batman"
-            android:title="Interpreter Test" />
-        <item
-            android:id="@+id/nav_log_out"
-            android:icon="@drawable/logout"
-            android:title="Log Out" />
+
+            -->
     </group>
 
 </menu>

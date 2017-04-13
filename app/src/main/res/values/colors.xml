@@ -12,7 +12,8 @@
 
     <color name="color_textTitle">#FFFFFF</color>
     <color name="color_textHeading">#FFFFFF</color>
-    <color name="color_text">#FFFFFF</color>
+    <color name="color_text">#FDFFDF</color>
+    <color name="color_text2">#252523</color>
     <color name="color_btnText">#FFFFFF</color>
 
 
