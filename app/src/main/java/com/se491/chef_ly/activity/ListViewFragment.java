@@ -3,6 +3,7 @@ package com.se491.chef_ly.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,13 +22,14 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.se491.chef_ly.R;
-import com.se491.chef_ly.model.Recipe;
+import com.se491.chef_ly.model.RecipeInformation;
+import com.se491.chef_ly.model.RecipeList;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import java.util.Collections;
 
 public class ListViewFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
@@ -37,7 +39,7 @@ public class ListViewFragment extends Fragment {
     private static final String TAG = "LISTVIEW_FRAG";
 
     private ListView listView;
-    private ArrayList<Recipe> list;
+    private RecipeList list;
     private View emptyView;
 
     // TODO: Rename and change types of parameters
@@ -72,12 +74,17 @@ public class ListViewFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        list = new ArrayList<>();
+
         if (getArguments() != null) {
             title = getArguments().getString("title");
             pageNum = getArguments().getString("pageNum");
             //list = getArguments().getParcelableArrayList("list");
         }
+        if(list == null){
+            list = new RecipeList();
+        }
+
+
         Log.d(TAG, "results -> " + title + " " + pageNum );
     }
 
@@ -96,8 +103,8 @@ public class ListViewFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView l, View v, int position, long id) {
                 Intent intent = new Intent(getContext(), RecipeDetailActivity.class);
-                String recipeID = ((Recipe) l.getAdapter().getItem(position)).getId();
-                intent.putExtra("recipe", recipeID);
+                int recipeID = ((RecipeInformation) l.getAdapter().getItem(position)).getId();
+                intent.putExtra("recipe", String.valueOf(recipeID));
                 Log.d(TAG, "Recipe Clicked: id -> " + recipeID);
                 startActivity(intent);
             }
@@ -156,13 +163,12 @@ public class ListViewFragment extends Fragment {
     public String getTitle(){
         return title;
     }
-    public void updateListAdapter(ArrayList<Recipe> newList){
-        if(list != null){
-            for(Recipe r : newList){
-                list.add(r);
-            }
-        }else{
-            Log.d(TAG, "Attempted to access arrayList before it could be initialized");
+    public void updateListAdapter(RecipeList newList){
+        if(list == null){
+            list = new RecipeList();
+        }
+        for(RecipeInformation r : newList){
+            list.add(r);
         }
 
         if(listView != null) {
@@ -179,23 +185,20 @@ public class ListViewFragment extends Fragment {
     static private class RecipeAdapter extends BaseAdapter {
         private final Context context;
         private final LayoutInflater inflater;
-        //private SparseBooleanArray likes =new SparseBooleanArray();
-        private List<Recipe> recipes = new ArrayList<>();
+        private RecipeList recipes;
         static class ViewHolder{
             final ImageView icon;
-            //final ImageButton like;
             final TextView name;
             final ImageView rating;
-            // ViewHolder(ImageView ic, ImageButton ib, TextView na, ImageView ra){
+
             ViewHolder(ImageView ic, TextView na, ImageView ra){
                 this.icon = ic;
-                //this.like = ib;
                 this.name = na;
                 this.rating = ra;
             }
         }
 
-        RecipeAdapter(Context context, ArrayList<Recipe> recipes){
+        RecipeAdapter(Context context, RecipeList recipes){
             this.context = context;
             this.recipes = recipes;
             inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -225,44 +228,20 @@ public class ListViewFragment extends Fragment {
                 row = inflater.inflate(R.layout.recipe_list_item, parent, false);
                 holder = new ViewHolder(
                         (ImageView) row.findViewById(R.id.image),
-                        //(ImageButton) row.findViewById(R.id.likeBtn),
                         (TextView) row.findViewById(R.id.recipeName),
                         (ImageView) row.findViewById(R.id.recipeRating)
                 );
-
-                // Listview does not operate correctly if there are focusable elements in it
-                //holder.like.setFocusableInTouchMode(false);
-                //holder.like.setFocusable(false);
-
-                //holder.like.setOnClickListener(new LikeListener(position));
 
                 row.setTag(holder);
             }else{
                 holder = (ViewHolder) row.getTag();
             }
 
-            Recipe r = recipes.get(position);
-            holder.name.setText(r.getName());
-
-            // TODO
-            //if(isFavorite(r.getId())){
-            //    holder.like.setActivated(true);
-            //}
-            /*
-            if(likes.get(position)){
-                holder.like.setImageResource(R.drawable.heartselected);
-                //likes.put(position, true);
-            }else{
-                holder.like.setImageResource(R.drawable.heartunselected);
-                //likes.put(position, false);
-            }
-            */
+            RecipeInformation r = recipes.get(position);
+            holder.name.setText(r.getTitle());
 
 
-
-
-
-            double rating = r.getRating();
+            double rating = r.getSpoonacularScore();
             rating = Math.round(rating);
             if(rating < 1){
                 holder.rating.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.nostars));
@@ -281,29 +260,26 @@ public class ListViewFragment extends Fragment {
 
 
             try{
-                Uri uri=r.getImage(); //take the url
-                String image = uri.toString(); //make the url into a string
+                String image =r.getImage(); //take the url
+                Log.d(TAG, "Image URL --> " + image);
                 if(!image.isEmpty()){
-                    image = image.substring(1, image.length()-1);  //remove the quotes from uri string
-                    final String tag = "ListView";
                     Glide.with(context)
-                            .load(image).asBitmap()
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .dontAnimate()
-                            .listener(new RequestListener<String, Bitmap>() {
+                            .load(image)
+                            .listener(new RequestListener<String, GlideDrawable>() {
                                 @Override
-                                public boolean onException(Exception e, String model, com.bumptech.glide.request.target.Target<Bitmap> target, boolean isFirstResource) {
-                                    Log.d(tag, e.getMessage());
+                                public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                                    Log.d(TAG, "Error loading image -> " + e.getMessage());
                                     return false;
                                 }
-
                                 @Override
-                                public boolean onResourceReady(Bitmap resource, String model, com.bumptech.glide.request.target.Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                                    Log.d(tag, "Image resource ready");
+                                public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                                    Log.d(TAG, "Image loaded!");
                                     return false;
                                 }
                             })
                             .error(R.drawable.noimageavailable)
+                            .placeholder(R.drawable.chefly)
+                            .centerCrop()
                             .into(holder.icon);
                 }else{
                     holder.icon.setImageResource(R.drawable.noimageavailable);
@@ -312,29 +288,10 @@ public class ListViewFragment extends Fragment {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
             return row;
         }
-        class LikeListener implements ImageButton.OnClickListener {
-            private int position;
-            LikeListener(int pos){
-                position = pos;
-                //likes.put(position,false);
-                Log.d(TAG, "position -> " +position );
-            }
-            @Override
-            public void onClick(View v) {
-                //TODO add logic to like/add to favorites
-                //boolean state = likes.get(position, false);
-                //if(state){
-                //    ((ImageButton) v).setImageResource(R.drawable.heartunselected);
-                //    likes.put(position, false);
-                //}else{
-                //    ((ImageButton) v).setImageResource(R.drawable.heartselected);
-                //    likes.put(position, true);
-                //}
-            }
 
-        }
     }
 
 }

@@ -8,21 +8,50 @@ import android.os.Parcelable;
  */
 
 public class RecipeInformation implements Parcelable {
-    private final int id;
-    private final String title;
-    private final int readyInMinutes;
-    private final String image;
-    private final String instructions;
-    private final AnalyzedInstruction[] analyzedInstructions;
-    private final ExtendedIngredient[] extendedIngredients;
-    private final int preparationMinutes;
-    private final int cookingMinutes;
-    private final String sourceUrl;
-    private final String spoonacularSourceUrl;
-    private final String creditText;
-    private final int aggregateLikes;
-    private final int spoonacularScore;
-    private final int servings;
+    private int id;
+    private String title;
+    private int readyInMinutes;
+    private String image;
+    private String instructions;
+    private AnalyzedInstruction[] analyzedInstructions;
+    private ExtendedIngredient[] extendedIngredients;
+    private int preparationMinutes;
+    private int cookingMinutes;
+    private String sourceUrl;
+    private String spoonacularSourceUrl;
+    private String creditText;
+    private int aggregateLikes;
+    private int spoonacularScore;
+    private int servings;
+
+
+    public RecipeInformation(int id, String title, String image, int servings) {
+        this.id = id;
+        this.title = title;
+        this.image = image;
+        this.servings = servings;
+    }
+
+    public RecipeInformation(int id, String title, int readyInMinutes, String image, String instructions,
+                             AnalyzedInstruction[] analyzedInstructions, ExtendedIngredient[] extendedIngredients,
+                             int preparationMinutes, int cookingMinutes, String sourceUrl, String spoonacularSourceUrl,
+                             String creditText, int aggregateLikes, int spoonacularScore, int servings) {
+        this.id = id;
+        this.title = title;
+        this.readyInMinutes = readyInMinutes;
+        this.image = image;
+        this.instructions = instructions;
+        this.analyzedInstructions = analyzedInstructions;
+        this.extendedIngredients = extendedIngredients;
+        this.preparationMinutes = preparationMinutes;
+        this.cookingMinutes = cookingMinutes;
+        this.sourceUrl = sourceUrl;
+        this.spoonacularSourceUrl = spoonacularSourceUrl;
+        this.creditText = creditText;
+        this.aggregateLikes = aggregateLikes;
+        this.spoonacularScore = spoonacularScore;
+        this.servings = servings;
+    }
 
     protected RecipeInformation(Parcel in) {
         id = in.readInt();

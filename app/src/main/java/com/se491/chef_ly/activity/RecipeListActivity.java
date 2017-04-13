@@ -45,14 +45,13 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
 
     private static final String TAG = "RecipeListActivity";
     private final int CREATE_RECIPE_CODE = 7212;
-    private static ArrayList<Recipe> favoriteRecipes = new ArrayList<>();
-    private static ArrayList<Recipe> serverRecipes = new ArrayList<>();
+    private static RecipeList favoriteRecipes;
+    private static RecipeList serverRecipes;
     private ListViewFragment favs;
     private ListViewFragment server;
     private ViewPager pager;
     private TextView favoritesHeader;
     private TextView recipesHeader;
-    private static RecipeList recipes = null;
 
     private static final String urlString ="https://chefly-dev.herokuapp.com/list/random/10";
 
@@ -61,17 +60,20 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            ArrayList<Recipe> fromServer;
+            RecipeList fromServer;
             // Get recipes from server
-            recipes = intent.getParcelableExtra(MyService.MY_SERVICE_PAYLOAD);
-
-            fromServer = intent.getParcelableArrayListExtra(MyService.MY_SERVICE_PAYLOAD);
-            // Only add the recipes we do not have in our list already
-            for(Recipe r : fromServer){
-                if(!serverRecipes.contains(r)){
-                    serverRecipes.add(r);
+            fromServer = intent.getParcelableExtra(MyService.MY_SERVICE_PAYLOAD);
+            if(fromServer != null){
+                // Only add the recipes we do not have in our list already
+                for(RecipeInformation r : fromServer){
+                    if(!serverRecipes.contains(r)){
+                        serverRecipes.add(r);
+                    }
                 }
+            }else{
+                Log.d(TAG, "No recipes received from server");
             }
+
             // Notify the list view adapter that the list has changed
             server.updateListAdapter(serverRecipes);
 
@@ -83,6 +85,10 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_list);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
+        //Initialize recipe lists
+        serverRecipes = new RecipeList();
+        favoriteRecipes = new RecipeList();
 
         // PageViewer
         pager = (ViewPager) findViewById(R.id.viewpager);
@@ -192,7 +198,12 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
 
         // Get recipes from local db
         DatabaseHandler db = new DatabaseHandler(getApplicationContext());
-        favoriteRecipes.addAll(db.getRecipes());
+        if(favoriteRecipes != null){
+            favoriteRecipes.addAll(db.getRecipes());
+        }else{
+            favoriteRecipes = new RecipeList(db.getRecipes());
+        }
+
         // Notify list view adapter that the list has changed
         favs.updateListAdapter(favoriteRecipes);
 
@@ -209,8 +220,8 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
             // Make sure the request was successful
             if (resultCode == RESULT_OK) {
                 Log.d(TAG, "Result from CreateRecipe");
-                RecipeDetail temp = data.getParcelableExtra("recipe");
-                Recipe r = new Recipe(temp.getId(), temp.getName(), temp.getAuthor(),temp.getImage().toString(), 0.0, temp.getTime(), temp.getCategories(), temp.getLevel().toString());
+                RecipeInformation r = data.getParcelableExtra("recipe");
+
                 favoriteRecipes.add(r);
                 favs.updateListAdapter(favoriteRecipes);
             }
@@ -303,8 +314,9 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
                 Toast.makeText(this, "Profile", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_interpreter:
-                Intent interpreter_intent = new Intent(this.getApplicationContext(), TestInterpreterActivity.class);
-                startActivity(interpreter_intent);
+                //Intent interpreter_intent = new Intent(this.getApplicationContext(), TestInterpreterActivity.class);
+                //startActivity(interpreter_intent);
+                Toast.makeText(this, "Nav Interpreter???", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_shopping_list:
                 Intent intent = new Intent(this.getApplicationContext(), ShoppingListActivity.class);

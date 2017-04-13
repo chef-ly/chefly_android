@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
     <color name="btnGray">#5d5d67</color>
     <color name="disabledBtn">#965d5d67</color>
     <color name="disableText">#858383</color>
@@ -15,6 +16,10 @@
     <color name="color_text">#FDFFDF</color>
     <color name="color_text2">#252523</color>
     <color name="color_btnText">#FFFFFF</color>
+
+    <color name="background_dark">#6d434343</color>
+    <color name="background_light">#1a7a7a7a</color>
+    <color name="transparent">#00ffffff</color>
 
 
     <!-- TODO: For testing interpreter -->

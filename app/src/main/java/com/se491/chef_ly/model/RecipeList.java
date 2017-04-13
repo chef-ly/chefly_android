@@ -3,20 +3,33 @@ package com.se491.chef_ly.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class RecipeList implements Parcelable{
-    private final RecipeInformation[] recipes;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
+public class RecipeList implements Parcelable, Iterable<RecipeInformation>{
+    private final ArrayList<RecipeInformation> recipes;
+
+    public RecipeList (){
+        this.recipes = new ArrayList<>();
+    }
     public RecipeList(RecipeInformation[] recipes){
+        this.recipes = new ArrayList<>(Arrays.asList(recipes));
+    }
+    public  RecipeList(ArrayList<RecipeInformation> recipes){
         this.recipes = recipes;
     }
 
     protected RecipeList(Parcel in) {
-        recipes = in.createTypedArray(RecipeInformation.CREATOR);
+        recipes = new ArrayList<>();
+        in.readTypedList(recipes, RecipeInformation.CREATOR);
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeTypedArray(recipes, flags);
+        dest.writeTypedList(recipes);
     }
 
     @Override
@@ -36,8 +49,31 @@ public class RecipeList implements Parcelable{
         }
     };
 
-    public RecipeInformation[] getRecipes(){
+    @Override
+    public Iterator<RecipeInformation> iterator() {
+        return recipes.iterator();
+    }
+
+
+    public ArrayList<RecipeInformation> getRecipes(){
         return recipes;
+    }
+
+    public int size(){
+        return recipes.size();
+    }
+
+    public RecipeInformation get(int position){
+        return recipes.get(position);
+    }
+    public void add(RecipeInformation recipe){
+        recipes.add(recipe);
+    }
+    public boolean contains(RecipeInformation recipe){
+        return recipes.contains(recipe);
+    }
+    public void addAll(ArrayList<RecipeInformation> list){
+        recipes.addAll(list);
     }
 
 }

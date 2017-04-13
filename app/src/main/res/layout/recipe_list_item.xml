@@ -1,26 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="320dp">
 
     <ImageView
         android:id="@+id/image"
         android:contentDescription="@string/recipeImageContentDescription"
-        android:scaleType="centerCrop"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
     <TextView
         android:id="@+id/recipeName"
         android:layout_centerHorizontal="true"
         android:textSize="@dimen/text_large"
-        android:textColor="@color/disableText"
+        android:textStyle="bold"
+        android:background="@drawable/circular_gradient"
+        android:textColor="@color/color_text"
+        android:shadowColor="@color/black"
+        android:shadowRadius="5"
+        android:shadowDx="6"
+        android:shadowDy="6"
         android:layout_alignTop="@id/image"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <ImageView
         android:id="@+id/likeBtn"
         android:contentDescription="@string/favorite"
-        android:layout_marginBottom="5dp"
         android:layout_marginStart="10dp"
         android:focusable="false"
         android:src="@drawable/likebtn"
@@ -51,9 +55,10 @@
         android:layout_marginBottom="5dp"
         android:focusable="false"
         android:layout_alignBottom="@id/image"
+        android:layout_margin="5dp"
         android:layout_alignEnd="@id/image"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content" />
 
 
 
