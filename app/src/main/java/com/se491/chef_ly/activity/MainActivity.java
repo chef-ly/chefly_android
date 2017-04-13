@@ -19,7 +19,6 @@ import com.auth0.android.authentication.AuthenticationException;
 import com.auth0.android.callback.BaseCallback;
 import com.auth0.android.result.Credentials;
 import com.se491.chef_ly.R;
-import com.se491.chef_ly.model.User;
 import com.se491.chef_ly.utils.AlarmReceiver;
 import com.se491.chef_ly.utils.CheflyTimer;
 
@@ -27,7 +26,7 @@ import java.util.concurrent.locks.Lock;
 
 import static android.view.View.X;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class    MainActivity extends AppCompatActivity implements View.OnClickListener{
 
     private EditText username;
     private EditText password;

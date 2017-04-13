@@ -529,40 +529,6 @@ public class GetCookingActivity extends Activity implements View.OnClickListener
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        switch (requestCode) {
-            case REQ_CODE_SPEECH_INPUT: {
-                if (resultCode == RESULT_OK && null != data) {
-
-                    ArrayList<String> result = data
-                            .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-
-                    Matcher m = commandRegex.matcher(result.get(0));
-                    if (m.find()) {
-                        String s = m.group(1);
-                        Button btn;
-                        switch (s.trim()) {
-                            case "next":
-                                btn = (Button)findViewById(R.id.next);
-                                btn.performClick();
-                                break;
-                            case "previous":
-                                btn = (Button)findViewById(R.id.prev);
-                                btn.performClick();
-                                break;
-                            case "repeat":
-                                btn = (Button)findViewById(R.id.repeat);
-                                btn.performClick();
-                                break;
-                        }
-                    } else {
-                        Toast.makeText(this, "Sorry, I didn't understand what you meant by " + result.get(0), Toast.LENGTH_LONG).show();
-                    }
-                }
-                break;
-            }
-
-        }
     }
     class ttsUtteranceListener extends UtteranceProgressListener {
 
