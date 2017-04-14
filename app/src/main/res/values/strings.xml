@@ -4,7 +4,7 @@
     <string name="auth0_databaseConnection">Username-Password-Authentication</string>
     <string name="addRemove">Add Remove</string>
     <string name="addToGroceryList">Add Selected to Grocery List</string>
-    <string name="app_name">Chef-ly</string>
+    <string name="app_name">Chefly</string>
     <string name="author">Author</string>
     <string name="back">Back</string>
     <string name="bonAppetit">Bon Appetit!</string>
@@ -12,7 +12,7 @@
     <string name="categoryHint">Italian, French, Dessert, Lunch, Quick, &#8230;</string>
     <string name="chooseUsername">Create a New Username</string>
     <string name="contentDescriptionRecipe">A picture of the recipe</string>
-    <string name="continueAsGuest"><u>Continue As Guest</u></string>
+    <string name="continueAsGuest"><u>Skip</u></string>
     <string name="createPassword">Enter Password</string>
     <string name="createPasswordAgain">Enter Password Again</string>
     <string name="createRecipe">Create Recipe</string>
@@ -59,15 +59,16 @@
     <string name="search">Search</string>
     <string name="searchHint">Search&#8230;</string>
     <string name="shoppingList">Shopping List</string>
-    <string name="signIn">Sign In</string>
-    <string name="signUp"><u>Sign Up Now!</u></string>
+    <string name="signIn">Login</string>
+    <string name="signUp"><u>Join for free</u></string>
+    <string name="forgotpassword"><u>Forgot Password?</u></string>
     <string name="step">Step</string>
     <string name="time">Time</string>
     <string name="unit">Unit</string>
     <string name="unknown">Unk</string>
     <string name="user">Don Heins</string>
     <string name="userImage">User Image</string>
-    <string name="username">Username</string>
+    <string name="useremail">Email</string>
     <string name="x">X</string>
     <string name="kws_caption">Say HEY CHEF to get cheflys attention</string>
     <string name="menu_caption">Say Forward, Back or Question to Chefly</string>

@@ -68,7 +68,7 @@ public class    MainActivity extends AppCompatActivity implements View.OnClickLi
         TextView continueAsGuest;
         TextView signUp;
 
-        username = (EditText) findViewById(R.id.username);
+        username = (EditText) findViewById(R.id.useremail);
         password = (EditText) findViewById(R.id.password);
         signInBtn = (Button) findViewById(R.id.signInBtn);
         signInBtn.setOnClickListener(this);
@@ -93,7 +93,7 @@ public class    MainActivity extends AppCompatActivity implements View.OnClickLi
 
                         // Navigate to your next activity
                         Intent recipeListIntent = new Intent(MainActivity.this, RecipeListActivity.class);
-                        recipeListIntent.putExtra("name", "aaa");
+                        //recipeListIntent.putExtra("name", "aaa");
                         startActivity(recipeListIntent);
                     }
 
