@@ -2,8 +2,6 @@ package com.se491.chef_ly.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,13 +13,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
@@ -29,11 +25,8 @@ import com.se491.chef_ly.R;
 import com.se491.chef_ly.model.RecipeInformation;
 import com.se491.chef_ly.model.RecipeList;
 
-import java.util.Collections;
-
 public class ListViewFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+
     private static final String ARG_PARAM1 = "title";
     private static final String ARG_PARAM2 = "pageNum";
     private static final String TAG = "LISTVIEW_FRAG";
@@ -42,7 +35,6 @@ public class ListViewFragment extends Fragment {
     private RecipeList list;
     private View emptyView;
 
-    // TODO: Rename and change types of parameters
     private String title;
     private String pageNum;
 
@@ -156,7 +148,7 @@ public class ListViewFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     protected interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
+
         void onFragmentInteraction(Uri uri);
     }
 

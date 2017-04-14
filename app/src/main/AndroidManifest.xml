@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:fullBackupContent="@xml/backup_descriptor">
-        <activity android:name=".activity.MainActivity">
+        <activity android:name=".activity.MainActivity" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -32,6 +32,7 @@
         <activity
             android:name=".activity.RecipeListActivity"
             android:label=""
+            android:screenOrientation="portrait"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
@@ -42,7 +43,8 @@
                 android:resource="@xml/searchable" />
         </activity>
         <activity android:name=".activity.RecipeDetailActivity" />
-        <activity android:name=".activity.GetCookingActivity" />
+        <activity android:name=".activity.GetCookingActivity"
+            android:screenOrientation="landscape"/>
         <activity
             android:name=".activity.RegisterActivity"
             android:windowSoftInputMode="stateAlwaysVisible" />

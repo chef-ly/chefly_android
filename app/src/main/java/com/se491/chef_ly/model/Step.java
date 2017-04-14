@@ -14,6 +14,12 @@ public class Step implements Parcelable{
     private final Ingredient[] ingredients;
     private final EquipmentItem[] equipment;
 
+    public Step(String step){
+        this.number = 0;
+        this.step = step;
+        this.ingredients = null;
+        this.equipment = null;
+    }
     public Step(int number, String step, Ingredient[] ingredients, EquipmentItem[] equipment) {
         this.number = number;
         this.step = step;

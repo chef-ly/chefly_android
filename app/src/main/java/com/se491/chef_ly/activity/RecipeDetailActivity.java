@@ -298,7 +298,12 @@ public class RecipeDetailActivity extends AppCompatActivity {
 
 
             ingredients = recipeDetail.getExtendedIngredients();
-            directions = recipeDetail.getAnalyzedInstructions()[0].getSteps();
+            if(recipeDetail.getAnalyzedInstructions().length > 0){
+                directions = recipeDetail.getAnalyzedInstructions()[0].getSteps();
+            }else{
+                directions = new Step[]{new Step(recipeDetail.getInstructions())};
+            }
+
 
             checkBoxes = new CheckBox[ingredients.length];
             int states[][] = {{android.R.attr.state_checked}, {}};

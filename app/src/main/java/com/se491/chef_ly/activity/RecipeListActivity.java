@@ -53,7 +53,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
     private TextView favoritesHeader;
     private TextView recipesHeader;
 
-    private static final String urlString ="https://chefly-dev.herokuapp.com/list/random/10";
+    private static final String urlString ="https://chefly-prod.herokuapp.com/list/random/10";
 
 
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
