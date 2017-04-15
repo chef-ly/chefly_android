@@ -1,250 +1,166 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_recipe_detail"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/cuttingboard"
+    android:background="@drawable/background"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="2dp"
-    android:paddingRight="2dp"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.se491.chef_ly.activity.RecipeDetailActivity">
 
-
     <ScrollView
-
+        android:id="@+id/scrollView"
+        android:layout_marginBottom="60dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <LinearLayout
-            android:orientation="vertical"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/image"
+                android:contentDescription="@string/recipeImage"
+                android:layout_alignParentTop="true"
+                android:scaleType="centerCrop"
+                android:layout_width="match_parent"
+                android:layout_height="250dp" />
             <TextView
                 android:id="@+id/recipeName"
-                android:textSize="@dimen/heading_subtitle"
-                android:textColor="@color/color_textHeading"
-                android:gravity="center_horizontal"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="1dp"
+                android:textSize="@dimen/text_large"
+                android:background="@drawable/circular_gradient"
+                android:textColor="@color/color_text"
+                android:shadowColor="@color/black"
+                android:shadowRadius="5"
+                android:shadowDx="6"
+                android:shadowDy="6"
+                android:layout_alignTop="@id/image"
+                android:layout_centerHorizontal="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
             <TextView
                 android:id="@+id/recipeAuthor"
                 android:textSize="@dimen/text_extraSmall"
                 android:textColor="@color/color_text"
-                android:gravity="center_horizontal"
-                android:layout_marginBottom="10dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-            <ImageView
-                android:id="@+id/image"
-                android:contentDescription="@string/contentDescriptionRecipe"
-                android:scaleType="centerCrop"
-                android:layout_gravity="center_horizontal"
+                android:layout_below="@id/image"
+                android:layout_alignStart="@id/image"
+                android:layout_marginStart="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-            <!-- Serves Time Difficulty-->
             <LinearLayout
+                android:id="@+id/servesAndTime"
                 android:orientation="horizontal"
+                android:layout_below="@id/recipeAuthor"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <LinearLayout
-                android:orientation="vertical"
-                android:layout_weight="0.333"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:text="@string/recipeServings"
-                    android:textColor="@color/color_textHeading"
-                    android:textSize="@dimen/text_medium"
-                    android:gravity="center_horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-                <TextView
-                    android:id="@+id/recipeServings"
-                    android:textColor="@color/color_text"
-                    android:textSize="@dimen/text_small"
-                    android:gravity="center_horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-                </LinearLayout>
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_weight="0.333"
+                    android:orientation="horizontal"
+                    android:layout_weight="0.5"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content">
                     <TextView
-                        android:text="@string/time"
-                        android:textColor="@color/color_textHeading"
+                        android:text="@string/recipeServings"
                         android:textSize="@dimen/text_medium"
-                        android:gravity="center_horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+                        android:textColor="@color/color_text"
+                        android:layout_marginEnd="6dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                    <TextView
+                        android:id="@+id/recipeServings"
+                        android:textSize="@dimen/text_medium"
+                        android:textColor="@color/color_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_weight="0.5"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:src="@drawable/clock"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp" />
                     <TextView
                         android:id="@+id/recipeTime"
-                        android:textColor="@color/color_text"
-                        android:textSize="@dimen/text_small"
-                        android:gravity="center_horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
-                </LinearLayout>
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_weight="0.333"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content">
-                    <TextView
-                        android:text="@string/level"
-                        android:textColor="@color/color_textHeading"
                         android:textSize="@dimen/text_medium"
-                        android:gravity="center_horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
-                    <TextView
-                        android:id="@+id/recipeLevel"
                         android:textColor="@color/color_text"
-                        android:textSize="@dimen/text_small"
-                        android:gravity="center_horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="6dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
                 </LinearLayout>
             </LinearLayout>
-
-            <!-- Description -->
-            <TextView
-                android:id="@+id/recipeDescription"
-                android:textSize="@dimen/text_small"
-                android:textColor="@color/color_text"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
 
             <!-- Ingredients -->
             <TextView
                 android:id="@+id/ingredientTitle"
                 android:text="@string/ingredients"
-                android:textSize="@dimen/text_large"
+                android:textSize="@dimen/text_medium"
                 android:textStyle="bold"
-                android:textColor="@color/color_textHeading"
+                android:textColor="@color/color_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_below="@id/servesAndTime"
                 android:gravity="center" />
-
-            <LinearLayout
+            <TableLayout
                 android:id="@+id/ingredientGroup"
-                android:orientation="vertical"
+                android:layout_below="@id/ingredientTitle"
+                android:layout_marginBottom="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-            </LinearLayout>
-            <Button
-                android:id="@+id/addToListBtn"
-                android:text="@string/addToGroceryList"
-                android:textColor="@color/color_btnText"
-                android:background="@color/btnGray"
-                android:layout_gravity="center_horizontal"
-                android:layout_margin="5dp"
-                android:paddingStart="5dp"
-                android:paddingEnd="5dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+            </TableLayout>
 
             <!-- Directions -->
             <TextView
                 android:id="@+id/directionTitle"
                 android:text="@string/directions"
-                android:textSize="@dimen/text_large"
-                android:textColor="@color/color_textHeading"
+                android:textSize="@dimen/text_medium"
                 android:textStyle="bold"
+                android:textColor="@color/color_text"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <ViewSwitcher android:id="@+id/my_switcher"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" >
-                <TextView
-                    android:id="@+id/directionView"
-                    android:clickable="true"
-                    android:text="@string/edit_directionView"
-                    android:textColor="@color/color_text"
-                    android:textSize="@dimen/text_small"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-                <EditText
-                    android:id="@+id/hidden_edit_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/edit_directionView" />
-
-
-            </ViewSwitcher>
-
-
-
-
-            <!-- Bottom Buttons -->
-            <Button
-                android:id="@+id/getCookingBtn"
-                android:layout_weight="0.1"
-                android:text="@string/getCooking"
-                android:textColor="@color/color_btnText"
-                android:background="@color/btnGray"
-                android:layout_gravity="center_horizontal"
-                android:layout_margin="5dp"
-                android:paddingStart="5dp"
-                android:paddingEnd="5dp"
-                android:layout_width="match_parent"
-                android:layout_height="0dp" />
-
-            <LinearLayout
-                android:orientation="horizontal"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_below="@id/ingredientGroup"
+                android:gravity="center" />
+            <ImageButton
+                android:id="@+id/directionsDropdown"
+                android:layout_marginStart="10dp"
+                android:layout_toEndOf="@+id/directionTitle"
+                android:layout_alignBottom="@+id/directionTitle"
+                android:src="@drawable/dropdownbtn4"
+                android:background="#00000000"
+                android:scaleType="centerCrop"
+                android:layout_width="30dp"
+                android:layout_height="30dp" />
+            <TableLayout
+                android:id="@+id/directionGroup"
+                android:layout_below="@id/directionTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <Button
-                    android:id="@+id/edit"
-                    android:layout_weight="0.1"
-                    android:text="@string/edit"
-                    android:textColor="@color/color_btnText"
-                    android:background="@color/btnGray"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_margin="5dp"
-                    android:paddingStart="5dp"
-                    android:paddingEnd="5dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <Button
-                    android:id="@+id/addremove"
-                    android:layout_weight="0.1"
-                    android:text="@string/addRemove"
-                    android:textColor="@color/color_btnText"
-                    android:background="@color/btnGray"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <Button
-                    android:id="@+id/backBtn"
-                    android:layout_weight="0.1"
-                    android:text="@string/back"
-                    android:textColor="@color/color_btnText"
-                    android:background="@color/btnGray"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_margin="5dp"
-                    android:paddingStart="5dp"
-                    android:paddingEnd="5dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+            </TableLayout>
 
-            </LinearLayout>
-
-        </LinearLayout>
-
+        </RelativeLayout>
 
     </ScrollView>
+    <Button
+        android:id="@+id/getCookingBtn"
 
+        android:text="@string/getCooking"
+        android:textColor="@color/color_btnText"
+        android:background="@color/btnGray"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="5dp"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
-</LinearLayout>
+</RelativeLayout>

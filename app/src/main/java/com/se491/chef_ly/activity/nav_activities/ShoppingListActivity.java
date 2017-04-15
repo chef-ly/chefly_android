@@ -69,20 +69,15 @@ public class ShoppingListActivity extends ListActivity {
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-        TextView qty = (TextView) v.findViewById(R.id.qty);
-        TextView uom = (TextView) v.findViewById(R.id.uom);
+
         TextView name = (TextView) v.findViewById(R.id.name);
         ShoppingListItem item = shoppingList.get(position);
 
         if(item.isPurchased()){
             item.setPurchased(false);
-            qty.setPaintFlags(qty.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
-            uom.setPaintFlags(uom.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
             name.setPaintFlags(name.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
         }else{
             item.setPurchased(true);
-            qty.setPaintFlags(qty.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-            uom.setPaintFlags(uom.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             name.setPaintFlags(name.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         }
         ((BaseAdapter) getListAdapter()).notifyDataSetChanged();
@@ -119,21 +114,12 @@ public class ShoppingListActivity extends ListActivity {
             if(convertView == null){
                 convertView = inflater.inflate(R.layout.activity_shopping_list_item, parent, false);
             }
-
-            TextView qty = (TextView) convertView.findViewById(R.id.qty);
-            TextView uom = (TextView) convertView.findViewById(R.id.uom);
             TextView name = (TextView) convertView.findViewById(R.id.name);
 
-            qty.setText(String.valueOf(item.getQty()));
-            uom.setText(item.getUnitOfMeasure());
             name.setText(item.getName());
             if(!item.isPurchased()){
-                qty.setPaintFlags(qty.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
-                uom.setPaintFlags(uom.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
                 name.setPaintFlags(name.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
             }else{
-                qty.setPaintFlags(qty.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                uom.setPaintFlags(uom.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                 name.setPaintFlags(name.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             }
             return convertView;
