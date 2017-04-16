@@ -18,6 +18,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
@@ -67,14 +68,21 @@ public class ListViewFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments() != null) {
-            title = getArguments().getString("title");
-            pageNum = getArguments().getString("pageNum");
-            //list = getArguments().getParcelableArrayList("list");
+        if(savedInstanceState != null){
+            title = savedInstanceState.getString("title");
+            pageNum = savedInstanceState.getString("pageNum");
+            list = savedInstanceState.getParcelable(title);
+        }else{
+            if (getArguments() != null) {
+                title = getArguments().getString("title");
+                pageNum = getArguments().getString("pageNum");
+                //list = getArguments().getParcelableArrayList("list");
+            }
+            if(list == null){
+                list = new RecipeList();
+            }
         }
-        if(list == null){
-            list = new RecipeList();
-        }
+
 
 
         Log.d(TAG, "results -> " + title + " " + pageNum );
@@ -89,15 +97,22 @@ public class ListViewFragment extends Fragment {
         listView = (ListView)  v.findViewById(R.id.list);
         emptyView = v.findViewById(R.id.emptyList);
 
+        if(title.equals("Favorites")){
+            emptyView.setBackground(getResources().getDrawable(R.drawable.emptylist, null));
+        }else{
+            emptyView.setBackground(getResources().getDrawable(R.drawable.emptylistwelcome, null));
+        }
+
         listView.setAdapter(new ListViewFragment.RecipeAdapter(getContext(), list));
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView l, View v, int position, long id) {
                 Intent intent = new Intent(getContext(), RecipeDetailActivity.class);
-                int recipeID = ((RecipeInformation) l.getAdapter().getItem(position)).getId();
-                intent.putExtra("recipe", String.valueOf(recipeID));
-                Log.d(TAG, "Recipe Clicked: id -> " + recipeID);
+                RecipeInformation recipe = ((RecipeInformation) l.getAdapter().getItem(position));
+                //intent.putExtra("recipe", String.valueOf(recipeID));
+                intent.putExtra("recipeDetail", recipe);
+                Log.d(TAG, "Recipe Clicked: id -> " + recipe.getId());
                 startActivity(intent);
             }
         });
@@ -152,9 +167,19 @@ public class ListViewFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        RecipeList r = ((RecipeAdapter)listView.getAdapter()).getRecipes();
+        outState.putString("title", title);
+        outState.putString("pageNum", pageNum);
+        outState.putParcelable(title,r);
+    }
+
     public String getTitle(){
         return title;
     }
+
     public void updateListAdapter(RecipeList newList){
         if(list == null){
             list = new RecipeList();
@@ -174,7 +199,7 @@ public class ListViewFragment extends Fragment {
 
     }
 
-    static private class RecipeAdapter extends BaseAdapter {
+    static protected class RecipeAdapter extends BaseAdapter {
         private final Context context;
         private final LayoutInflater inflater;
         private RecipeList recipes;
@@ -196,7 +221,9 @@ public class ListViewFragment extends Fragment {
             inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         }
-
+        protected RecipeList getRecipes(){
+            return recipes;
+        }
         @Override
         public int getCount() {
             return recipes.size();
@@ -270,8 +297,9 @@ public class ListViewFragment extends Fragment {
                                 }
                             })
                             .error(R.drawable.noimageavailable)
-                            .placeholder(R.drawable.chefly)
+                            .placeholder(R.drawable.circular_gradient)
                             .centerCrop()
+                            .diskCacheStrategy(DiskCacheStrategy.RESULT)
                             .into(holder.icon);
                 }else{
                     holder.icon.setImageResource(R.drawable.noimageavailable);

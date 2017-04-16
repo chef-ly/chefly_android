@@ -2,28 +2,25 @@ package com.se491.chef_ly.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.CompoundButtonCompat;
-import android.support.v7.app.AppCompatActivity;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.View;
-import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ViewSwitcher;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -32,28 +29,25 @@ import com.se491.chef_ly.Databases.DatabaseHandler;
 import com.se491.chef_ly.R;
 import com.se491.chef_ly.http.HttpConnection;
 import com.se491.chef_ly.http.RequestMethod;
-import com.se491.chef_ly.model.*;
+import com.se491.chef_ly.model.ExtendedIngredient;
+import com.se491.chef_ly.model.RecipeInformation;
+import com.se491.chef_ly.model.ShoppingListItem;
+import com.se491.chef_ly.model.Step;
 import com.se491.chef_ly.utils.NetworkHelper;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.URL;
+import java.util.ArrayList;
 
 public class RecipeDetailActivity extends AppCompatActivity {
 
     private TextView recipeTitle;
     private ImageView imageView;
-    private TextView directionView;
-
-    private LinearLayout ingredientGroup;
-
-    private CheckBox[] checkBoxes;
     private RecipeInformation recipeDetail;
-    private ExtendedIngredient[] ingredients;
-    private String  recipeName;
-    private Uri recipeIm;
+
     private String[] directionsForCooking;
-    private String steps;
+    private ArrayList<ShoppingListItem> shoppingList;
     private static final String TAG = "RecipeDetailActivity";
     private static final String urlString = "https://chefly-prod.herokuapp.com/recipe/";
 
@@ -61,44 +55,14 @@ public class RecipeDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_detail);
-        final Context c = getApplicationContext();
-        Button backBtn;
-        Button editBtn;
-        Button addToListBtn;
+
         Button getCookingBtn;
         //EditText editTextDesciption;
 
         recipeTitle = (TextView) findViewById(R.id.recipeName);
         imageView = (ImageView) findViewById(R.id.image);
         //editTextDesciption = (EditText) findViewById(R.id.hidden_edit_view);
-        directionView = (TextView) findViewById(R.id.directionView);
-        backBtn = (Button) findViewById(R.id.backBtn);
-        backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setResult(RESULT_OK);
-                finish();
-            }
-        });
 
-        ingredientGroup = (LinearLayout) findViewById(R.id.ingredientGroup);
-        addToListBtn = (Button) findViewById(R.id.addToListBtn);
-        addToListBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int count = 0;
-                DatabaseHandler handler = new DatabaseHandler(c);
-                for (CheckBox cb : checkBoxes) {
-                    if (cb.isChecked()) {
-                        handler.addItemToShoppingList(ingredients[cb.getId()], false);
-                        count++;
-                        cb.setChecked(false);
-                        Log.d(TAG, "Added to list -> " + String.valueOf(cb.getText()));
-                    }
-                }
-                Toast.makeText(RecipeDetailActivity.this, count + " items added to list", Toast.LENGTH_SHORT).show();
-            }
-        });
         getCookingBtn = (Button) findViewById(R.id.getCookingBtn);
         getCookingBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,16 +80,11 @@ public class RecipeDetailActivity extends AppCompatActivity {
             }
         });
 
-        editBtn = (Button) findViewById(R.id.edit);
-        editBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                textViewClicked();
-            }
-        });
+        DatabaseHandler db = new DatabaseHandler(getApplicationContext());
+        shoppingList = db.getShoppingList();
 
     }
-
+/*
     private void textViewClicked() {
         ViewSwitcher switcher = (ViewSwitcher) findViewById(R.id.my_switcher);
         View currentView = switcher.getCurrentView();
@@ -174,7 +133,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
         sb.append(data[data.length - 1].trim());
         return sb.toString();
     }
-
+*/
     @Override
     protected void onStart() {
         super.onStart();
@@ -230,16 +189,52 @@ public class RecipeDetailActivity extends AppCompatActivity {
         }
 
 
+
+
     }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+
+        DatabaseHandler db = new DatabaseHandler(getApplicationContext());
+        shoppingList = db.getShoppingList();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        DatabaseHandler db = new DatabaseHandler(getApplicationContext());
+
+        // Remove an item from shopping list if removed by clicking on ingredient
+        ArrayList<ShoppingListItem> existing = db.getShoppingList();
+        ArrayList<ShoppingListItem> toDelete = new ArrayList<>();
+        for(ShoppingListItem item: existing){
+            if(!shoppingList.contains(item)){
+                toDelete.add(item);
+            }
+        }
+        db.deleteItemFromShoppingList(toDelete);
+
+        // Add new items to shopping list
+        for(ShoppingListItem item : shoppingList){
+            if(item.getId() == -9999){
+                db.addItemToShoppingList(item.getName(),item.isPurchased());
+            }
+        }
+    }
+
     private void setRecipeInfo(){
-        Context c = getApplicationContext();
+        final Context c = getApplicationContext();
         TextView author = (TextView) findViewById(R.id.recipeAuthor);
-        TextView description = (TextView) findViewById(R.id.recipeDescription);
+       // TextView description = (TextView) findViewById(R.id.recipeDescription);
         TextView serves = (TextView) findViewById(R.id.recipeServings);
         TextView time = (TextView) findViewById(R.id.recipeTime);
-        TextView level = (TextView) findViewById(R.id.recipeLevel);
 
+        ExtendedIngredient[] ingredients;
+        String  recipeName;
         Step[] directions;
+
         if (recipeDetail == null) {
             recipeTitle.setText(R.string.recipeNotFound);
         } else {
@@ -305,39 +300,132 @@ public class RecipeDetailActivity extends AppCompatActivity {
             }
 
 
-            checkBoxes = new CheckBox[ingredients.length];
-            int states[][] = {{android.R.attr.state_checked}, {}};
-            int textColor = getColor(c, R.color.color_text);
-            int colors[] = {textColor, textColor};
+//            checkBoxes = new CheckBox[ingredients.length];
+//            int states[][] = {{android.R.attr.state_checked}, {}};
+            TableLayout table = (TableLayout) findViewById(R.id.ingredientGroup);
+
+            TableLayout.LayoutParams tableRowParams=
+                    new TableLayout.LayoutParams
+                            (TableLayout.LayoutParams.MATCH_PARENT,TableLayout.LayoutParams.WRAP_CONTENT);
+
+            int leftMargin=30;
+            int topMargin=1;
+            int rightMargin=30;
+            int bottomMargin=1;
+
+            tableRowParams.setMargins(leftMargin,topMargin,rightMargin,bottomMargin);
+
+            int color1 = getColor(c, R.color.table_color1);
+            int color2 = getColor(c, R.color.table_color2);
+
             int count = 0;
             for (ExtendedIngredient s : ingredients) {
-                CheckBox temp = new CheckBox(c);
-                temp.setId(count);
-                temp.setText(s.getOriginalString());
-                temp.setTextColor(textColor);
-                temp.setTextSize(TypedValue.COMPLEX_UNIT_PX,
-                        getResources().getDimension(R.dimen.text_small));
-                CompoundButtonCompat.setButtonTintList(temp, new ColorStateList(states, colors));
-                checkBoxes[count] = temp;
-                ingredientGroup.addView(temp);
+                final TableRow row = new TableRow(c);
+                row.setLayoutParams(tableRowParams);
+                row.setBackgroundColor(count%2 == 0 ? color1 : color2);
+                row.setPadding(10,5,10,5);
+                TextView text = new TextView(c);
+                text.setText(s.getOriginalString());
+                text.setTextSize((getResources().getDimension(R.dimen.text_small) / getResources().getDisplayMetrics().density));
+                text.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT, 1f));
+                text.setPadding(10,5,10,5);
+
+                text.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        ImageView image = (ImageView) row.getChildAt(1);
+                        String text = String.valueOf(((TextView) row.getChildAt(0)).getText());
+                        if(row.getChildAt(1).getVisibility() == View.GONE){
+                            image.setVisibility(View.VISIBLE);
+                            shoppingList.add(new ShoppingListItem(text, false));
+                            Toast.makeText(c, text + " added to shopping list", Toast.LENGTH_SHORT).show();
+                        }else{
+                            image.setVisibility(View.GONE);
+                            shoppingList.remove(new ShoppingListItem(text,false));
+                            Toast.makeText(c, text + " removed from shopping list", Toast.LENGTH_SHORT).show();
+                        }
+
+
+
+                    }
+                });
+                row.addView(text);
+                ImageView check = new ImageView(c);
+                check.setImageResource(R.drawable.shoppinglist);
+                check.setLayoutParams(new TableRow.LayoutParams(60,60, 0.1f));
+                if(shoppingList.contains(new ShoppingListItem(s.getOriginalString(),false))){
+                    check.setVisibility(View.VISIBLE);
+                }else{
+                    check.setVisibility(View.GONE);
+                }
+
+
+                row.addView(check);
+
+                table.addView(row);
                 count++;
             }
             //
+            final TableLayout tableDirec = (TableLayout) findViewById(R.id.directionGroup);
+            tableDirec.setColumnShrinkable(0,true);
+            tableDirec.setVisibility(View.GONE);
             directionsForCooking = new String[directions.length];
-            StringBuilder sb = new StringBuilder();
+
             count = 1;
             for (Step s : directions) {
-                sb.append(count);
-                sb.append(":  ");
-                sb.append(s.getStep());
-                sb.append("\n");
+                String step = count + ")  " + s.getStep();
 
-                directionsForCooking[count - 1] = s.getStep();
+                TableRow row = new TableRow(c);
+                row.setLayoutParams(tableRowParams);
+                row.setBackgroundColor(count%2 == 0 ? color1 : color2);
+                TextView text = new TextView(c);
+                text.setText(step);
+                text.setTextSize((getResources().getDimension(R.dimen.text_small) / getResources().getDisplayMetrics().density));
+                text.setPadding(15,1,15,1);
+                text.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT, 1f));
+                row.addView(text);
+                tableDirec.addView(row);
+
+                directionsForCooking[count-1] = s.getStep();
                 count++;
             }
-            steps = sb.toString();
-            directionView.setText(steps);
+            final ScrollView sv = (ScrollView) findViewById(R.id.scrollView);
 
+            final ImageButton dropdown = (ImageButton) findViewById(R.id.directionsDropdown);
+            final RotateAnimation rotatedown = new RotateAnimation(0, 180,
+                    Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+            rotatedown.setDuration(250);
+            rotatedown.setFillAfter(true);
+            final RotateAnimation rotateup = new RotateAnimation(180, 0,
+                    Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+            rotateup.setDuration(250);
+            rotateup.setFillAfter(true);
+
+            dropdown.setOnClickListener(new View.OnClickListener() {
+                private boolean isClicked = false;
+                @Override
+                public void onClick(View v) {
+                    if(!isClicked){
+                        tableDirec.setVisibility(View.VISIBLE);
+                        dropdown.startAnimation(rotatedown);
+                        isClicked = true;
+                        sv.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                //sv.fullScroll(ScrollView.FOCUS_DOWN);
+                                sv.smoothScrollBy(0, 500);
+                            }
+                        });
+                    }else{
+                        dropdown.startAnimation(rotateup);
+                        tableDirec.setVisibility(View.GONE);
+                        isClicked = false;
+                        //sv.fullScroll(ScrollView.FOCUS_DOWN);
+
+                    }
+                }
+            });
         }
     }
 

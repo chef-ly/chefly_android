@@ -22,6 +22,9 @@
     <color name="background_light">#1a7a7a7a</color>
     <color name="transparent">#00ffffff</color>
 
+    <color name="table_color1">#FDFFDF</color>
+    <color name="table_color2">#dadbcb</color>
+
 
     <!-- TODO: For testing interpreter -->
     <color name="bg_gradient_start">#31244e</color>
