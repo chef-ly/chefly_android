@@ -11,6 +11,7 @@
     <string name="by">by </string>
     <string name="categoryHint">Italian, French, Dessert, Lunch, Quick, &#8230;</string>
     <string name="chooseUsername">Create a New Username</string>
+    <string name="clearPurchased">Clear Purchased</string>
     <string name="contentDescriptionRecipe">A picture of the recipe</string>
     <string name="continueAsGuest"><u>Skip</u></string>
     <string name="createPassword">Enter Password</string>
@@ -54,7 +55,6 @@
     <string name="recipeServings">Serves</string>
     <string name="recipeTime">Cook and Prep Time</string>
     <string name="registerPageTitle">Register</string>
-    <string name="removePurchased">Remove Purchased</string>
     <string name="repeat">Repeat</string>
     <string name="search">Search</string>
     <string name="searchHint">Search&#8230;</string>

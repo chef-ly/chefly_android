@@ -59,6 +59,7 @@
             android:name=".http.MyService"
             android:exported="false" />
 
-        <activity android:name=".activity.nav_activities.ShoppingListActivity" />
+        <activity android:name=".activity.nav_activities.ShoppingListActivity"
+            android:windowSoftInputMode="adjustPan"/>
     </application>
 </manifest>
