@@ -14,17 +14,24 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:fullBackupContent="@xml/backup_descriptor">
-        <activity android:name=".activity.MainActivity" android:screenOrientation="portrait">
+        <activity android:name=".activity.MainActivity" android:screenOrientation="portrait" android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-                <!--<data-->
-                    <!--android:host="athina.auth0.com"-->
-                    <!--android:pathPrefix="/android/com.se491.chef_ly/callback"-->
-                    <!--android:scheme="https" />-->
-            </intent-filter>
 
+            </intent-filter>
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="@string/auth0_domain"
+                    android:pathPrefix="/android/com.se491.chef_ly/callback"
+                    android:scheme="https" />
+            </intent-filter>
             <meta-data
                 android:name="android.app.default_searchable"
                 android:value=".RecipeListActivity" />

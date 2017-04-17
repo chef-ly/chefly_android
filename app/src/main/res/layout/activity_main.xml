@@ -123,5 +123,14 @@
             android:layout_alignBaseline="@+id/forgotpassword"
             android:layout_alignBottom="@+id/forgotpassword"
             android:layout_alignParentStart="true" />
-
+    <Button
+        android:id="@+id/webLoginButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="29dp"
+        android:minWidth="250dp"
+        android:text="@string/webLogin"
+        android:background="@color/btnBlue"
+        android:layout_below="@+id/forgotpassword"
+        android:layout_toStartOf="@+id/continueAsGuest" />
 </RelativeLayout>

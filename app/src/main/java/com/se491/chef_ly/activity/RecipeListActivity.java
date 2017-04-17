@@ -36,6 +36,7 @@ import com.se491.chef_ly.http.MyService;
 import com.se491.chef_ly.http.RequestMethod;
 import com.se491.chef_ly.model.RecipeInformation;
 import com.se491.chef_ly.model.RecipeList;
+import com.se491.chef_ly.utils.CredentialsManager;
 import com.se491.chef_ly.utils.NetworkHelper;
 
 import java.util.ArrayList;
@@ -329,6 +330,9 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
                 break;
             case R.id.nav_log_out:
                 Toast.makeText(this, "Log Out", Toast.LENGTH_SHORT).show();
+                CredentialsManager.deleteCredentials(this);//call the method from the util class
+                startActivity(new Intent(this, MainActivity.class));
+                finish();
                 break;
             /*
             case R.id.nav_create_recipe:
