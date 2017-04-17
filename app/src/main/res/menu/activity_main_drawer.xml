@@ -12,7 +12,7 @@
             android:title="Interpreter Test" />
         <item
             android:id="@+id/nav_shopping_list"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@drawable/shoppinglist"
             android:title="Shopping List" />
         <item
             android:id="@+id/nav_log_out"

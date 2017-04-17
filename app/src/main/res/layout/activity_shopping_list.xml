@@ -1,59 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:id="@+id/activity_shopping_list"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#f2f0b8"
+    android:background="@drawable/background"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.se491.chef_ly.activity.nav_activities.ShoppingListActivity">
 
     <TextView
+        android:id="@+id/heading"
         android:text="@string/shoppingList"
-        android:textSize="30sp"
-        android:textColor="@color/darkGray"
+        android:textSize="@dimen/heading_subtitle"
+        android:textColor="@color/color_text"
         android:layout_gravity="center_horizontal"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_marginTop="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <Button
-            android:id="@+id/clearPurchasedBtn"
-            android:text="@string/removePurchased"
-            android:background="@color/btnGray"
-            android:layout_marginBottom="20dp"
-            android:layout_gravity="start"
-            android:layout_weight="0.5"
-            android:padding="5dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="10dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <Button
-            android:id="@+id/finishedBtn"
-            android:text="@string/finished"
-            android:background="@color/btnGray"
-            android:layout_gravity="end"
-            android:layout_weight="0.5"
-            android:padding="5dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginBottom="20dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
+
+
 
     <ListView
         android:id="@android:id/list"
+        android:divider="@null"
+        android:dividerHeight="0dp"
+        android:background="@color/table_color1"
+        android:layout_margin="10dp"
         android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="60dp"
+        android:layout_below="@id/heading"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
     </ListView>
+    <Button
+        android:id="@+id/addBtn"
+        android:text="@string/plus"
+        android:layout_marginStart="20dp"
+        android:textColor="#16C916"
+        android:textSize="20sp"
+        android:textAlignment="center"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="@drawable/circlebutton"
+        android:layout_below="@android:id/list"
+        android:shadowColor="#fdffdf"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="5" />
+    <Button
+        android:id="@+id/clearPurchasedBtn"
+        android:text="@string/clearPurchased"
+        android:background="@color/table_color2"
+        android:layout_gravity="start"
+        android:padding="5dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="10dp"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
-</LinearLayout>
+</RelativeLayout>
