@@ -1,10 +1,13 @@
 package com.se491.chef_ly.activity;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
-
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.util.Log;
@@ -21,21 +24,59 @@ import com.auth0.android.lock.Lock;
 import com.auth0.android.provider.AuthCallback;
 import com.auth0.android.provider.WebAuthProvider;
 import com.auth0.android.result.Credentials;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.se491.chef_ly.R;
+import com.se491.chef_ly.http.HttpConnection;
+import com.se491.chef_ly.http.RequestMethod;
+import com.se491.chef_ly.model.RecipeList;
+import com.se491.chef_ly.utils.NetworkHelper;
+
+import java.io.IOException;
+import java.lang.reflect.Type;
 
 
-public class  MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class    MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<RecipeList>, View.OnClickListener{
 
     private EditText username;
     private EditText password;
     private final String TAG = "MainActivity";
     private Lock mLock;
+    private static final String urlString ="https://chefly-prod.herokuapp.com/list/random/10";
+    RecipeList serverRecipes;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        setupViews();
-        Toast.makeText(getApplicationContext(), "Welcome To Chef.ly", Toast.LENGTH_SHORT).show();
+        setContentView(R.layout.splash_layout);
+
+        serverRecipes = new RecipeList();
+
+        // Get recipes from server
+        if(NetworkHelper.hasNetworkAccess(MainActivity.this)) //returns true if internet available
+        {
+            //Toast.makeText(RecipeListActivity.this,"Internet Connection",Toast.LENGTH_LONG).show();
+            //register to listen the data
+            RequestMethod requestPackage = new RequestMethod();
+            requestPackage.setEndPoint(urlString);
+            requestPackage.setMethod("GET"); //  or requestPackage.setMethod("POST");
+
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("requestPackage", requestPackage);
+
+            getSupportLoaderManager().initLoader(1, bundle,this).forceLoad();
+
+        }
+        else
+        {
+            //Toast.makeText(RecipeListActivity.this,"No Internet Connection",Toast.LENGTH_LONG).show();
+            Log.d(TAG, "No Internet Connection");
+        }
+
+
+        //Toast.makeText(getApplicationContext(), "Welcome To Chef.ly", Toast.LENGTH_SHORT).show();
 
 
         ////////////////////////////////////////////////////////////////////////////////////////////
@@ -192,6 +233,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
             case R.id.continueAsGuest:
                 Intent recipeListIntent = new Intent(MainActivity.this, RecipeListActivity.class);
                 recipeListIntent.putExtra("name", "guest");
+                recipeListIntent.putExtra("recipeList", serverRecipes);
                 startActivity(recipeListIntent);
                 break;
             case R.id.webLoginButton:
@@ -213,6 +255,49 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
         return User.authenticateExisting(user.toString(), password.toString());
     }*/
 
+    //  LoaderManager callback method
+    @Override
+    public Loader<RecipeList> onCreateLoader(int id, Bundle args) {
+        RequestMethod rm = args.getParcelable("requestPackage");
+        return  new GetRecipesFromServer(getApplicationContext(), rm);
+    }
+    //  LoaderManager callback method
+    @Override
+    public void onLoadFinished(Loader<RecipeList> loader, RecipeList data) {
+        serverRecipes = data;
+        setContentView(R.layout.activity_main);
+        setupViews();
+    }
+    //  LoaderManager callback method
+    @Override
+    public void onLoaderReset(Loader<RecipeList> loader) {
+        serverRecipes = new RecipeList();
+    }
+
+    private static class GetRecipesFromServer extends AsyncTaskLoader<RecipeList>{
+        private RequestMethod requestPackage;
+        private GetRecipesFromServer(Context c, RequestMethod method){
+            super(c);
+            this.requestPackage = method;
+        }
+        @Override
+        public RecipeList loadInBackground() {
+            String response;
+            try {
+                response = HttpConnection.downloadFromFeed(requestPackage);
+            } catch (IOException e) {
+                //e.printStackTrace();
+                return new RecipeList();
+            }
+            Log.d("AsyncTaskLoader","Response -> " + response);
+            GsonBuilder builder = new GsonBuilder();
+
+            Gson gson = builder.create();
+
+            Type type = new TypeToken<RecipeList>(){}.getType();
+            return  gson.fromJson(response, type);
+        }
+    }
 
 }
 
