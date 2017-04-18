@@ -319,14 +319,12 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
             case R.id.nav_profile:
                 Toast.makeText(this, "Profile", Toast.LENGTH_SHORT).show();
                 break;
-            case R.id.nav_interpreter:
-                //Intent interpreter_intent = new Intent(this.getApplicationContext(), TestInterpreterActivity.class);
-                //startActivity(interpreter_intent);
-                Toast.makeText(this, "Nav Interpreter???", Toast.LENGTH_SHORT).show();
-                break;
             case R.id.nav_shopping_list:
                 Intent intent = new Intent(this.getApplicationContext(), ShoppingListActivity.class);
                 startActivity(intent);
+                break;
+            case R.id.contact_us:
+                Toast.makeText(this, "Contact Us!", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_log_out:
                 Toast.makeText(this, "Log Out", Toast.LENGTH_SHORT).show();
