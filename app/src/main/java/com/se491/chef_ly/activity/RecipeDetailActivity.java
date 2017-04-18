@@ -326,6 +326,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
                 row.setPadding(10,5,10,5);
                 TextView text = new TextView(c);
                 text.setText(s.getOriginalString());
+                text.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.black));
                 text.setTextSize((getResources().getDimension(R.dimen.text_small) / getResources().getDisplayMetrics().density));
                 text.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT, 1f));
                 text.setPadding(10,5,10,5);
@@ -381,6 +382,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
                 row.setBackgroundColor(count%2 == 0 ? color1 : color2);
                 TextView text = new TextView(c);
                 text.setText(step);
+                text.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.black));
                 text.setTextSize((getResources().getDimension(R.dimen.text_small) / getResources().getDisplayMetrics().density));
                 text.setPadding(15,1,15,1);
                 text.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT, 1f));
