@@ -16,8 +16,8 @@
     <string name="clearPurchased">Clear Purchased</string>
     <string name="contentDescriptionRecipe">A picture of the recipe</string>
     <string name="continueAsGuest"><u>Skip</u></string>
-    <string name="createPassword">Enter Password</string>
-    <string name="createPasswordAgain">Please Re-enter password for confirmation</string>
+    <string name="createPassword">Enter Password that includes at least 8 characters with at least 1 uppers,lower,number and symbol</string>
+    <string name="createPasswordAgain">Please Re-enter password for match confirmation</string>
     <string name="createRecipe">Create Recipe</string>
     <string name="difficulty">Difficulty: </string>
     <string name="directions">Directions</string>
