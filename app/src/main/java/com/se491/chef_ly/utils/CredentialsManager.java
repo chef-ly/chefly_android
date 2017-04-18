@@ -52,4 +52,17 @@ public class CredentialsManager {
     }
 
 
+    public static void saveUsername(Context context, String emailOrUsername) {
+        SharedPreferences sp = context.getSharedPreferences(
+                PREFERENCES_NAME, Context.MODE_PRIVATE);
+        sp.edit()
+                .putString("emailOrUsername", emailOrUsername)
+                .apply();
+    }
+
+    public static String getUsername(Context context) {
+        SharedPreferences sp = context.getSharedPreferences(
+                PREFERENCES_NAME, Context.MODE_PRIVATE);
+        return sp.getString("emailOrUsername", null);
+    }
 }

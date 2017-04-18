@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.accounts.AccountManager;
 import com.auth0.android.Auth0;
 import com.auth0.android.authentication.AuthenticationAPIClient;
 import com.auth0.android.authentication.AuthenticationException;
@@ -104,7 +105,7 @@ public class    MainActivity extends AppCompatActivity implements View.OnClickLi
 
     }
 
-    private void login(String emailOrUsername, String password) {
+    private void login(final String emailOrUsername, String password) {
 
 
         // get a valid refresh_token in the response
@@ -126,10 +127,12 @@ public class    MainActivity extends AppCompatActivity implements View.OnClickLi
                     public void onSuccess(Credentials credentials) {
                         Log.d(TAG, "LOGIN SUCCESS!");
                         // Store credentials- how do we want to do this? Store in shared preferences?
-                       // CredentialsManager.saveCredentials(MainActivity.this, credentials);
+                        CredentialsManager.saveCredentials(MainActivity.this, credentials);
+                        CredentialsManager.saveUsername(MainActivity.this, emailOrUsername);
+
                         // Navigate to your next activity
                         Intent recipeListIntent = new Intent(MainActivity.this, RecipeListActivity.class);
-                        recipeListIntent.putExtra("name", "aaa");
+                        recipeListIntent.putExtra("name", emailOrUsername);
                         startActivity(recipeListIntent);
                     }
 
