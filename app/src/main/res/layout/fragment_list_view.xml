@@ -12,7 +12,6 @@
     <ImageView
         android:contentDescription="@string/noFavorites"
         android:id="@+id/emptyList"
-        android:src="@drawable/emptylist"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"/>

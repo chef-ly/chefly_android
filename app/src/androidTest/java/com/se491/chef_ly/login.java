@@ -28,8 +28,8 @@ public class login extends ActivityInstrumentationTestCase2<MainActivity> {
         //Wait for activity: 'com.se491.chef_ly.activity.MainActivity'
 		solo.waitForActivity(com.se491.chef_ly.activity.MainActivity.class, 2000);
         //Enter the text: 'a'
-		solo.clearEditText((android.widget.EditText) solo.getView(com.se491.chef_ly.R.id.username));
-		solo.enterText((android.widget.EditText) solo.getView(com.se491.chef_ly.R.id.username), "a");
+		solo.clearEditText((android.widget.EditText) solo.getView(com.se491.chef_ly.R.id.email));
+		solo.enterText((android.widget.EditText) solo.getView(com.se491.chef_ly.R.id.email), "a");
         //Click on Empty Text View
 		solo.clickOnView(solo.getView(com.se491.chef_ly.R.id.password));
         //Enter the text: 'a'

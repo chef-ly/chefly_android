@@ -4,12 +4,18 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.text.InputType;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.se491.chef_ly.Databases.DatabaseHandler;
@@ -20,8 +26,7 @@ import java.util.ArrayList;
 
 public class ShoppingListActivity extends ListActivity {
     private static ArrayList<ShoppingListItem> shoppingList = new ArrayList<>();
-    private Button deletePurchasedBtn;
-    private Button finished;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,14 +36,8 @@ public class ShoppingListActivity extends ListActivity {
 
         final DatabaseHandler handler = new DatabaseHandler(this.getApplicationContext());
 
-        finished = (Button) findViewById(R.id.finishedBtn);
-        finished.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setResult(RESULT_OK);
-                finish();
-            }
-        });
+        Button deletePurchasedBtn;
+
         deletePurchasedBtn = (Button) findViewById(R.id.clearPurchasedBtn);
         deletePurchasedBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,39 +62,97 @@ public class ShoppingListActivity extends ListActivity {
             }
         });
 
+        final Button add = (Button) findViewById(R.id.addBtn);
+
+        add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final EditText newItem = new EditText(getApplicationContext());
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, 150);
+                params.addRule(RelativeLayout.BELOW, add.getId());
+                params.setMargins(20,2,20,2);
+                newItem.setLayoutParams(params);
+                newItem.setHint("new grocery list item");
+                newItem.setBackground(getDrawable(R.color.white));
+                newItem.setInputType(InputType.TYPE_CLASS_TEXT);
+                newItem.setImeOptions(EditorInfo.IME_ACTION_DONE);
+                newItem.setMaxLines(1);
+                RelativeLayout layout = (RelativeLayout) findViewById(R.id.activity_shopping_list) ;
+                layout.addView(newItem);
+
+                newItem.setOnFocusChangeListener(new View.OnFocusChangeListener(){
+                    @Override
+                    public void onFocusChange(View v, boolean hasFocus) {
+                        String text = newItem.getText().toString();
+                        if(!hasFocus && text.length() > 0){
+                            addText(text);
+                            newItem.setText("");
+                            newItem.setVisibility(View.GONE);
+                        }
+                    }
+                });
+                newItem.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                    @Override
+                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+
+                        if(actionId == EditorInfo.IME_ACTION_DONE ){
+
+                            InputMethodManager imm = (InputMethodManager)v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+
+                            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                            String text = newItem.getText().toString();
+                            if(!text.isEmpty()){
+                                addText(text);
+                                newItem.setText("");
+                            }
+
+                            newItem.setVisibility(View.GONE);
+
+                            return true;
+                        }
+                        return false;
+                    }
+                });
+            }
+        });
+
+
+
         shoppingList = handler.getShoppingList();
+    }
+
+    private void addText(String text){
+
+        DatabaseHandler db = new DatabaseHandler(getApplicationContext());
+        db.addItemToShoppingList(text, false);
+        shoppingList = db.getShoppingList();
+
+        ((BaseAdapter)getListAdapter()).notifyDataSetChanged();
     }
 
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-        TextView qty = (TextView) v.findViewById(R.id.qty);
-        TextView uom = (TextView) v.findViewById(R.id.uom);
+
         TextView name = (TextView) v.findViewById(R.id.name);
         ShoppingListItem item = shoppingList.get(position);
 
         if(item.isPurchased()){
             item.setPurchased(false);
-            qty.setPaintFlags(qty.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
-            uom.setPaintFlags(uom.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
             name.setPaintFlags(name.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
         }else{
             item.setPurchased(true);
-            qty.setPaintFlags(qty.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-            uom.setPaintFlags(uom.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             name.setPaintFlags(name.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         }
         ((BaseAdapter) getListAdapter()).notifyDataSetChanged();
 
     }
 
-    static class myAdapter extends BaseAdapter{
+    private static class myAdapter extends BaseAdapter{
         private final LayoutInflater inflater;
-        private final Context context;
 
         myAdapter(Context context){
             inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            this.context = context;
         }
         @Override
         public int getCount() {
@@ -119,21 +176,12 @@ public class ShoppingListActivity extends ListActivity {
             if(convertView == null){
                 convertView = inflater.inflate(R.layout.activity_shopping_list_item, parent, false);
             }
-
-            TextView qty = (TextView) convertView.findViewById(R.id.qty);
-            TextView uom = (TextView) convertView.findViewById(R.id.uom);
             TextView name = (TextView) convertView.findViewById(R.id.name);
 
-            qty.setText(String.valueOf(item.getQty()));
-            uom.setText(item.getUnitOfMeasure());
             name.setText(item.getName());
             if(!item.isPurchased()){
-                qty.setPaintFlags(qty.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
-                uom.setPaintFlags(uom.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
                 name.setPaintFlags(name.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
             }else{
-                qty.setPaintFlags(qty.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                uom.setPaintFlags(uom.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                 name.setPaintFlags(name.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             }
             return convertView;

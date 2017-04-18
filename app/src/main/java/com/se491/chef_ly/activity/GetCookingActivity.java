@@ -1,23 +1,17 @@
 package com.se491.chef_ly.activity;
 
-import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -34,10 +28,7 @@ import com.se491.chef_ly.utils.VoiceRecognizer;
 
 import java.util.ArrayList;
 import java.util.Locale;
-
-
-
-import static android.widget.Toast.makeText;
+import java.text.BreakIterator;
 
 public class GetCookingActivity extends AppCompatActivity implements GetCookingFragment.OnFragmentInteractionListener {
 
@@ -50,7 +41,7 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
 
     private final String TAG = "GetCookingActivity";
     private final int REQ_CODE_SPEECH_INPUT = 100;
-    private String[] directions;
+    private ArrayList<String> directions;
     private int step;
     private boolean hasDirections = false;
     private int numberSteps;
@@ -72,8 +63,8 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
             @Override
             public boolean onSingleTapConfirmed(MotionEvent e) {
                 if(hasDirections) {
-                    if (step < directions.length) {
-                        read(directions[step]);
+                    if (step < directions.size()) {
+                        read(directions.get(step));
                     } else {
                         read(getResources().getString(R.string.bonAppetit));
                     }
@@ -106,7 +97,7 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 step = position;
                 updateStepText();
-                read(directions[position]);
+                read(directions.get(position));
             }
 
             @Override
@@ -150,8 +141,8 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
 
                     // Causes nullPointerException on Nexus_5_API_22
                    // Log.d(TAG, "Quality -> " + textToSpeech.getVoice().getQuality());
-                    if(directions.length > 0){
-                        read(directions[0]);
+                    if(directions.size() > 0){
+                        read(directions.get(0));
 
                     }
                 }
@@ -174,8 +165,23 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
     protected void onStart() {
         super.onStart();
         Intent i = getIntent();
-        directions = i.getStringArrayExtra("directions");
-        numberSteps = directions.length;
+
+        // Split up the directions to more "digestible" (wink wink) pieces
+        String[] rawDirections = i.getStringArrayExtra("directions");
+
+        directions = new ArrayList<>();
+
+        for (int x = 0; x < rawDirections.length; x++) {
+            BreakIterator iterator = BreakIterator.getSentenceInstance(Locale.US);
+            String source = rawDirections[x];
+            iterator.setText(source);
+            int start = iterator.first();
+            for (int end = iterator.next(); end != BreakIterator.DONE; start = end, end = iterator.next()) {
+                directions.add(source.substring(start,end));
+            }
+        }
+
+        numberSteps = directions.size();
         if(numberSteps > 0){
 
             hasDirections = true;
@@ -185,7 +191,7 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
             updateStepText();
             ArrayList<GetCookingFragment> frags = new ArrayList<>();
             for(int j = 0; j < numberSteps; j++){
-                frags.add(GetCookingFragment.newInstance(String.valueOf(j), directions[j]));
+                frags.add(GetCookingFragment.newInstance(String.valueOf(j), directions.get(j)));
             }
 
             pager.setAdapter(new CookingPagerAdapter(getSupportFragmentManager(), frags));
@@ -262,6 +268,12 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
                     getString(R.string.speech_not_supported),
                     Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        textToSpeech.stop();
     }
 
     /**

@@ -19,7 +19,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     private final String TAG = "DatabaseHandler";
     private static final String DB_FILE_NAME = "chefly.db";
-    private static final int DB_VERSION = 8;
+    private static final int DB_VERSION = 9;
 
     public DatabaseHandler(Context context) {
         super(context, DB_FILE_NAME, null, DB_VERSION);
@@ -41,137 +41,192 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     public void createDetailedRecipe(RecipeInformation recipe){
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
+        SQLiteDatabase db = null;
+        ContentValues values;
 
-        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_ID, recipe.getId());
-        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_NAME, recipe.getTitle());
-        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_AUTHOR, recipe.getCreditText());
-        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_SERVES, recipe.getServings());
-        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_TIME, recipe.getReadyInMinutes());
-        Gson gson = new Gson();
-        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_IMAGE, recipe.getImage().toString());
-        String json = gson.toJson(recipe.getInstructions());
-        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_DIRECTIONS, json);
-        json = gson.toJson(recipe.getExtendedIngredients());
-        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_INGREDIENTS, json);
+        try {
+            db = this.getWritableDatabase();
+            values = new ContentValues();
+            values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_ID, recipe.getId());
+            values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_NAME, recipe.getTitle());
+            values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_AUTHOR, recipe.getCreditText());
+            values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_SERVES, recipe.getServings());
+            values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_TIME, recipe.getReadyInMinutes());
+            Gson gson = new Gson();
+            values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_IMAGE, recipe.getImage().toString());
+            String json = gson.toJson(recipe.getInstructions());
+            values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_DIRECTIONS, json);
+            json = gson.toJson(recipe.getExtendedIngredients());
+            values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_INGREDIENTS, json);
 
-        db.insert(RecipeDetailTable.RECIPE_DETAIL_TABLE_ITEMS, "", values);
-        db.close();
+            db.insert(RecipeDetailTable.RECIPE_DETAIL_TABLE_ITEMS, "", values);
+        }finally {
+            if (db != null)
+                db.close();
+        }
+
+
 
     }
     public ArrayList<RecipeInformation> getRecipes(){
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
         ArrayList<RecipeInformation> list = new ArrayList<>();
         String[] columns = {RecipeDetailTable.COLUMN_RECIPE_DETAIL_ID, RecipeDetailTable.COLUMN_RECIPE_DETAIL_NAME,RecipeDetailTable.COLUMN_RECIPE_DETAIL_AUTHOR,
                 RecipeDetailTable.COLUMN_RECIPE_DETAIL_CATEGORIES,RecipeDetailTable.COLUMN_RECIPE_DETAIL_LEVEL, RecipeDetailTable.COLUMN_RECIPE_DETAIL_TIME,
                 RecipeDetailTable.COLUMN_RECIPE_DETAIL_RATING,RecipeDetailTable.COLUMN_RECIPE_DETAIL_IMAGE };
+        try {
+            db = this.getWritableDatabase();
+            cursor = db.query(RecipeDetailTable.RECIPE_DETAIL_TABLE_ITEMS, columns , null, null, null, null, RecipeDetailTable.COLUMN_RECIPE_DETAIL_NAME);
+            if (cursor.moveToFirst()) {
+                do {
+                    String id = cursor.getString(cursor.getColumnIndex(RecipeDetailTable.COLUMN_RECIPE_DETAIL_ID));
+                    String name = cursor.getString(cursor.getColumnIndex(RecipeDetailTable.COLUMN_RECIPE_DETAIL_NAME));
+                    String author = cursor.getString(cursor.getColumnIndex(RecipeDetailTable.COLUMN_RECIPE_DETAIL_AUTHOR));
+                    String cats = cursor.getString(cursor.getColumnIndex(RecipeDetailTable.COLUMN_RECIPE_DETAIL_CATEGORIES));
+                    String level = cursor.getString(cursor.getColumnIndex(RecipeDetailTable.COLUMN_RECIPE_DETAIL_LEVEL));
+                    int time = cursor.getInt(cursor.getColumnIndex(RecipeDetailTable.COLUMN_RECIPE_DETAIL_TIME));
+                    int rating = cursor.getInt(cursor.getColumnIndex(RecipeDetailTable.COLUMN_RECIPE_DETAIL_RATING));
+                    String image = cursor.getString(cursor.getColumnIndex(RecipeDetailTable.COLUMN_RECIPE_DETAIL_IMAGE));
 
-        Cursor cursor = db.query(RecipeDetailTable.RECIPE_DETAIL_TABLE_ITEMS, columns , null, null, null, null, RecipeDetailTable.COLUMN_RECIPE_DETAIL_NAME);
-        if (cursor.moveToFirst()) {
-            do {
-                String id = cursor.getString(cursor.getColumnIndex(RecipeDetailTable.COLUMN_RECIPE_DETAIL_ID));
-                String name = cursor.getString(cursor.getColumnIndex(RecipeDetailTable.COLUMN_RECIPE_DETAIL_NAME));
-                String author = cursor.getString(cursor.getColumnIndex(RecipeDetailTable.COLUMN_RECIPE_DETAIL_AUTHOR));
-                String cats = cursor.getString(cursor.getColumnIndex(RecipeDetailTable.COLUMN_RECIPE_DETAIL_CATEGORIES));
-                String level = cursor.getString(cursor.getColumnIndex(RecipeDetailTable.COLUMN_RECIPE_DETAIL_LEVEL));
-                int time = cursor.getInt(cursor.getColumnIndex(RecipeDetailTable.COLUMN_RECIPE_DETAIL_TIME));
-                int rating = cursor.getInt(cursor.getColumnIndex(RecipeDetailTable.COLUMN_RECIPE_DETAIL_RATING));
-                String image = cursor.getString(cursor.getColumnIndex(RecipeDetailTable.COLUMN_RECIPE_DETAIL_IMAGE));
+                    Gson gson = new Gson();
+                    String[] categories = gson.fromJson(cats, String[].class);
+                    //list.add(new RecipeInformation(id,name,author,image, rating, time, categories, level));
 
-                Gson gson = new Gson();
-                String[] categories = gson.fromJson(cats, String[].class);
-                //list.add(new RecipeInformation(id,name,author,image, rating, time, categories, level));
+                } while (cursor.moveToNext());
 
-            } while (cursor.moveToNext());
+            }
+        }finally {
+            if(cursor != null)
+                cursor.close();
 
+            if(db != null)
+                db.close();
         }
-        cursor.close();
-        db.close();
+
+
         return list;
     }
 
     public long getRecipeItemsCount() {
-        SQLiteDatabase db = this.getReadableDatabase();
-        long l =  DatabaseUtils.queryNumEntries(db, RecipeTable.RECIPE_TABLE_ITEMS);
-        db.close();
-        return l;
+        SQLiteDatabase db = null;
+        try{
+            db = this.getReadableDatabase();
+            return DatabaseUtils.queryNumEntries(db, RecipeTable.RECIPE_TABLE_ITEMS);
+        }finally {
+            if(db != null)
+                db.close();
+        }
+
     }
 
     public ArrayList<ShoppingListItem> getShoppingList(){
-        SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
         ArrayList<ShoppingListItem> listItems = new ArrayList<>();
 
-        Cursor cursor = db.query(ShoppingList.TABLE_LIST_ITEMS, ShoppingList.ALL_COLUMNS , null, null, null, null, ShoppingList.COLUMN_NAME);
+        try{
+            db = this.getReadableDatabase();
 
-        if (cursor.moveToFirst()) {
-            do {
-                int id = cursor.getInt(cursor.getColumnIndex(ShoppingList.COLUMN_LIST_ID));
-                String name = cursor.getString(cursor.getColumnIndex(ShoppingList.COLUMN_NAME));
-                int qty = cursor.getInt(cursor.getColumnIndex(ShoppingList.COLUMN_QUANTITY));
-                String uom = cursor.getString(cursor.getColumnIndex(ShoppingList.COLUMN_UNIT));
-                boolean purchased = cursor.getInt(cursor.getColumnIndex(ShoppingList.COLUMN_PURCHASED)) > 0;
+            cursor = db.query(ShoppingList.TABLE_LIST_ITEMS, ShoppingList.ALL_COLUMNS , null, null, null, null, ShoppingList.COLUMN_NAME);
 
-                listItems.add(new ShoppingListItem(id, name, qty,uom,purchased));
-            } while (cursor.moveToNext());
-            return listItems;
+            if (cursor.moveToFirst()) {
+                do {
+                    int id = cursor.getInt(cursor.getColumnIndex(ShoppingList.COLUMN_LIST_ID));
+                    String name = cursor.getString(cursor.getColumnIndex(ShoppingList.COLUMN_NAME));
+                    boolean purchased = cursor.getInt(cursor.getColumnIndex(ShoppingList.COLUMN_PURCHASED)) > 0;
+
+                    listItems.add(new ShoppingListItem(id, name,purchased));
+                } while (cursor.moveToNext());
+                return listItems;
+            }
+
+        }finally {
+            if(cursor != null){
+                cursor.close();
+            }
+            if(db != null){
+                db.close();
+            }
+
         }
 
-        cursor.close();
-        db.close();
+
         return listItems;
     }
 
 
-    public void addItemToShoppingList(ExtendedIngredient i, boolean purchased){
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
+    public void addItemToShoppingList(String name, boolean purchased){
+        SQLiteDatabase db = null;
+        try{
+            db = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
 
-        values.put(ShoppingList.COLUMN_NAME, i.getName());
-        values.put(ShoppingList.COLUMN_QUANTITY, i.getAmount());
-        values.put(ShoppingList.COLUMN_UNIT, i.getUnit());
-        values.put(ShoppingList.COLUMN_PURCHASED, purchased);
+            values.put(ShoppingList.COLUMN_NAME, name);
+            values.put(ShoppingList.COLUMN_PURCHASED, purchased);
 
-        db.insert(ShoppingList.TABLE_LIST_ITEMS, null, values);
+            db.insert(ShoppingList.TABLE_LIST_ITEMS, null, values);
+        }finally {
+            if(db != null)
+                db.close();
+        }
 
-        db.close();
+
+
     }
     public void updateShoppingListItem(ShoppingListItem i){
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(ShoppingList.COLUMN_NAME, i.getName());
-        values.put(ShoppingList.COLUMN_QUANTITY, i.getQty());
-        values.put(ShoppingList.COLUMN_UNIT, i.getUnitOfMeasure());
-        values.put(ShoppingList.COLUMN_PURCHASED, i.isPurchased());
-        db.update(ShoppingList.TABLE_LIST_ITEMS, values, ShoppingList.COLUMN_LIST_ID + " = " + i.getId(), null);
-        db.close();
+        SQLiteDatabase db = null;
+        try {
+            db = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put(ShoppingList.COLUMN_NAME, i.getName());
+            values.put(ShoppingList.COLUMN_PURCHASED, i.isPurchased());
+            db.update(ShoppingList.TABLE_LIST_ITEMS, values, ShoppingList.COLUMN_LIST_ID + " = " + i.getId(), null);
+        }finally {
+            if(db != null)
+                db.close();
+        }
+
     }
 
     public void recipeUpdate(RecipeInformation recipe){
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_ID, recipe.getId());
-        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_NAME, recipe.getTitle());
-        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_AUTHOR, recipe.getCreditText());
-        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_SERVES, recipe.getServings());
-        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_TIME, recipe.getReadyInMinutes());
-        Gson gson = new Gson();
-        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_IMAGE, recipe.getImage());
-        String json = gson.toJson(recipe.getInstructions());
-        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_DIRECTIONS, json);
-        json = gson.toJson(recipe.getExtendedIngredients());
-        values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_INGREDIENTS, json);
+        SQLiteDatabase db = null;
+        try{
+            db = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_ID, recipe.getId());
+            values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_NAME, recipe.getTitle());
+            values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_AUTHOR, recipe.getCreditText());
+            values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_SERVES, recipe.getServings());
+            values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_TIME, recipe.getReadyInMinutes());
+            Gson gson = new Gson();
+            values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_IMAGE, recipe.getImage());
+            String json = gson.toJson(recipe.getInstructions());
+            values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_DIRECTIONS, json);
+            json = gson.toJson(recipe.getExtendedIngredients());
+            values.put(RecipeDetailTable.COLUMN_RECIPE_DETAIL_INGREDIENTS, json);
 
-        db.update(RecipeDetailTable.RECIPE_DETAIL_TABLE_ITEMS, values,RecipeDetailTable.COLUMN_RECIPE_DETAIL_ID + " = " + recipe.getId(), null);
-        db.close();
-    }
-    public void deleteItemFromShoppingList(ArrayList<ShoppingListItem> items){
-        SQLiteDatabase db = this.getWritableDatabase();
-        for(ShoppingListItem item : items){
-            long result = db.delete(ShoppingList.TABLE_LIST_ITEMS, ShoppingList.COLUMN_LIST_ID + " = " + item.getId(), null);
-            Log.d(TAG, "id -> " +item.getId() + " result ->" + result);
+            db.update(RecipeDetailTable.RECIPE_DETAIL_TABLE_ITEMS, values,RecipeDetailTable.COLUMN_RECIPE_DETAIL_ID + " = " + recipe.getId(), null);
+
+        }finally {
+            if(db != null)
+                db.close();
         }
 
-        db.close();
+    }
+    public void deleteItemFromShoppingList(ArrayList<ShoppingListItem> items){
+        SQLiteDatabase db = null;
+        try{
+            db = this.getWritableDatabase();
+            for(ShoppingListItem item : items){
+                long result = db.delete(ShoppingList.TABLE_LIST_ITEMS, ShoppingList.COLUMN_LIST_ID + " = " + item.getId(), null);
+                Log.d(TAG, "id -> " +item.getId() + " result ->" + result);
+            }
+
+        }finally {
+            if(db != null)
+                db.close();
+        }
+
     }
 }
