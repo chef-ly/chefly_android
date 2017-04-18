@@ -21,13 +21,10 @@ import com.auth0.android.lock.Lock;
 import com.auth0.android.provider.AuthCallback;
 import com.auth0.android.provider.WebAuthProvider;
 import com.auth0.android.result.Credentials;
-import com.auth0.android.result.UserProfile;
 import com.se491.chef_ly.R;
-import com.se491.chef_ly.model.UserSessionManager;
-import com.se491.chef_ly.utils.CredentialsManager;
 
 
-public class    MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class  MainActivity extends AppCompatActivity implements View.OnClickListener{
 
     private EditText username;
     private EditText password;
@@ -62,28 +59,7 @@ public class    MainActivity extends AppCompatActivity implements View.OnClickLi
         ////////////////////////////////////////////////////////////////////////////////////////////
         */
 
-//        // save users from having to re-enter their login credentials when relaunching the app
-//        if(CredentialsManager.getCredentials(this).getIdToken() == null) {
-//            // Prompt Login screen.
-//        }
-//        else {
-//            AuthenticationAPIClient aClient = new AuthenticationAPIClient(auth0);
-//            aClient.tokenInfo(CredentialsManager.getCredentials(this).getIdToken())
-//                    .start(new BaseCallback<UserProfile, AuthenticationException>() {
-//                        @Override
-//                        public void onSuccess(UserProfile payload) {
-//                            // Valid ID > Navigate to the app's MainActivity
-//                            Intent recipeListIntent = new Intent(MainActivity.this, RecipeListActivity.class);
-//                            recipeListIntent.putExtra("name", "aaa");
-//                            startActivity(recipeListIntent);
-//                        }
-//
-//                        @Override
-//                        public void onFailure(AuthenticationException error) {
-//                            // Invalid ID Scenario
-//                        }
-//                    });
-//        }
+
 
     }
 
@@ -93,6 +69,8 @@ public class    MainActivity extends AppCompatActivity implements View.OnClickLi
         TextView signUp;
         Button webLoginButton = (Button) findViewById(R.id.webLoginButton);
         webLoginButton.setOnClickListener(this);
+        Button googleLoginButton = (Button) findViewById(R.id.googleLoginButton);
+        googleLoginButton.setOnClickListener(this);
         username = (EditText) findViewById(R.id.useremail);
         password = (EditText) findViewById(R.id.password);
         signInBtn = (Button) findViewById(R.id.signInBtn);
@@ -107,14 +85,6 @@ public class    MainActivity extends AppCompatActivity implements View.OnClickLi
     private void login(String emailOrUsername, String password) {
 
 
-        // get a valid refresh_token in the response
-
-//        Map<String, Object> parameters = new HashMap<>();
-//        parameters.put("scope", "openid offline_access");
-//        Lock lock = Lock.newBuilder(auth0, callback)
-//                .withAuthenticationParameters(parameters)
-//                .build(this);
-//        startActivity(lock.newIntent(this));
 
         Log.d(TAG, "LOGIN ENTERED");
         Auth0 auth0 = new Auth0(getString(R.string.auth0_client_id), getString(R.string.auth0_domain));
@@ -226,6 +196,9 @@ public class    MainActivity extends AppCompatActivity implements View.OnClickLi
                 break;
             case R.id.webLoginButton:
                 socialLogin();
+                break;
+            case R.id.googleLoginButton:
+                //googleLogin();
                 break;
             case R.id.signUp:
                 Intent registerIntent = new Intent(MainActivity.this, RegisterActivity.class);

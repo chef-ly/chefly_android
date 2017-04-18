@@ -127,10 +127,20 @@
         android:id="@+id/webLoginButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="29dp"
+        android:layout_marginTop="28dp"
         android:minWidth="250dp"
         android:text="@string/webLogin"
         android:background="@color/btnBlue"
         android:layout_below="@+id/forgotpassword"
+        android:layout_alignEnd="@+id/googleLoginButton" />
+    <Button
+        android:id="@+id/googleLoginButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="250dp"
+        android:text="@string/googleLogin"
+        android:background="@color/btnred"
+        android:textColor="@color/white"
+        android:layout_below="@+id/webLoginButton"
         android:layout_toStartOf="@+id/continueAsGuest" />
 </RelativeLayout>
