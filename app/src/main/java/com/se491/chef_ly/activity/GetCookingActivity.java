@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
@@ -29,6 +30,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.se491.chef_ly.R;
+import com.se491.chef_ly.utils.VoiceRecognizer;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -52,6 +54,8 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
     private int step;
     private boolean hasDirections = false;
     private int numberSteps;
+
+    private VoiceRecognizer voiceRec = new VoiceRecognizer(GetCookingActivity.this);
 
 
 
@@ -156,8 +160,13 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
 
 
         //TODO - run recognizer from VoceRecognizer after text is done being read
-        //runRecognizerSetup();
         //Toast.makeText(GetCookingActivity.this, "Starting recognizer", Toast.LENGTH_LONG).show();
+        voiceRec.runRec();
+
+
+
+        pager.setCurrentItem(2, true);
+
 
     }
 
@@ -184,6 +193,30 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
         }
     }
 
+
+
+    public void sendLocalSwipeEvent(){
+        Log.e("DEBUG", "Sending local activity swipe");
+        long downTime = SystemClock.uptimeMillis();
+        long eventTime = SystemClock.uptimeMillis()+ 10;
+//        float x = 100.0f;
+//        float y = 100.0f;
+        int metaState = 0;
+        int[] coords = new int[2];
+        pager.getLocationOnScreen(coords);
+        int x = coords[0];
+        int y = coords[1];
+        Log.e("DEBUG", "The (x,y) coords are: ("+x+","+y+")");
+        MotionEvent motionEvent = MotionEvent.obtain(
+                downTime,
+                eventTime,
+                MotionEvent.ACTION_MOVE,
+                x+100,
+                y,
+                metaState);
+
+        pager.dispatchTouchEvent(motionEvent);
+    }
     @TargetApi(21)
     @SuppressWarnings("deprecation")
     private void read(String s) {
@@ -256,6 +289,10 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
         public void onDone(String ID){
             Log.e("DEBUG", "The TTS is done speaking "+ ID);
             //TODO - figure out how to call something that will start the recognizer there.
+            voiceRec.startRec();
+            //sendLocalSwipeEvent();
+            //pager.setCurrentItem(2, true);
+
         }
 
         @Override
@@ -267,6 +304,7 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
         public void onStart(String ID) {
             //recognizer.stop();
             Log.e("DEBUG", "The TTS is starting to speak!");
+            voiceRec.stopRec();
 
         }
     }

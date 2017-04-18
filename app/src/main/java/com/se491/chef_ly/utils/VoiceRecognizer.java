@@ -1,13 +1,17 @@
 package com.se491.chef_ly.utils;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,8 +34,13 @@ import static android.widget.Toast.makeText;
  * Created by Wolf on 4/14/2017.
  */
 
-public class VoiceRecognizer extends Application implements RecognitionListener {
+public class VoiceRecognizer implements RecognitionListener {
 
+    Activity currentActivity;
+    // TODO - THIS is a hack fix it
+    public VoiceRecognizer(Activity currentActivity){
+        this.currentActivity = currentActivity;
+    }
     // PocketSphinx vars
     /* Named searches allow to quickly reconfigure the decoder */
     private static final String KWS_SEARCH = "wakeup";
@@ -49,6 +58,7 @@ public class VoiceRecognizer extends Application implements RecognitionListener 
     private SpeechRecognizer recognizer;
     private HashMap<String, Integer> captions;
 
+
     //TODO - captions hashmap in onCreate//Pocketsphinx vars and code
     /*******************************
     // Prepare the data for UI
@@ -64,16 +74,31 @@ public class VoiceRecognizer extends Application implements RecognitionListener 
 
         Toast.makeText(this, "Preparing the recognizer", Toast.LENGTH_LONG).show();
 
-    // Check if user has given permission to record audio
-    int permissionCheck = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO);
-        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, PERMISSIONS_REQUEST_RECORD_AUDIO);
-        return;
+
 
     }
      *****************/
 
+    public void checkAudioPermission(Activity currentActivity) {
+        // Check if user has given permission to record audio
+        int permissionCheck = ContextCompat.checkSelfPermission(currentActivity, Manifest.permission.RECORD_AUDIO);
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(currentActivity, new String[]{Manifest.permission.RECORD_AUDIO}, PERMISSIONS_REQUEST_RECORD_AUDIO);
+            return;
+        }
+    }
 
+    public void runRec(){
+        Toast.makeText(currentActivity, "Starting recognizer", Toast.LENGTH_SHORT).show();
+        runRecognizerSetup();
+    }
+
+    public void startRec(){
+        switchSearch(KWS_SEARCH);
+    }
+    public void stopRec(){
+        recognizer.stop();
+    }
 
     // --- PocketSphinx functions
     private void runRecognizerSetup() {
@@ -83,7 +108,7 @@ public class VoiceRecognizer extends Application implements RecognitionListener 
             @Override
             protected Exception doInBackground(Void... params) {
                 try {
-                    Assets assets = new Assets(getApplicationContext());
+                    Assets assets = new Assets(currentActivity);
                     File assetDir = assets.syncAssets();
                     setupRecognizer(assetDir);
                 } catch (IOException e) {
@@ -95,9 +120,10 @@ public class VoiceRecognizer extends Application implements RecognitionListener 
             @Override
             protected void onPostExecute(Exception result) {
                 if (result != null) {
-                    Toast.makeText(getApplicationContext(), "Failed to init recognizer " + result, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(currentActivity, "Failed to init recognizer " + result, Toast.LENGTH_SHORT).show();
                 } else {
                     //TODO - move to the listener for textToSpeech to be done
+                    Toast.makeText(currentActivity, "Recognizer initialized!", Toast.LENGTH_SHORT).show();
                     switchSearch(KWS_SEARCH);
                 }
             }
@@ -146,7 +172,7 @@ public class VoiceRecognizer extends Application implements RecognitionListener 
             switchSearch(MENU_SEARCH);
         else if (text.equals(FORWARD)) {
             //TODO - DONT make calls here in partial
-            Toast.makeText(this, "parital "+ text, Toast.LENGTH_LONG).show();
+            Toast.makeText(currentActivity, "parital "+ text, Toast.LENGTH_LONG).show();
             //next.performClick();
             switchSearch(KWS_SEARCH);
         }
@@ -161,7 +187,7 @@ public class VoiceRecognizer extends Application implements RecognitionListener 
         else
             //((TextView) findViewById(R.id.text)).setText(text);
             // TODO- dont show text from here.  ONly show text from Final results
-            Toast.makeText(this, "parital "+ text, Toast.LENGTH_LONG).show();
+            Toast.makeText(currentActivity, "PARTIAL "+ text, Toast.LENGTH_LONG).show();
     }
 
     /**
@@ -173,12 +199,15 @@ public class VoiceRecognizer extends Application implements RecognitionListener 
         if (hypothesis != null) {
             String text = hypothesis.getHypstr();
             //TODO - here is where you should be making calls and doing stuff, not partial
-            makeText(getApplicationContext(), "full " + text, Toast.LENGTH_SHORT).show();
+            makeText(currentActivity, "Full: " + text, Toast.LENGTH_SHORT).show();
 
             if (text.equals(FORWARD)) {
-                //TODO - DONT make calls here in partial
+                //TODO - DONT make calls here
 
                 //next.performClick();
+                Log.e("DEBUG","Recognizer received NEXT");
+                sendSwipeEvent();
+
                 switchSearch(KWS_SEARCH);
             }
             else if (text.equals(BACK)) {
@@ -188,6 +217,24 @@ public class VoiceRecognizer extends Application implements RecognitionListener 
             }
 
         }
+    }
+
+    public void sendSwipeEvent(){
+        Log.e("DEBUG", "Sending Swipe");
+        long downTime = SystemClock.uptimeMillis();
+        long eventTime = SystemClock.uptimeMillis()+ 10;
+        float x = 0.0f;
+        float y = 0.0f;
+        int metaState = 0;
+        MotionEvent motionEvent = MotionEvent.obtain(
+                downTime,
+                eventTime,
+                MotionEvent.AXIS_HSCROLL,
+                x,
+                y,
+                metaState);
+
+        currentActivity.findViewById(R.id.viewpager).dispatchTouchEvent(motionEvent);
     }
 
     @Override
@@ -212,9 +259,10 @@ public class VoiceRecognizer extends Application implements RecognitionListener 
         else
             recognizer.startListening(searchName, 10000);
 
-        String caption = getResources().getString(captions.get(searchName));
+        //TODO - fix get recsources()
+        //String caption = currentActivity.getString(captions.get(searchName));
         //((TextView) findViewById(R.id.text)).setText(caption);
-        Toast.makeText(this, caption, Toast.LENGTH_LONG).show();
+        //Toast.makeText(currentActivity, "Search Started", Toast.LENGTH_LONG).show();
     }
 
     public void initSwitchSearch(){
@@ -261,7 +309,7 @@ public class VoiceRecognizer extends Application implements RecognitionListener 
 
     @Override
     public void onError(Exception error) {
-        Toast.makeText(getApplicationContext(), "There was an error", Toast.LENGTH_LONG).show();
+        Toast.makeText(currentActivity, "There was an error", Toast.LENGTH_LONG).show();
     }
 
     @Override
