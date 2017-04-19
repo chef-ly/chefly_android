@@ -45,21 +45,21 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
         @Override
         public void onReceive(Context context, Intent intent) {
             //try {
-                token = intent.getStringExtra(MyService.MY_SERVICE_RESPONSE_STRING);
-                Log.d(TAG, token);
+            token = intent.getStringExtra(MyService.MY_SERVICE_RESPONSE_STRING);
+            Log.d(TAG, token);
 
-                if (token != null) {
-                    // Direct user to list view
-                    Intent recipeListIntent = new Intent(RegisterActivity.this, RecipeListActivity.class);
-                    recipeListIntent.putExtra("name", username);
-                    startActivity(recipeListIntent);
-                    finish();
-                } else {
-                    Toast.makeText(getApplicationContext(), "There was a problem while registering your account", Toast.LENGTH_SHORT).show();
-                    Intent mainIntent = new Intent(RegisterActivity.this, MainActivity.class);
-                    startActivity(mainIntent);
-                    finish();
-                }
+            if (token != null) {
+                // Direct user to list view
+                Intent recipeListIntent = new Intent(RegisterActivity.this, RecipeListActivity.class);
+                recipeListIntent.putExtra("name", username);
+                startActivity(recipeListIntent);
+                finish();
+            } else {
+                Toast.makeText(getApplicationContext(), "There was a problem while registering your account", Toast.LENGTH_SHORT).show();
+                Intent mainIntent = new Intent(RegisterActivity.this, MainActivity.class);
+                startActivity(mainIntent);
+                finish();
+            }
             //} catch (JSONException e) {
             //    e.printStackTrace();
             //}

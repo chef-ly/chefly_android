@@ -1,10 +1,8 @@
 package com.se491.chef_ly.activity;
 
 import android.app.SearchManager;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,7 +11,6 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -32,17 +29,12 @@ import android.widget.Toast;
 import com.se491.chef_ly.Databases.DatabaseHandler;
 import com.se491.chef_ly.R;
 import com.se491.chef_ly.activity.nav_activities.ShoppingListActivity;
-import com.se491.chef_ly.http.MyService;
-import com.se491.chef_ly.http.RequestMethod;
 import com.se491.chef_ly.model.RecipeInformation;
 import com.se491.chef_ly.model.RecipeList;
 import com.se491.chef_ly.utils.CredentialsManager;
-import com.se491.chef_ly.utils.NetworkHelper;
-
-import java.util.ArrayList;
 
 public class RecipeListActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
-                                                                        ListViewFragment.OnFragmentInteractionListener{
+                                                                        ListViewFragment.OnFragmentInteractionListener {
 
     private static final String TAG = "RecipeListActivity";
     private final int CREATE_RECIPE_CODE = 7212;
@@ -54,33 +46,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
     private TextView favoritesHeader;
     private TextView recipesHeader;
 
-    private static final String urlString ="https://chefly-prod.herokuapp.com/list/random/10";
 
-
-    private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            RecipeList fromServer;
-            // Get recipes from server
-            fromServer = intent.getParcelableExtra(MyService.MY_SERVICE_PAYLOAD);
-            if(fromServer != null){
-                // Only add the recipes we do not have in our list already
-                for(RecipeInformation r : fromServer){
-                    if(!serverRecipes.contains(r)){
-                        serverRecipes.add(r);
-                    }
-                }
-            }else{
-                Log.d(TAG, "No recipes received from server");
-            }
-
-            // Notify the list view adapter that the list has changed
-            server.updateListAdapter(serverRecipes);
-
-        }
-
-    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,25 +63,28 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
 
         server = ListViewFragment.newInstance("Recipes", "2");
 
-        ListViewFragment[] frags = {server,favs};
+        ListViewFragment[] frags = {server, favs};
         pager.setAdapter(new RecipeListPagerAdapter(getSupportFragmentManager(), frags));
 
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                if(position == 1){
-                    favoritesHeader.setPaintFlags(favoritesHeader.getPaintFlags()| Paint.UNDERLINE_TEXT_FLAG);
+                if (position == 1) {
+                    favoritesHeader.setPaintFlags(favoritesHeader.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
                     recipesHeader.setPaintFlags(0);
-                }else{
-                    recipesHeader.setPaintFlags(recipesHeader.getPaintFlags()| Paint.UNDERLINE_TEXT_FLAG);
+                } else {
+                    recipesHeader.setPaintFlags(recipesHeader.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
                     favoritesHeader.setPaintFlags(0);
                 }
             }
-            @Override
-            public void onPageSelected(int position) { }
 
             @Override
-            public void onPageScrollStateChanged(int state) {}
+            public void onPageSelected(int position) {
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
         });
 
         // Header links
@@ -125,13 +94,13 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         View.OnClickListener headerListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(v.getId() == favoritesHeader.getId()){
-                    favoritesHeader.setPaintFlags(favoritesHeader.getPaintFlags()| Paint.UNDERLINE_TEXT_FLAG);
+                if (v.getId() == favoritesHeader.getId()) {
+                    favoritesHeader.setPaintFlags(favoritesHeader.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
                     recipesHeader.setPaintFlags(0);
                     //TODO change page to favs
                     pager.setCurrentItem(1);
-                }else{
-                    recipesHeader.setPaintFlags(recipesHeader.getPaintFlags()| Paint.UNDERLINE_TEXT_FLAG);
+                } else {
+                    recipesHeader.setPaintFlags(recipesHeader.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
                     favoritesHeader.setPaintFlags(0);
                     //TODO change page to recipes
                     pager.setCurrentItem(0);
@@ -155,39 +124,6 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        // Get recipes from server
-        if(NetworkHelper.hasNetworkAccess(RecipeListActivity.this)) //returns true if internet available
-        {
-            //Toast.makeText(RecipeListActivity.this,"Internet Connection",Toast.LENGTH_LONG).show();
-                      //register to listen the data
-            RequestMethod requestPackage = new RequestMethod();
-
-            requestPackage.setEndPoint(urlString);
-            //requestPackage.setParam("name", "Pepperoni Pizza");//filter data if i want
-            requestPackage.setMethod("GET"); //  or requestPackage.setMethod("POST");
-            Intent intent = new Intent(this, MyService.class);
-            intent.putExtra(MyService.REQUEST_PACKAGE, requestPackage);
-            intent.putExtra("Tag", TAG);
-            startService(intent);
-        }
-        else
-        {
-            //Toast.makeText(RecipeListActivity.this,"No Internet Connection",Toast.LENGTH_LONG).show();
-            Log.d(TAG, "No Internet Connection");
-        }
-        //listen to the message
-        LocalBroadcastManager.getInstance(getApplicationContext())
-                .registerReceiver(mBroadcastReceiver,
-                        new IntentFilter(MyService.MY_SERVICE_MESSAGE));
-        handleIntent(getIntent());
-
-    }
-    @Override
-    protected void onDestroy() { //unregister to listen the data
-        super.onDestroy();
-
-        LocalBroadcastManager.getInstance(getApplicationContext())
-                .unregisterReceiver(mBroadcastReceiver);
     }
 
     @Override
@@ -196,17 +132,26 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
     }
 
     @Override
-    protected void onStart(){
+    protected void onStart() {
         super.onStart();
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         String user = extras.getString("name");
+        RecipeList list = extras.getParcelable("recipeList");
+        if(list != null){
+            serverRecipes = list;
+            server.updateListAdapter(serverRecipes);
+        }else{
+            Log.d(TAG, "Error - No recipes loaded from server");
+            Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
+            //TODO handle case where no recipes are retrieved from server
+        }
 
         // Get recipes from local db
         DatabaseHandler db = new DatabaseHandler(getApplicationContext());
-        if(favoriteRecipes != null){
+        if (favoriteRecipes != null) {
             favoriteRecipes.addAll(db.getRecipes());
-        }else{
+        } else {
             favoriteRecipes = new RecipeList(db.getRecipes());
         }
 
@@ -214,6 +159,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         favs.updateListAdapter(favoriteRecipes);
 
     }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -245,15 +191,17 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
             Toast.makeText(this, query, Toast.LENGTH_SHORT).show();
-        }else{
+        } else {
             Log.d(TAG, "Intent does not equal action search");
         }
     }
 
+    // PageViewer
     @Override
     public void onFragmentInteraction(Uri uri) {
 
     }
+
     //For navigation drawer
     @Override
     public void onBackPressed() {
@@ -315,7 +263,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        switch(id){
+        switch (id) {
             case R.id.nav_profile:
                 Toast.makeText(this, "Profile", Toast.LENGTH_SHORT).show();
                 break;
@@ -359,11 +307,10 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
     }
 
 
-
     private class RecipeListPagerAdapter extends FragmentPagerAdapter {
         private ListViewFragment[] pages;
 
-        RecipeListPagerAdapter(FragmentManager m, ListViewFragment[] p){
+        RecipeListPagerAdapter(FragmentManager m, ListViewFragment[] p) {
             super(m);
             pages = p;
         }
@@ -382,9 +329,11 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         public Fragment getItem(int position) {
             return pages[position];
         }
+
         @Override
         public CharSequence getPageTitle(int position) {
             return pages[position].getTitle();
         }
     }
+
 }

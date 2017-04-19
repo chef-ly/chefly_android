@@ -3,6 +3,7 @@
     <string name="auth0_domain">chefly.auth0.com</string>
     <string name="auth0_databaseConnection">Username-Password-Authentication</string>
     <string name="webLogin">Login with Facebook</string>
+    <string name="googleLogin">Login with Google</string>
     <string name="addRemove">Add Remove</string>
     <string name="addToGroceryList">Add Selected to Grocery List</string>
     <string name="app_name">Chefly</string>
@@ -11,12 +12,12 @@
     <string name="bonAppetit">Bon Appetit!</string>
     <string name="by">by </string>
     <string name="categoryHint">Italian, French, Dessert, Lunch, Quick, &#8230;</string>
-    <string name="chooseUsername">Create a New Username</string>
+    <string name="chooseUsername">Create a new username</string>
     <string name="clearPurchased">Clear Purchased</string>
     <string name="contentDescriptionRecipe">A picture of the recipe</string>
     <string name="continueAsGuest"><u>Skip</u></string>
-    <string name="createPassword">Enter Password</string>
-    <string name="createPasswordAgain">Enter Password Again</string>
+    <string name="createPassword">Enter Password that includes at least 8 characters with at least 1 uppers,lower,number and symbol</string>
+    <string name="createPasswordAgain">Please Re-enter password for match confirmation</string>
     <string name="createRecipe">Create Recipe</string>
     <string name="difficulty">Difficulty: </string>
     <string name="directions">Directions</string>
@@ -24,7 +25,7 @@
     <string name="edit">Edit</string>
     <string name="edit_directionView">edit direction step</string>
     <string name="email">heinsd@hotmail.com</string>
-    <string name="enterUserEmail">Enter user email</string>
+    <string name="enterUserEmail">Please enter your email</string>
     <string name="favorite">Favorite</string>
     <string name="favorites">Favorites</string>
     <string name="finished">Finished</string>
