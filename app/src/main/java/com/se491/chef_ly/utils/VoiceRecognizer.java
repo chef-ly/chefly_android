@@ -42,9 +42,9 @@ import static com.se491.chef_ly.R.id.pager;
 
 public class VoiceRecognizer implements RecognitionListener {
 
-    Activity currentActivity;
+    Context currentActivity;
     // TODO - THIS is a hack fix it
-    public VoiceRecognizer(Activity currentActivity){
+    public VoiceRecognizer(Context currentActivity){
         this.currentActivity = currentActivity;
     }
     // PocketSphinx vars
@@ -118,6 +118,7 @@ public class VoiceRecognizer implements RecognitionListener {
                     File assetDir = assets.syncAssets();
                     setupRecognizer(assetDir);
                 } catch (IOException e) {
+                    Log.e("DEBUG", e.toString());
                     return e;
                 }
                 return null;
@@ -226,24 +227,6 @@ public class VoiceRecognizer implements RecognitionListener {
         }
     }
 
-    public void sendSwipeEvent(){
-        Log.e("DEBUG", "Sending Swipe");
-        long downTime = SystemClock.uptimeMillis();
-        long eventTime = SystemClock.uptimeMillis()+ 10;
-        float x = 0.0f;
-        float y = 0.0f;
-        int metaState = 0;
-        MotionEvent motionEvent = MotionEvent.obtain(
-                downTime,
-                eventTime,
-                MotionEvent.AXIS_HSCROLL,
-                x,
-                y,
-                metaState);
-
-        currentActivity.findViewById(R.id.viewpager).dispatchTouchEvent(motionEvent);
-    }
-
     @Override
     public void onBeginningOfSpeech() {
     }
@@ -270,10 +253,6 @@ public class VoiceRecognizer implements RecognitionListener {
         //String caption = currentActivity.getString(captions.get(searchName));
         //((TextView) findViewById(R.id.text)).setText(caption);
         //Toast.makeText(currentActivity, "Search Started", Toast.LENGTH_LONG).show();
-    }
-
-    public void initSwitchSearch(){
-        switchSearch(KWS_SEARCH);
     }
 
     private void setupRecognizer(File assetsDir) throws IOException {

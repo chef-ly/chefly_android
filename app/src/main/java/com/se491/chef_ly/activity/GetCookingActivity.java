@@ -1,8 +1,10 @@
 package com.se491.chef_ly.activity;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,9 +13,11 @@ import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -57,6 +61,9 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
     private int step;
     private boolean hasDirections = false;
     private int numberSteps;
+
+    /* Used to handle permission request from PocketSphinx*/
+    private static final int PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
 
     private VoiceRecognizer voiceRec = new VoiceRecognizer(GetCookingActivity.this);
 
@@ -180,6 +187,11 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
         });
         //TODO - run recognizer from VoiceRecognizer after text is done being read
 
+        int permissionCheck = ContextCompat.checkSelfPermission(GetCookingActivity.this, Manifest.permission.RECORD_AUDIO);
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(GetCookingActivity.this, new String[]{Manifest.permission.RECORD_AUDIO}, PERMISSIONS_REQUEST_RECORD_AUDIO);
+            return;
+        }
         //Toast.makeText(GetCookingActivity.this, "Starting recognizer", Toast.LENGTH_LONG).show();
         voiceRec.runRec();
 
