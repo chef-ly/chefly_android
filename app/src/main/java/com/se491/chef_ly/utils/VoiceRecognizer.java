@@ -6,6 +6,9 @@ import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.view.View;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -18,6 +21,8 @@ import android.widget.Toast;
 import com.se491.chef_ly.R;
 import com.se491.chef_ly.activity.GetCookingActivity;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -29,6 +34,7 @@ import edu.cmu.pocketsphinx.SpeechRecognizer;
 import edu.cmu.pocketsphinx.SpeechRecognizerSetup;
 
 import static android.widget.Toast.makeText;
+import static com.se491.chef_ly.R.id.pager;
 
 /**
  * Created by Wolf on 4/14/2017.
@@ -206,7 +212,8 @@ public class VoiceRecognizer implements RecognitionListener {
 
                 //next.performClick();
                 Log.e("DEBUG","Recognizer received NEXT");
-                sendSwipeEvent();
+                EventBus.getDefault().post(new VoiceInstructionEvent(true));
+
 
                 switchSearch(KWS_SEARCH);
             }
