@@ -160,7 +160,7 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
             }
         });
 
-        // TODO replace with speach recognizer
+        // TODO replace with speech recognizer
         Button ingredBtn = (Button) findViewById(R.id.ingredientsBtn);
         ingredBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -169,16 +169,16 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
                 ingredientsPopup.show(fm, "Ingredients");
             }
         });
-        // TODO replace with speach recognizer
+        // TODO replace with speech recognizer
         Button direcBtn = (Button) findViewById(R.id.directionsBtn);
         direcBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FragmentManager fm = getSupportFragmentManager();
-                directionsPopup.show(fm, "Ingredients");
+                directionsPopup.show(fm, "Directions");
             }
         });
-        //TODO - run recognizer from VoceRecognizer after text is done being read
+        //TODO - run recognizer from VoiceRecognizer after text is done being read
 
         //Toast.makeText(GetCookingActivity.this, "Starting recognizer", Toast.LENGTH_LONG).show();
         voiceRec.runRec();
