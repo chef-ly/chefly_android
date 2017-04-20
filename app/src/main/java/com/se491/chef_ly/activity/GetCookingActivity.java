@@ -10,7 +10,9 @@ import android.os.SystemClock;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -20,10 +22,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.se491.chef_ly.R;
+import com.se491.chef_ly.utils.DialogPopUp;
 import com.se491.chef_ly.utils.VoiceInstructionEvent;
 import com.se491.chef_ly.utils.VoiceRecognizer;
 
@@ -34,6 +38,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.text.BreakIterator;
+import java.util.zip.Inflater;
 
 public class GetCookingActivity extends AppCompatActivity implements GetCookingFragment.OnFragmentInteractionListener {
 
@@ -44,6 +49,8 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
     private ImageButton btnSpeak;
     private ViewPager pager;
 
+    private DialogPopUp ingredientsPopup;
+    private DialogPopUp directionsPopup;
     private final String TAG = "GetCookingActivity";
     private final int REQ_CODE_SPEECH_INPUT = 100;
     private ArrayList<String> directions;
@@ -153,6 +160,24 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
             }
         });
 
+        // TODO replace with speach recognizer
+        Button ingredBtn = (Button) findViewById(R.id.ingredientsBtn);
+        ingredBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentManager fm = getSupportFragmentManager();
+                ingredientsPopup.show(fm, "Ingredients");
+            }
+        });
+        // TODO replace with speach recognizer
+        Button direcBtn = (Button) findViewById(R.id.directionsBtn);
+        direcBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentManager fm = getSupportFragmentManager();
+                directionsPopup.show(fm, "Ingredients");
+            }
+        });
         //TODO - run recognizer from VoceRecognizer after text is done being read
 
         //Toast.makeText(GetCookingActivity.this, "Starting recognizer", Toast.LENGTH_LONG).show();
@@ -164,6 +189,17 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
     protected void onStart() {
         super.onStart();
         Intent i = getIntent();
+
+        //  Get ingredient list for popup
+        ArrayList<String> ingredients = i.getStringArrayListExtra("ingredients");
+        if(ingredients != null){
+            ingredientsPopup = DialogPopUp.newInstance(getResources().getString(R.string.ingredients), ingredients);
+            ingredientsPopup.showTitle(false);
+
+
+        }else{
+            DialogPopUp ingredientsPopup = DialogPopUp.newInstance(getResources().getString(R.string.ingredients), new ArrayList<String>());
+        }
 
         // Split up the directions to more "digestible" (wink wink) pieces
         String[] rawDirections = i.getStringArrayExtra("directions");
@@ -182,6 +218,8 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
 
         numberSteps = directions.size();
         if(numberSteps > 0){
+            directionsPopup = DialogPopUp.newInstance(getResources().getString(R.string.directions), directions);
+            directionsPopup.showTitle(false);
 
             hasDirections = true;
             step = 0;

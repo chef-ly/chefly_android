@@ -45,7 +45,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
     private TextView recipeTitle;
     private ImageView imageView;
     private RecipeInformation recipeDetail;
-
+    private ExtendedIngredient[] ingredients;
     private String[] directionsForCooking;
     private ArrayList<ShoppingListItem> shoppingList;
     private static final String TAG = "RecipeDetailActivity";
@@ -70,6 +70,11 @@ public class RecipeDetailActivity extends AppCompatActivity {
                 Intent cookingIntent = new Intent(RecipeDetailActivity.this, GetCookingActivity.class);
                 if (directionsForCooking != null) {
                     cookingIntent.putExtra("directions", directionsForCooking);
+                    ArrayList<String> ingredList = new ArrayList<String>();
+                    for(ExtendedIngredient ingre : ingredients){
+                        ingredList.add(ingre.getOriginalString());
+                    }
+                    cookingIntent.putExtra("ingredients", ingredList);
                     startActivity(cookingIntent);
                     finish();
                 } else {
@@ -231,7 +236,6 @@ public class RecipeDetailActivity extends AppCompatActivity {
         TextView serves = (TextView) findViewById(R.id.recipeServings);
         TextView time = (TextView) findViewById(R.id.recipeTime);
 
-        ExtendedIngredient[] ingredients;
         String  recipeName;
         Step[] directions;
 
