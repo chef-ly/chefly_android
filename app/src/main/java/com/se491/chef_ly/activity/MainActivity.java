@@ -3,6 +3,7 @@ package com.se491.chef_ly.activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -36,6 +37,7 @@ public class    MainActivity extends AppCompatActivity implements LoaderManager.
     private EditText password;
     private final String TAG = "MainActivity";
     private Lock mLock;
+    private Handler splashHandler;
     private static final String urlString ="https://chefly-prod.herokuapp.com/list/random/10";
     RecipeList serverRecipes;
 
@@ -60,6 +62,15 @@ public class    MainActivity extends AppCompatActivity implements LoaderManager.
             bundle.putParcelable("requestPackage", requestPackage);
 
             getSupportLoaderManager().initLoader(1, bundle,this).forceLoad();
+            splashHandler = new Handler();
+            splashHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    //ViewGroup group = (ViewGroup) findViewById(R.id.activity_main);
+
+                    setContentView(R.layout.activity_main);
+                }
+            }, 5000);
 
         }
         else
@@ -258,6 +269,7 @@ public class    MainActivity extends AppCompatActivity implements LoaderManager.
     @Override
     public void onLoadFinished(Loader<RecipeList> loader, RecipeList data) {
         serverRecipes = data;
+        splashHandler.removeCallbacksAndMessages(null);
         setContentView(R.layout.activity_main);
         setupViews();
     }
