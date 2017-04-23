@@ -18,10 +18,6 @@ import java.util.ArrayList;
 
 import static android.support.v4.content.ContextCompat.getColor;
 
-/**
- * Created by Don on 4/20/2017.
- */
-
 public class DialogPopUp extends DialogFragment{
     private boolean showTitle;
     public DialogPopUp(){}

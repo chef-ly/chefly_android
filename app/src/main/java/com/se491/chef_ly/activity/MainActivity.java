@@ -1,12 +1,10 @@
 package com.se491.chef_ly.activity;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -16,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.auth0.android.Auth0;
 import com.auth0.android.authentication.AuthenticationAPIClient;
 import com.auth0.android.authentication.AuthenticationException;
@@ -24,17 +23,11 @@ import com.auth0.android.lock.Lock;
 import com.auth0.android.provider.AuthCallback;
 import com.auth0.android.provider.WebAuthProvider;
 import com.auth0.android.result.Credentials;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import com.se491.chef_ly.R;
-import com.se491.chef_ly.http.HttpConnection;
 import com.se491.chef_ly.http.RequestMethod;
 import com.se491.chef_ly.model.RecipeList;
+import com.se491.chef_ly.utils.GetRecipesFromServer;
 import com.se491.chef_ly.utils.NetworkHelper;
-
-import java.io.IOException;
-import java.lang.reflect.Type;
 
 
 public class    MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<RecipeList>, View.OnClickListener{
@@ -274,30 +267,7 @@ public class    MainActivity extends AppCompatActivity implements LoaderManager.
         serverRecipes = new RecipeList();
     }
 
-    private static class GetRecipesFromServer extends AsyncTaskLoader<RecipeList>{
-        private RequestMethod requestPackage;
-        private GetRecipesFromServer(Context c, RequestMethod method){
-            super(c);
-            this.requestPackage = method;
-        }
-        @Override
-        public RecipeList loadInBackground() {
-            String response;
-            try {
-                response = HttpConnection.downloadFromFeed(requestPackage);
-            } catch (IOException e) {
-                //e.printStackTrace();
-                return new RecipeList();
-            }
-            Log.d("AsyncTaskLoader","Response -> " + response);
-            GsonBuilder builder = new GsonBuilder();
 
-            Gson gson = builder.create();
-
-            Type type = new TypeToken<RecipeList>(){}.getType();
-            return  gson.fromJson(response, type);
-        }
-    }
 
 }
 
