@@ -122,6 +122,7 @@ public class    MainActivity extends AppCompatActivity implements View.OnClickLi
         AuthenticationAPIClient client = new AuthenticationAPIClient(auth0);
         String connectionName = getString(R.string.auth0_databaseConnection);
         client.login(emailOrUsername, password, connectionName)
+                .setAudience(audience)
                 .start(new BaseCallback<Credentials, AuthenticationException>() {
                     @Override
                     public void onSuccess(Credentials credentials) {
@@ -166,6 +167,7 @@ public class    MainActivity extends AppCompatActivity implements View.OnClickLi
         Auth0 auth0 = new Auth0(getString(R.string.auth0_client_id), getString(R.string.auth0_domain));
         WebAuthProvider.init(auth0)
                 .withConnection("facebook")
+                .withAudience()
                 .start(MainActivity.this, new AuthCallback() {
                     @Override
                     public void onFailure(@NonNull Dialog dialog) {
