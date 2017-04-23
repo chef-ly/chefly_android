@@ -123,28 +123,36 @@
             android:layout_alignBaseline="@+id/forgotpassword"
             android:layout_alignBottom="@+id/forgotpassword"
             android:layout_alignParentStart="true" />
-    <Button
-        android:id="@+id/webLoginButton"
+
+    <TextView
+        android:textSize="@dimen/text_medium"
+        android:text="@string/continueWithSocial"
+        android:layout_below="@id/forgotpassword"
+        android:layout_marginTop="20dp"
+        android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
-        android:textAlignment="center"
-        android:minWidth="250dp"
-        android:text="@string/webLogin"
-        android:background="@color/btnBlue"
-        android:layout_below="@+id/forgotpassword"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true" />
-    <Button
-        android:id="@+id/googleLoginButton"
+        android:layout_height="wrap_content" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_marginTop="50dp"
+        android:layout_below="@id/forgotpassword"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:minWidth="250dp"
-        android:text="@string/googleLogin"
-        android:background="@color/btnred"
-        android:textColor="@color/white"
-        android:layout_below="@+id/webLoginButton"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_height="wrap_content">
+        <ImageButton
+            android:id="@+id/webLoginButton"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:layout_marginEnd="50dp"
+            android:textAlignment="center"
+            android:background="@drawable/fbbw"/>
+        <ImageButton
+            android:id="@+id/googleLoginButton"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:textAlignment="center"
+            android:text="@string/googleLogin"
+            android:background="@drawable/googlebw"/>
+    </LinearLayout>
+
 </RelativeLayout>

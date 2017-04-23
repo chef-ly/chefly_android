@@ -11,8 +11,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -112,9 +114,9 @@ public class    MainActivity extends AppCompatActivity implements LoaderManager.
         Button signInBtn;
         TextView continueAsGuest;
         TextView signUp;
-        Button webLoginButton = (Button) findViewById(R.id.webLoginButton);
+        ImageButton webLoginButton = (ImageButton) findViewById(R.id.webLoginButton);
         webLoginButton.setOnClickListener(this);
-        Button googleLoginButton = (Button) findViewById(R.id.googleLoginButton);
+        ImageButton googleLoginButton = (ImageButton) findViewById(R.id.googleLoginButton);
         googleLoginButton.setOnClickListener(this);
         username = (EditText) findViewById(R.id.useremail);
         password = (EditText) findViewById(R.id.password);
