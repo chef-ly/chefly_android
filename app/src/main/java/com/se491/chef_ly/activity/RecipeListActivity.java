@@ -29,6 +29,7 @@ import android.widget.Toast;
 import com.se491.chef_ly.Databases.DatabaseHandler;
 import com.se491.chef_ly.R;
 import com.se491.chef_ly.activity.nav_activities.ShoppingListActivity;
+import com.se491.chef_ly.activity.nav_activities.UserProfileActivity;
 import com.se491.chef_ly.model.RecipeInformation;
 import com.se491.chef_ly.model.RecipeList;
 import com.se491.chef_ly.utils.CredentialsManager;
@@ -265,7 +266,8 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         int id = item.getItemId();
         switch (id) {
             case R.id.nav_profile:
-                Toast.makeText(this, "Profile", Toast.LENGTH_SHORT).show();
+                Intent i = new Intent(this, UserProfileActivity.class);
+                startActivity(i);
                 break;
             case R.id.nav_shopping_list:
                 Intent intent = new Intent(this.getApplicationContext(), ShoppingListActivity.class);

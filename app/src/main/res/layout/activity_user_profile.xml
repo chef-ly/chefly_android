@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/UserProfileActivity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingStart="25dp"
+    android:paddingEnd="25dp"
+    android:background="@drawable/background"
+    tools:context="com.se491.chef_ly.activity.nav_activities.UserProfileActivity">
+
+    <ImageView
+        android:id="@+id/userImage"
+        android:contentDescription="@string/userImage"
+        android:src="@drawable/chefly"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/editImage"
+        android:background="@android:drawable/btn_plus"
+        android:contentDescription="@string/edit"
+        android:layout_toEndOf="@id/userImage"
+        android:layout_alignBottom="@id/userImage"
+        android:scaleType="fitCenter"
+        android:layout_margin="5dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp" />
+    <EditText
+        android:id="@+id/userName"
+        android:text="@string/user"
+        android:inputType="none"
+        android:layout_below="@id/userImage"
+        android:textSize="@dimen/text_medium"
+        android:textColor="@color/color_text"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/editUserName"
+        android:background="@android:drawable/btn_plus"
+        android:contentDescription="@string/edit"
+        android:layout_toEndOf="@id/userName"
+        android:layout_alignBottom="@id/userName"
+        android:scaleType="fitCenter"
+        android:layout_margin="5dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp" />
+
+    <TextView
+        android:id="@+id/email"
+        android:text="@string/email"
+        android:layout_below="@id/userName"
+        android:textSize="@dimen/text_medium"
+        android:textColor="@color/color_text"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/updateLogin"
+        android:text="@string/updateEmailPassword"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="5dp"
+        android:layout_below="@id/email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
+
+</RelativeLayout>
