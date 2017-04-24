@@ -85,15 +85,6 @@ public class VoiceRecognizer implements RecognitionListener {
     }
      *****************/
 
-    public void checkAudioPermission(Activity currentActivity) {
-        // Check if user has given permission to record audio
-        int permissionCheck = ContextCompat.checkSelfPermission(currentActivity, Manifest.permission.RECORD_AUDIO);
-        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(currentActivity, new String[]{Manifest.permission.RECORD_AUDIO}, PERMISSIONS_REQUEST_RECORD_AUDIO);
-            return;
-        }
-    }
-
     public void runRec(){
         Toast.makeText(currentActivity, "Starting recognizer", Toast.LENGTH_SHORT).show();
         runRecognizerSetup();
@@ -209,16 +200,18 @@ public class VoiceRecognizer implements RecognitionListener {
             makeText(currentActivity, "Full: " + text, Toast.LENGTH_SHORT).show();
 
             if (text.equals(FORWARD)) {
-                //TODO - DONT make calls here
 
                 //next.performClick();
                 Log.e("DEBUG","Recognizer received NEXT");
-                EventBus.getDefault().post(new VoiceInstructionEvent(true));
+                EventBus.getDefault().post(new VoiceInstructionEvent(text));
 
 
                 switchSearch(KWS_SEARCH);
             }
             else if (text.equals(BACK)) {
+
+                Log.e("DEBUG", "Recognizer received BACK");
+                EventBus.getDefault().post(new VoiceInstructionEvent(text));
 
                 //prev.performClick();
                 switchSearch(KWS_SEARCH);

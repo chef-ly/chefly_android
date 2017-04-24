@@ -160,16 +160,20 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
             }
         });
 
-        //TODO - run recognizer from VoceRecognizer after text is done being read
-        int permissionCheck = ContextCompat.checkSelfPermission(GetCookingActivity.this, Manifest.permission.RECORD_AUDIO);
-        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(GetCookingActivity.this, new String[]{Manifest.permission.RECORD_AUDIO}, PERMISSIONS_REQUEST_RECORD_AUDIO);
-            return;
-        }
-        //Toast.makeText(GetCookingActivity.this, "Starting recognizer", Toast.LENGTH_LONG).show();
+
         voiceRec.runRec();
+//        int permissionCheck = ContextCompat.checkSelfPermission(GetCookingActivity.this, Manifest.permission.RECORD_AUDIO);
+//        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(GetCookingActivity.this, new String[]{Manifest.permission.RECORD_AUDIO}, PERMISSIONS_REQUEST_RECORD_AUDIO);
+//            return;
+//        }
+
+        // VOICEREC is initialized on call back of user accepting permissions
+        // IF the user allows use of mic
 
     }
+
+    // TODO - add onPause and onDestroy where the speech and recognizer are stopped
 
     @Override
     protected void onStart() {
@@ -271,8 +275,14 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(VoiceInstructionEvent event){
 
-        updateStepText();
-        pager.setCurrentItem(step+1, true);
+        if (event.getInstruction().equals("next")){
+            updateStepText();
+            pager.setCurrentItem(step+1, true);
+        } else if (event.getInstruction().equals("back")) {
+            updateStepText();
+            pager.setCurrentItem(step-1, true);
+        }
+
 
         Log.e("DEBUG", "Received VoiceInstructionEvent" + event.getInstruction());
     }
