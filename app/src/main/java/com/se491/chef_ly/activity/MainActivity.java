@@ -3,12 +3,15 @@ package com.se491.chef_ly.activity;
 import android.app.Dialog;
 import android.content.Intent;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -18,17 +21,29 @@ import com.auth0.android.Auth0;
 import com.auth0.android.authentication.AuthenticationAPIClient;
 import com.auth0.android.authentication.AuthenticationException;
 import com.auth0.android.callback.BaseCallback;
+import com.auth0.android.jwt.JWT;
 import com.auth0.android.lock.Lock;
+import com.auth0.android.lock.internal.configuration.OAuthConnection;
 import com.auth0.android.provider.AuthCallback;
 import com.auth0.android.provider.WebAuthProvider;
 import com.auth0.android.result.Credentials;
 import com.auth0.android.result.UserProfile;
+import com.mashape.unirest.request.BaseRequest;
 import com.se491.chef_ly.R;
+import com.se491.chef_ly.http.HttpConnection;
+import com.se491.chef_ly.http.RequestMethod;
 import com.se491.chef_ly.model.UserSessionManager;
 import com.se491.chef_ly.utils.CredentialsManager;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+
+public class MainActivity extends AppCompatActivity implements View.OnClickListener  {
 
     private EditText username;
     private EditText password;
@@ -121,13 +136,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Auth0 auth0 = new Auth0(getString(R.string.auth0_client_id), getString(R.string.auth0_domain));
         AuthenticationAPIClient client = new AuthenticationAPIClient(auth0);
         String connectionName = getString(R.string.auth0_databaseConnection);
-
         client.login(emailOrUsername, password, connectionName)
-               // .setAudience(audience)
+                .setAudience("https://chefly.auth0.com/api/")
                 .start(new BaseCallback<Credentials, AuthenticationException>() {
                     @Override
                     public void onSuccess(Credentials credentials) {
+                        Log.d(TAG, credentials.getType());
+                        Log.d(TAG, credentials.getIdToken());
+                        Log.d(TAG, credentials.getAccessToken());
                         Log.d(TAG, "LOGIN SUCCESS!");
+                        Login login = new Login();
+                        login.execute(new RequestMethod());
                         // Store credentials- how do we want to do this? Store in shared preferences?
                         CredentialsManager.saveCredentials(MainActivity.this, credentials);
                         CredentialsManager.saveUsername(MainActivity.this, emailOrUsername);
@@ -150,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                     }
                 });
-        // proper login
+
     }
 
 //for social connections like google and fb
@@ -245,6 +264,62 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return User.authenticateExisting(user.toString(), password.toString());
     }*/
 
+    class Login extends AsyncTask<RequestMethod, Integer, String> {
 
+        public Login() {
+
+        }
+
+        @Override
+        protected String doInBackground(RequestMethod... requestMethod) {
+            String urlString = "https://chefly.auth0.com/authorize";
+            RequestMethod rm = new RequestMethod();
+            rm.setEndPoint(urlString);
+            //try {
+                rm.setParam("audience", "https://chefly.auth0.com/api/");
+                rm.setParam("redirect_uri", "http://chefly-dev.herokuapp.com/*");
+                rm.setParam("scope", "read:user");
+//            } catch (UnsupportedEncodingException e) {
+//                e.printStackTrace();
+//            }
+            rm.setParam("client_id", getString(R.string.auth0_client_id));
+            try {
+                rm.setParam("code_challenge", this.generateCodeChallenge() );
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            }
+            rm.setParam("code_challenge_method", getString(R.string.auth0_code_challenge_method));
+            rm.setParam("response_type", "code");
+            rm.setMethod("GET");
+            String response = "";
+            try {
+                response = HttpConnection.downloadFromFeed(rm);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return response;
+        }
+
+        @Override
+        protected void onPostExecute(String response){
+            Log.d(TAG, "LOGIN TOKEN RESPONSE: " + response);
+            WebView wv = new WebView(MainActivity.this);
+        }
+
+        String generateCodeChallenge() throws UnsupportedEncodingException, NoSuchAlgorithmException{
+            SecureRandom sr = new SecureRandom();
+            byte[] code = new byte[32];
+            sr.nextBytes(code);
+            String verifier = Base64.encodeToString(code, Base64.URL_SAFE | Base64.NO_WRAP | Base64.NO_PADDING);
+            byte[] bytes = verifier.getBytes("US-ASCII");
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            md.update(bytes, 0, bytes.length);
+            byte[] digest = md.digest();
+            String challenge = Base64.encodeToString(digest, Base64.URL_SAFE | Base64.NO_WRAP | Base64.NO_PADDING);
+            return challenge;
+        }
+    }
 }
 
