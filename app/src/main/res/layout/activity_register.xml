@@ -42,7 +42,7 @@
         android:layout_marginTop="146dp"
         android:textSize="20sp"
         android:textColor="@color/black"
-        android:layout_below="@+id/registerTitle"
+
         android:layout_alignParentStart="true" />
 
     <EditText

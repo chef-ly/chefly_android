@@ -204,6 +204,7 @@ public class    MainActivity extends AppCompatActivity implements LoaderManager.
                         // Navigate to your next activity
                         Intent recipeListIntent = new Intent(MainActivity.this, RecipeListActivity.class);
                         recipeListIntent.putExtra("name", "aaa");
+                        recipeListIntent.putExtra("recipeList", serverRecipes);
                         startActivity(recipeListIntent);
                     }
                 });
@@ -244,6 +245,7 @@ public class    MainActivity extends AppCompatActivity implements LoaderManager.
                 break;
             case R.id.webLoginButton:
                 socialLogin();
+
                 break;
             case R.id.googleLoginButton:
                 //googleLogin();
