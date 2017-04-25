@@ -156,7 +156,6 @@ public class VoiceRecognizer implements RecognitionListener {
 
             //((TextView) findViewById(R.id.text)).setText(text);
 
-           // Toast.makeText(currentActivity, "PARTIAL "+ text, Toast.LENGTH_LONG).show();
     }
 
     /**
