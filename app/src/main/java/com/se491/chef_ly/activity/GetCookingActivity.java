@@ -281,10 +281,15 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
         } else if (event.getInstruction().equals("back")) {
             updateStepText();
             pager.setCurrentItem(step-1, true);
+        } else if (event.getInstruction().equals("repeat")) {
+            read(directions.get(step));
+
+        } else {
+            Toast.makeText(this, "Can you please say that again?", Toast.LENGTH_LONG).show();
         }
 
 
-        Log.e("DEBUG", "Received VoiceInstructionEvent" + event.getInstruction());
+        Log.e("DEBUG", "Received VoiceInstructionEvent " + event.getInstruction());
     }
 
     /**
