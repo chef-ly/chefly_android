@@ -144,28 +144,19 @@ public class VoiceRecognizer implements RecognitionListener {
 
         String text = hypothesis.getHypstr();
 
-        Toast.makeText(currentActivity, "parital "+ text, Toast.LENGTH_LONG).show();
+        //Toast.makeText(currentActivity, "parital "+ text, Toast.LENGTH_LONG).show();
 
         if (text.equals(KEYPHRASE)) {
             // Start search listening for menu options
             switchSearch(MENU_SEARCH);
         }
-        else if (text.equals(FORWARD)) {
-            //TODO - DONT make calls here in partial
-
-            switchSearch(KWS_SEARCH);
-        }
-        else if (text.equals(BACK)) {
-
-            switchSearch(KWS_SEARCH);
-        }
         else if (text.equals(QUESTION_SEARCH))
             // TODO - implement getting text of the question and passing here
             switchSearch(QUESTION_SEARCH);
-        else
+
             //((TextView) findViewById(R.id.text)).setText(text);
 
-            Toast.makeText(currentActivity, "PARTIAL "+ text, Toast.LENGTH_LONG).show();
+           // Toast.makeText(currentActivity, "PARTIAL "+ text, Toast.LENGTH_LONG).show();
     }
 
     /**
@@ -179,7 +170,8 @@ public class VoiceRecognizer implements RecognitionListener {
             //TODO - here is where you should be making calls and doing stuff, not partial
             makeText(currentActivity, "Full: " + text, Toast.LENGTH_SHORT).show();
 
-            Log.e("DEBUG", "Recognizer received " + text);
+            Log.e("DEBUG", "Full Recognizer received " + text);
+
             if (text.equals(FORWARD)) {
 
                 EventBus.getDefault().post(new VoiceInstructionEvent(text));
@@ -192,6 +184,8 @@ public class VoiceRecognizer implements RecognitionListener {
 
                 EventBus.getDefault().post(new VoiceInstructionEvent(text));
 
+            } else if (text.equals("ingredients")) {
+                EventBus.getDefault().post(new VoiceInstructionEvent(text));
             }
 
 

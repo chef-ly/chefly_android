@@ -62,8 +62,8 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
     private boolean hasDirections = false;
     private int numberSteps;
 
-    /* Used to handle permission request from PocketSphinx*/
-    private static final int PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
+    private boolean ingredientsShowing = false;
+    private boolean directionsShowing = false;
 
     private VoiceRecognizer voiceRec = new VoiceRecognizer(GetCookingActivity.this);
 
@@ -147,7 +147,7 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
         btnSpeak.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                promptSpeechInput();
+
             }
         });
 
@@ -167,15 +167,15 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
             }
         });
 
-        // TODO replace with speech recognizer
-        Button ingredBtn = (Button) findViewById(R.id.ingredientsBtn);
-        ingredBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FragmentManager fm = getSupportFragmentManager();
-                ingredientsPopup.show(fm, "Ingredients");
-            }
-        });
+
+//        Button ingredBtn = (Button) findViewById(R.id.ingredientsBtn);
+//        ingredBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                FragmentManager fm = getSupportFragmentManager();
+//                ingredientsPopup.show(fm, "Ingredients");
+//            }
+//        });
         // TODO replace with speech recognizer
         Button direcBtn = (Button) findViewById(R.id.directionsBtn);
         direcBtn.setOnClickListener(new View.OnClickListener() {
@@ -185,21 +185,11 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
                 directionsPopup.show(fm, "Directions");
             }
         });
-        //TODO - run recognizer from VoiceRecognizer after text is done being read
 
         voiceRec.runRec();
-//        int permissionCheck = ContextCompat.checkSelfPermission(GetCookingActivity.this, Manifest.permission.RECORD_AUDIO);
-//        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(GetCookingActivity.this, new String[]{Manifest.permission.RECORD_AUDIO}, PERMISSIONS_REQUEST_RECORD_AUDIO);
-//            return;
-//        }
-
-        // VOICEREC is initialized on call back of user accepting permissions
-        // IF the user allows use of mic
-
     }
 
-    // TODO - add onPause and onDestroy where the speech and recognizer are stopped
+    // TODO - add onPause and onResume where the speech and recognizer are stopped
 
     @Override
     protected void onStart() {
@@ -282,25 +272,6 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
 
     }
 
-    /**
-     * Showing google speech input dialog
-     * */
-    private void promptSpeechInput() {
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
-                getString(R.string.speech_prompt));
-        try {
-            startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
-        } catch (ActivityNotFoundException a) {
-            Toast.makeText(getApplicationContext(),
-                    getString(R.string.speech_not_supported),
-                    Toast.LENGTH_SHORT).show();
-        }
-    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -317,14 +288,28 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
         if (event.getInstruction().equals("next")){
             updateStepText();
             pager.setCurrentItem(step+1, true);
+
         } else if (event.getInstruction().equals("back")) {
-            updateStepText();
-            pager.setCurrentItem(step-1, true);
+
+            if (ingredientsShowing){
+                ingredientsPopup.dismiss();
+                //directionsPopup.dismiss();
+            } else {
+
+                updateStepText();
+                pager.setCurrentItem(step - 1, true);
+            }
+
+
         } else if (event.getInstruction().equals("repeat")) {
             read(directions.get(step));
 
+        } else if (event.getInstruction().equals("ingredients")) {
+            FragmentManager fm = getSupportFragmentManager();
+            ingredientsPopup.show(fm, "Ingredients");
+            ingredientsShowing = true;
         } else {
-            Toast.makeText(this, "Can you please say that again?", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Can you please say that again?", Toast.LENGTH_LONG).show();
         }
 
 
@@ -349,9 +334,8 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
         @Override
         public void onDone(String ID){
             Log.e("DEBUG", "The TTS is done speaking "+ ID);
-            //TODO - figure out how to call something that will start the recognizer there.
-            voiceRec.startRec();
 
+            voiceRec.startRec();
         }
 
         @Override
