@@ -5,6 +5,12 @@ import android.annotation.TargetApi;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.BlurMaskFilter;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,6 +32,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -66,6 +73,9 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
     private boolean directionsShowing = false;
 
     private VoiceRecognizer voiceRec = new VoiceRecognizer(GetCookingActivity.this);
+
+
+
 
 
     @Override
@@ -141,6 +151,7 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
                 finish();
             }
         });
+
 
         btnSpeak = (ImageButton) findViewById(R.id.btnSpeak);
 
@@ -294,7 +305,12 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
             if (ingredientsShowing){
                 ingredientsPopup.dismiss();
                 //directionsPopup.dismiss();
-            } else {
+                ingredientsShowing = false;
+            }else if (directionsShowing) {
+                directionsPopup.dismiss();
+                directionsShowing = false;
+            }
+            else {
 
                 updateStepText();
                 pager.setCurrentItem(step - 1, true);
@@ -308,7 +324,15 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
             FragmentManager fm = getSupportFragmentManager();
             ingredientsPopup.show(fm, "Ingredients");
             ingredientsShowing = true;
-        } else {
+        } else if (event.getInstruction().equals("directions")) {
+            FragmentManager fm = getSupportFragmentManager();
+            directionsPopup.show(fm, "Directions");
+            directionsShowing = true;
+        } else if (event.getInstruction().equals("question")){
+            //TODO - make chefly icon at bottom of screen blow to show hes listening
+
+        }
+        else {
                 Toast.makeText(this, "Can you please say that again?", Toast.LENGTH_LONG).show();
         }
 

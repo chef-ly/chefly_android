@@ -12,6 +12,7 @@ grammar digits;
           six   |
           seven |
           eight |
-          nine;
+          nine  |
+          ten;
 
 public <digits> = <digit>+;

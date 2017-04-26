@@ -185,6 +185,12 @@ public class VoiceRecognizer implements RecognitionListener {
 
             } else if (text.equals("ingredients")) {
                 EventBus.getDefault().post(new VoiceInstructionEvent(text));
+            } else if (text.equals("directions")) {
+                EventBus.getDefault().post(new VoiceInstructionEvent(text));
+            } else if (text.equals(QUESTION_SEARCH)) {
+
+                //EventBus.getDefault().post(new VoiceInstructionEvent(text));
+                switchSearch(QUESTION_SEARCH);
             }
 
 
@@ -241,9 +247,9 @@ public class VoiceRecognizer implements RecognitionListener {
         File menuGrammar = new File(assetsDir, "menu.gram");
         recognizer.addGrammarSearch(MENU_SEARCH, menuGrammar);
 
-        // Create language model search
-        File languageModel = new File(assetsDir, "weather.dmp");
-        recognizer.addNgramSearch(QUESTION_SEARCH, languageModel);
+        // Create grammar-based search for cooking words
+        File cookingGrammar = new File(assetsDir, "cooking.gram");
+        recognizer.addGrammarSearch(QUESTION_SEARCH, cookingGrammar);
     }
 
     @Override
