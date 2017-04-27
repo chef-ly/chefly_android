@@ -2,21 +2,26 @@ package com.se491.chef_ly.activity;
 
 import android.app.Dialog;
 import android.content.Intent;
-
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.accounts.AccountManager;
+
 import com.auth0.android.Auth0;
 import com.auth0.android.authentication.AuthenticationAPIClient;
 import com.auth0.android.authentication.AuthenticationException;
@@ -34,6 +39,9 @@ import com.se491.chef_ly.http.HttpConnection;
 import com.se491.chef_ly.http.RequestMethod;
 import com.se491.chef_ly.model.UserSessionManager;
 import com.se491.chef_ly.utils.CredentialsManager;
+import com.se491.chef_ly.model.RecipeList;
+import com.se491.chef_ly.utils.GetRecipesFromServer;
+import com.se491.chef_ly.utils.NetworkHelper;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -43,18 +51,56 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener  {
+public class    MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<RecipeList>, View.OnClickListener{
 
     private EditText username;
     private EditText password;
     private final String TAG = "MainActivity";
     private Lock mLock;
+    private Handler splashHandler;
+    private static final String urlString ="https://chefly-prod.herokuapp.com/list/random/10";
+    RecipeList serverRecipes;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        setupViews();
-        Toast.makeText(getApplicationContext(), "Welcome To Chef.ly", Toast.LENGTH_SHORT).show();
+        setContentView(R.layout.splash_layout);
+
+        serverRecipes = new RecipeList();
+
+        // Get recipes from server
+        if(NetworkHelper.hasNetworkAccess(MainActivity.this)) //returns true if internet available
+        {
+            //Toast.makeText(RecipeListActivity.this,"Internet Connection",Toast.LENGTH_LONG).show();
+            //register to listen the data
+            RequestMethod requestPackage = new RequestMethod();
+            requestPackage.setEndPoint(urlString);
+            requestPackage.setMethod("GET"); //  or requestPackage.setMethod("POST");
+
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("requestPackage", requestPackage);
+
+            getSupportLoaderManager().initLoader(1, bundle,this).forceLoad();
+            splashHandler = new Handler();
+            splashHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    //ViewGroup group = (ViewGroup) findViewById(R.id.activity_main);
+
+                    setContentView(R.layout.activity_main);
+                }
+            }, 5000);
+
+        }
+        else
+        {
+            //Toast.makeText(RecipeListActivity.this,"No Internet Connection",Toast.LENGTH_LONG).show();
+            Log.d(TAG, "No Internet Connection");
+        }
+
+
+        //Toast.makeText(getApplicationContext(), "Welcome To Chef.ly", Toast.LENGTH_SHORT).show();
 
 
         ////////////////////////////////////////////////////////////////////////////////////////////
@@ -78,28 +124,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ////////////////////////////////////////////////////////////////////////////////////////////
         */
 
-//        // save users from having to re-enter their login credentials when relaunching the app
-//        if(CredentialsManager.getCredentials(this).getIdToken() == null) {
-//            // Prompt Login screen.
-//        }
-//        else {
-//            AuthenticationAPIClient aClient = new AuthenticationAPIClient(auth0);
-//            aClient.tokenInfo(CredentialsManager.getCredentials(this).getIdToken())
-//                    .start(new BaseCallback<UserProfile, AuthenticationException>() {
-//                        @Override
-//                        public void onSuccess(UserProfile payload) {
-//                            // Valid ID > Navigate to the app's MainActivity
-//                            Intent recipeListIntent = new Intent(MainActivity.this, RecipeListActivity.class);
-//                            recipeListIntent.putExtra("name", "aaa");
-//                            startActivity(recipeListIntent);
-//                        }
-//
-//                        @Override
-//                        public void onFailure(AuthenticationException error) {
-//                            // Invalid ID Scenario
-//                        }
-//                    });
-//        }
+
 
     }
 
@@ -107,8 +132,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Button signInBtn;
         TextView continueAsGuest;
         TextView signUp;
-        Button webLoginButton = (Button) findViewById(R.id.webLoginButton);
+        ImageButton webLoginButton = (ImageButton) findViewById(R.id.webLoginButton);
         webLoginButton.setOnClickListener(this);
+        ImageButton googleLoginButton = (ImageButton) findViewById(R.id.googleLoginButton);
+        googleLoginButton.setOnClickListener(this);
         username = (EditText) findViewById(R.id.useremail);
         password = (EditText) findViewById(R.id.password);
         signInBtn = (Button) findViewById(R.id.signInBtn);
@@ -121,16 +148,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void login(final String emailOrUsername, String password) {
-
-
-        // get a valid refresh_token in the response
-
-//        Map<String, Object> parameters = new HashMap<>();
-//        parameters.put("scope", "openid offline_access");
-//        Lock lock = Lock.newBuilder(auth0, callback)
-//                .withAuthenticationParameters(parameters)
-//                .build(this);
-//        startActivity(lock.newIntent(this));
 
         Log.d(TAG, "LOGIN ENTERED");
         Auth0 auth0 = new Auth0(getString(R.string.auth0_client_id), getString(R.string.auth0_domain));
@@ -154,6 +171,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         // Navigate to your next activity
                         Intent recipeListIntent = new Intent(MainActivity.this, RecipeListActivity.class);
                         recipeListIntent.putExtra("name", emailOrUsername);
+                        recipeListIntent.putExtra("recipeList", serverRecipes);
                         startActivity(recipeListIntent);
                     }
 
@@ -183,10 +201,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onNewIntent(intent);
     }
 
-    private void socialLogin() {
+
+    private void socialLogin(String connection) {
         Auth0 auth0 = new Auth0(getString(R.string.auth0_client_id), getString(R.string.auth0_domain));
         WebAuthProvider.init(auth0)
-                .withConnection("facebook")
+                .withConnection(connection)
                 .start(MainActivity.this, new AuthCallback() {
                     @Override
                     public void onFailure(@NonNull Dialog dialog) {
@@ -211,6 +230,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         // Navigate to your next activity
                         Intent recipeListIntent = new Intent(MainActivity.this, RecipeListActivity.class);
                         recipeListIntent.putExtra("name", "aaa");
+                        recipeListIntent.putExtra("recipeList", serverRecipes);
                         startActivity(recipeListIntent);
                     }
                 });
@@ -246,10 +266,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.continueAsGuest:
                 Intent recipeListIntent = new Intent(MainActivity.this, RecipeListActivity.class);
                 recipeListIntent.putExtra("name", "guest");
+                recipeListIntent.putExtra("recipeList", serverRecipes);
                 startActivity(recipeListIntent);
                 break;
             case R.id.webLoginButton:
-                socialLogin();
+                socialLogin("facebook");
+                break;
+            case R.id.googleLoginButton:
+                socialLogin("google-oauth2");
                 break;
             case R.id.signUp:
                 Intent registerIntent = new Intent(MainActivity.this, RegisterActivity.class);
@@ -264,8 +288,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return User.authenticateExisting(user.toString(), password.toString());
     }*/
 
-    class Login extends AsyncTask<RequestMethod, Integer, String> {
+    //  LoaderManager callback method
+    @Override
+    public Loader<RecipeList> onCreateLoader(int id, Bundle args) {
+        RequestMethod rm = args.getParcelable("requestPackage");
+        return  new GetRecipesFromServer(getApplicationContext(), rm);
+    }
+    //  LoaderManager callback method
+    @Override
+    public void onLoadFinished(Loader<RecipeList> loader, RecipeList data) {
+        serverRecipes = data;
+        splashHandler.removeCallbacksAndMessages(null);
+        setContentView(R.layout.activity_main);
+        setupViews();
+    }
+    //  LoaderManager callback method
+    @Override
+    public void onLoaderReset(Loader<RecipeList> loader) {
+        serverRecipes = new RecipeList();
+    }
 
+
+
+    class Login extends AsyncTask<RequestMethod, Integer, String> {
         public Login() {
 
         }

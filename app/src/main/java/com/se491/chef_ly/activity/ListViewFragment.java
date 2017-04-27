@@ -6,11 +6,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
@@ -23,14 +26,21 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.se491.chef_ly.R;
+import com.se491.chef_ly.http.RequestMethod;
 import com.se491.chef_ly.model.RecipeInformation;
 import com.se491.chef_ly.model.RecipeList;
+import com.se491.chef_ly.utils.GetRecipesFromServer;
 
-public class ListViewFragment extends Fragment {
+import java.util.Date;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+public class ListViewFragment extends Fragment implements LoaderManager.LoaderCallbacks<RecipeList>{
 
     private static final String ARG_PARAM1 = "title";
     private static final String ARG_PARAM2 = "pageNum";
     private static final String TAG = "LISTVIEW_FRAG";
+
+    private static final String urlString ="https://chefly-prod.herokuapp.com/list/random/5";
 
     private ListView listView;
     private RecipeList list;
@@ -38,6 +48,7 @@ public class ListViewFragment extends Fragment {
 
     private String title;
     private String pageNum;
+    private AtomicBoolean isLoading;
 
     private OnFragmentInteractionListener mListener;
 
@@ -67,6 +78,7 @@ public class ListViewFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        isLoading = new AtomicBoolean(false);
 
         if(savedInstanceState != null){
             title = savedInstanceState.getString("title");
@@ -114,6 +126,34 @@ public class ListViewFragment extends Fragment {
                 intent.putExtra("recipeDetail", recipe);
                 Log.d(TAG, "Recipe Clicked: id -> " + recipe.getId());
                 startActivity(intent);
+            }
+        });
+
+        final LoaderManager.LoaderCallbacks callbacks = this;
+        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                //TODO remove limit and or wait for user to scroll past end of list to load more
+                if(firstVisibleItem+visibleItemCount + 2 == totalItemCount && totalItemCount!=0  && totalItemCount < 25) {
+
+                    if(!isLoading.get()){
+                        Log.d(TAG, "Getting more recipes from server");
+                        isLoading.set(true);
+
+                        RequestMethod requestPackage = new RequestMethod();
+                        requestPackage.setEndPoint(urlString);
+                        requestPackage.setMethod("GET"); //  or requestPackage.setMethod("POST");
+
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelable("requestPackage", requestPackage);
+
+                        getLoaderManager().initLoader((new Date()).hashCode() , bundle, callbacks).forceLoad();
+                    }
+                }
             }
         });
         final Handler h = new Handler();
@@ -199,7 +239,32 @@ public class ListViewFragment extends Fragment {
 
     }
 
-    static protected class RecipeAdapter extends BaseAdapter {
+    //  LoaderManager callback method
+    @Override
+    public Loader<RecipeList> onCreateLoader(int id, Bundle args) {
+        Log.d(TAG, "Loader Created");
+        RequestMethod rm = args.getParcelable("requestPackage");
+        return  new GetRecipesFromServer(getContext(), rm);
+    }
+    //  LoaderManager callback method
+    @Override
+    public void onLoadFinished(Loader<RecipeList> loader, RecipeList data) {
+        Log.d(TAG, "Loader - OnLoadFinish");
+        for(RecipeInformation recipe : data){
+            list.add(recipe);
+        }
+
+        ((BaseAdapter) listView.getAdapter()).notifyDataSetChanged();
+        isLoading.set(false);
+        Log.d(TAG, "Getting more recipes from server --- Done");
+    }
+    //  LoaderManager callback method
+    @Override
+    public void onLoaderReset(Loader<RecipeList> loader) {
+
+    }
+
+    static private class RecipeAdapter extends BaseAdapter {
         private final Context context;
         private final LayoutInflater inflater;
         private RecipeList recipes;
@@ -221,7 +286,7 @@ public class ListViewFragment extends Fragment {
             inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         }
-        protected RecipeList getRecipes(){
+        RecipeList getRecipes(){
             return recipes;
         }
         @Override
@@ -284,18 +349,6 @@ public class ListViewFragment extends Fragment {
                 if(!image.isEmpty()){
                     Glide.with(context)
                             .load(image)
-                            .listener(new RequestListener<String, GlideDrawable>() {
-                                @Override
-                                public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                                    Log.d(TAG, "Error loading image -> " + e.getMessage());
-                                    return false;
-                                }
-                                @Override
-                                public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                                    Log.d(TAG, "Image loaded!");
-                                    return false;
-                                }
-                            })
                             .error(R.drawable.noimageavailable)
                             .placeholder(R.drawable.circular_gradient)
                             .centerCrop()
@@ -308,7 +361,6 @@ public class ListViewFragment extends Fragment {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
             return row;
         }
 

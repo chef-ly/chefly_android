@@ -8,6 +8,7 @@
     <color name="btnBlack">#000000</color>
     <color name="btnBlue">#007299</color>
     <color name="btnGray">#837979</color>
+    <color name="btnred">#ff0000</color>
     <color name="disabledBtn">#965d5d67</color>
     <color name="disableText">#858383</color>
     <color name="darkGray">#32323c</color>

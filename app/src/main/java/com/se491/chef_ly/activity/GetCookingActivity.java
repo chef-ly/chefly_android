@@ -6,10 +6,13 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -19,13 +22,23 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.se491.chef_ly.R;
+import com.se491.chef_ly.utils.DialogPopUp;
+import com.se491.chef_ly.utils.VoiceInstructionEvent;
+import com.se491.chef_ly.utils.VoiceRecognizer;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.Locale;
+import java.text.BreakIterator;
+import java.util.zip.Inflater;
 
 public class GetCookingActivity extends AppCompatActivity implements GetCookingFragment.OnFragmentInteractionListener {
 
@@ -36,13 +49,16 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
     private ImageButton btnSpeak;
     private ViewPager pager;
 
+    private DialogPopUp ingredientsPopup;
+    private DialogPopUp directionsPopup;
     private final String TAG = "GetCookingActivity";
     private final int REQ_CODE_SPEECH_INPUT = 100;
-    private String[] directions;
+    private ArrayList<String> directions;
     private int step;
     private boolean hasDirections = false;
     private int numberSteps;
 
+    private VoiceRecognizer voiceRec = new VoiceRecognizer(GetCookingActivity.this);
 
 
     @Override
@@ -58,8 +74,8 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
             @Override
             public boolean onSingleTapConfirmed(MotionEvent e) {
                 if(hasDirections) {
-                    if (step < directions.length) {
-                        read(directions[step]);
+                    if (step < directions.size()) {
+                        read(directions.get(step));
                     } else {
                         read(getResources().getString(R.string.bonAppetit));
                     }
@@ -92,7 +108,7 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 step = position;
                 updateStepText();
-                read(directions[position]);
+                read(directions.get(position));
             }
 
             @Override
@@ -136,18 +152,36 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
 
                     // Causes nullPointerException on Nexus_5_API_22
                    // Log.d(TAG, "Quality -> " + textToSpeech.getVoice().getQuality());
-                    if(directions.length > 0){
-                        read(directions[0]);
+                    if(directions.size() > 0){
+                        read(directions.get(0));
 
                     }
                 }
             }
         });
 
+        // TODO replace with speech recognizer
+        Button ingredBtn = (Button) findViewById(R.id.ingredientsBtn);
+        ingredBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentManager fm = getSupportFragmentManager();
+                ingredientsPopup.show(fm, "Ingredients");
+            }
+        });
+        // TODO replace with speech recognizer
+        Button direcBtn = (Button) findViewById(R.id.directionsBtn);
+        direcBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentManager fm = getSupportFragmentManager();
+                directionsPopup.show(fm, "Directions");
+            }
+        });
+        //TODO - run recognizer from VoiceRecognizer after text is done being read
 
-        //TODO - run recognizer from VoceRecognizer after text is done being read
-        //runRecognizerSetup();
         //Toast.makeText(GetCookingActivity.this, "Starting recognizer", Toast.LENGTH_LONG).show();
+        voiceRec.runRec();
 
     }
 
@@ -155,9 +189,37 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
     protected void onStart() {
         super.onStart();
         Intent i = getIntent();
-        directions = i.getStringArrayExtra("directions");
-        numberSteps = directions.length;
+
+        //  Get ingredient list for popup
+        ArrayList<String> ingredients = i.getStringArrayListExtra("ingredients");
+        if(ingredients != null){
+            ingredientsPopup = DialogPopUp.newInstance(getResources().getString(R.string.ingredients), ingredients);
+            ingredientsPopup.showTitle(false);
+
+
+        }else{
+            DialogPopUp ingredientsPopup = DialogPopUp.newInstance(getResources().getString(R.string.ingredients), new ArrayList<String>());
+        }
+
+        // Split up the directions to more "digestible" (wink wink) pieces
+        String[] rawDirections = i.getStringArrayExtra("directions");
+
+        directions = new ArrayList<>();
+
+        for (int x = 0; x < rawDirections.length; x++) {
+            BreakIterator iterator = BreakIterator.getSentenceInstance(Locale.US);
+            String source = rawDirections[x];
+            iterator.setText(source);
+            int start = iterator.first();
+            for (int end = iterator.next(); end != BreakIterator.DONE; start = end, end = iterator.next()) {
+                directions.add(source.substring(start,end));
+            }
+        }
+
+        numberSteps = directions.size();
         if(numberSteps > 0){
+            directionsPopup = DialogPopUp.newInstance(getResources().getString(R.string.directions), directions);
+            directionsPopup.showTitle(false);
 
             hasDirections = true;
             step = 0;
@@ -166,12 +228,14 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
             updateStepText();
             ArrayList<GetCookingFragment> frags = new ArrayList<>();
             for(int j = 0; j < numberSteps; j++){
-                frags.add(GetCookingFragment.newInstance(String.valueOf(j), directions[j]));
+                frags.add(GetCookingFragment.newInstance(String.valueOf(j), directions.get(j)));
             }
 
             pager.setAdapter(new CookingPagerAdapter(getSupportFragmentManager(), frags));
 
         }
+        // register with EventBus to get events from VoiceRec
+        EventBus.getDefault().register(this);
     }
 
     @TargetApi(21)
@@ -225,6 +289,19 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
     protected void onDestroy() {
         super.onDestroy();
         textToSpeech.stop();
+
+        // Unregister EventBus
+        EventBus.getDefault().unregister(this);
+    }
+
+    // This method will be called when the VoiceRec class sends a nextInstruction event
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(VoiceInstructionEvent event){
+
+        updateStepText();
+        pager.setCurrentItem(step+1, true);
+
+        Log.e("DEBUG", "Received VoiceInstructionEvent" + event.getInstruction());
     }
 
     /**
@@ -242,16 +319,12 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
 
     class ttsUtteranceListener extends UtteranceProgressListener {
 
-//        private List<SpeechRecognizer> recognizers;
-//
-//        public void addRecognizer(SpeechRecognizer rec1){
-//            recognizers.add(rec1);
-//        }
-
         @Override
         public void onDone(String ID){
             Log.e("DEBUG", "The TTS is done speaking "+ ID);
             //TODO - figure out how to call something that will start the recognizer there.
+            voiceRec.startRec();
+
         }
 
         @Override
@@ -263,6 +336,7 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
         public void onStart(String ID) {
             //recognizer.stop();
             Log.e("DEBUG", "The TTS is starting to speak!");
+            voiceRec.stopRec();
 
         }
     }

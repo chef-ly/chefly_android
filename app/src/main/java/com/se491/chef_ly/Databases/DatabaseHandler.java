@@ -19,7 +19,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     private final String TAG = "DatabaseHandler";
     private static final String DB_FILE_NAME = "chefly.db";
-    private static final int DB_VERSION = 9;
+    private static final int DB_VERSION = 10;
 
     public DatabaseHandler(Context context) {
         super(context, DB_FILE_NAME, null, DB_VERSION);
@@ -27,17 +27,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(RecipeTable.SQL_CREATE);
-        db.execSQL(RecipeDetailTable.SQL_CREATE);
-        db.execSQL( ShoppingList.SQL_CREATE);
+
+            db.execSQL(RecipeTable.SQL_CREATE);
+            db.execSQL(RecipeDetailTable.SQL_CREATE);
+            db.execSQL( ShoppingList.SQL_CREATE);
+            db.execSQL(UserTable.SQL_CREATE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
         db.execSQL(RecipeTable.SQL_DELETE);
         db.execSQL(RecipeDetailTable.SQL_DELETE);
         db.execSQL(ShoppingList.SQL_DELETE);
         onCreate(db);
+
     }
 
     public void createDetailedRecipe(RecipeInformation recipe){

@@ -5,7 +5,7 @@
     android:id="@+id/activity_register"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/cuttingboard"
+    android:background="@color/background_light"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
@@ -13,25 +13,36 @@
     tools:context="com.se491.chef_ly.activity.RegisterActivity">
 
     <TextView
-        android:id="@+id/registerTitle"
-        android:text="@string/registerPageTitle"
+        android:text="@string/app_name"
         android:textSize="60sp"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
+        android:textStyle="bold|italic"
+        android:fontFamily="cursive"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="23dp"
+        android:id="@+id/textView"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp" />
+        android:layout_marginEnd="12dp" />
+
+    <ImageView
+        android:src="@drawable/chefly"
+        android:scaleType="fitCenter"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignTop="@+id/textView"
+        android:layout_toEndOf="@+id/textView"
+        android:id="@+id/imageView2" />
 
     <TextView
         android:id="@+id/registerInstruction"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/registerTitle"
         android:text="@string/enterUserEmail"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="146dp"
         android:textSize="20sp"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
+
         android:layout_alignParentStart="true" />
 
     <EditText
@@ -50,7 +61,7 @@
         android:id="@+id/registerButton"
         android:text="@string/next"
         android:textColor="@color/white"
-        android:background="@color/btnGray"
+        android:background="@color/btnBlack"
         android:layout_alignEnd="@id/registerInput"
         android:layout_below="@id/registerInput"
         android:paddingEnd="15dp"
