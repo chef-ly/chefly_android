@@ -53,6 +53,9 @@ android {
     productFlavors {
         free {}
         paid {}
+        alpha {
+            applicationId 'com.se491.chef_ly.alpha'
+        }
     }
     lintOptions {
         abortOnError false
@@ -78,7 +81,7 @@ dependencies {
     compile 'com.android.support:support-v4:25.3.1'
     compile 'com.auth0.android:auth0:1.7.0'
     compile 'com.mashape.unirest:unirest-java:1.4.9'
-    compile group: 'org.apache.httpcomponents', name: 'httpclient-android', version: '4.3.5.1'
+    compile 'org.apache.httpcomponents:httpclient-android:4.3.5.1'
     compile 'com.auth0.android:lock:2.4.0'
     testCompile 'junit:junit:4.12'
     androidTestCompile 'com.android.support:support-annotations:25.3.1'
