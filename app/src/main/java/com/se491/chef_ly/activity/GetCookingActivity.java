@@ -16,6 +16,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -58,6 +59,10 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
     private boolean hasDirections = false;
     private int numberSteps;
 
+
+    private int width ;
+    private int height ;
+
     private VoiceRecognizer voiceRec = new VoiceRecognizer(GetCookingActivity.this);
 
 
@@ -66,6 +71,10 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_get_cooking);
 
+
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        width = metrics.widthPixels;
+        height = metrics.heightPixels;
         //View Pager
         pager = (ViewPager)findViewById(R.id.viewpager);
 
@@ -167,6 +176,9 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
             public void onClick(View v) {
                 FragmentManager fm = getSupportFragmentManager();
                 ingredientsPopup.show(fm, "Ingredients");
+                getSupportFragmentManager().executePendingTransactions();
+                if(ingredientsPopup.getDialog().getWindow() != null)
+                    ingredientsPopup.getDialog().getWindow().setLayout((6 * width)/7, (4 * height)/5);
             }
         });
         // TODO replace with speech recognizer
@@ -176,6 +188,10 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
             public void onClick(View v) {
                 FragmentManager fm = getSupportFragmentManager();
                 directionsPopup.show(fm, "Directions");
+                getSupportFragmentManager().executePendingTransactions();
+                if(directionsPopup.getDialog().getWindow() != null)
+                    directionsPopup.getDialog().getWindow().setLayout((6 * width)/7, (4 * height)/5);
+
             }
         });
         //TODO - run recognizer from VoiceRecognizer after text is done being read
@@ -189,7 +205,6 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
     protected void onStart() {
         super.onStart();
         Intent i = getIntent();
-
         //  Get ingredient list for popup
         ArrayList<String> ingredients = i.getStringArrayListExtra("ingredients");
         if(ingredients != null){
@@ -222,8 +237,6 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
             directionsPopup.showTitle(false);
 
             hasDirections = true;
-            step = 0;
-
 
             updateStepText();
             ArrayList<GetCookingFragment> frags = new ArrayList<>();
@@ -232,6 +245,8 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
             }
 
             pager.setAdapter(new CookingPagerAdapter(getSupportFragmentManager(), frags));
+            Log.d(TAG, "Step ----> " + step);
+            pager.setCurrentItem(step);
 
         }
         // register with EventBus to get events from VoiceRec
@@ -292,6 +307,8 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
 
         // Unregister EventBus
         EventBus.getDefault().unregister(this);
+
+        Log.d(TAG,"OnDestroy <><><><><><><><><><><>");
     }
 
     // This method will be called when the VoiceRec class sends a nextInstruction event
@@ -363,6 +380,12 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
             return pages.get(position);
         }
 
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
 
     }
 }
