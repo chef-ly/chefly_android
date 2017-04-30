@@ -5,14 +5,16 @@ package com.se491.chef_ly.utils;
  */
 
 public class VoiceInstructionEvent {
-    private final boolean nextInstruction;
+    private final String nextInstruction;
 
-    public VoiceInstructionEvent(boolean nextInstruction){
+    public VoiceInstructionEvent(String nextInstruction){
         this.nextInstruction = nextInstruction;
     }
 
-    public boolean getInstruction(){
+    public String getInstruction(){
         return nextInstruction;
     }
+
+
 
 }

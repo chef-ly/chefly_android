@@ -1,0 +1,14 @@
+#JSGF V1.0;
+
+grammar cooking;
+
+<cook> = chicken  |
+         how      |
+         much     |
+         which    |
+         step     |
+         add      |
+         flour    |
+         sauce;
+
+public <cooking> = <cook>+;

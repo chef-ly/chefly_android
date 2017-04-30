@@ -42,9 +42,9 @@ import static com.se491.chef_ly.R.id.pager;
 
 public class VoiceRecognizer implements RecognitionListener {
 
-    Activity currentActivity;
+    Context currentActivity;
     // TODO - THIS is a hack fix it
-    public VoiceRecognizer(Activity currentActivity){
+    public VoiceRecognizer(Context currentActivity){
         this.currentActivity = currentActivity;
     }
     // PocketSphinx vars
@@ -63,36 +63,6 @@ public class VoiceRecognizer implements RecognitionListener {
 
     private SpeechRecognizer recognizer;
     private HashMap<String, Integer> captions;
-
-
-    //TODO - captions hashmap in onCreate//Pocketsphinx vars and code
-    /*******************************
-    // Prepare the data for UI
-    captions = new HashMap<>();
-        captions.put(KWS_SEARCH, R.string.kws_caption);
-        captions.put(MENU_SEARCH, R.string.menu_caption);
-        captions.put(FORWARD, R.string.forward_caption);
-        captions.put(BACK, R.string.back_caption);
-        captions.put(QUESTION_SEARCH, R.string.question_caption);
-
-    //((TextView) findViewById(R.id.text))
-    //        .setText("Preparing the recognizer");
-
-        Toast.makeText(this, "Preparing the recognizer", Toast.LENGTH_LONG).show();
-
-
-
-    }
-     *****************/
-
-    public void checkAudioPermission(Activity currentActivity) {
-        // Check if user has given permission to record audio
-        int permissionCheck = ContextCompat.checkSelfPermission(currentActivity, Manifest.permission.RECORD_AUDIO);
-        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(currentActivity, new String[]{Manifest.permission.RECORD_AUDIO}, PERMISSIONS_REQUEST_RECORD_AUDIO);
-            return;
-        }
-    }
 
     public void runRec(){
         Toast.makeText(currentActivity, "Starting recognizer", Toast.LENGTH_SHORT).show();
@@ -118,6 +88,7 @@ public class VoiceRecognizer implements RecognitionListener {
                     File assetDir = assets.syncAssets();
                     setupRecognizer(assetDir);
                 } catch (IOException e) {
+                    Log.e("DEBUG", e.toString());
                     return e;
                 }
                 return null;
@@ -171,29 +142,20 @@ public class VoiceRecognizer implements RecognitionListener {
         if (hypothesis == null)
             return;
 
-
-        // TODO - this is where the implementation happens
         String text = hypothesis.getHypstr();
-        if (text.equals(KEYPHRASE))
-            switchSearch(MENU_SEARCH);
-        else if (text.equals(FORWARD)) {
-            //TODO - DONT make calls here in partial
-            Toast.makeText(currentActivity, "parital "+ text, Toast.LENGTH_LONG).show();
-            //next.performClick();
-            switchSearch(KWS_SEARCH);
-        }
-        else if (text.equals(BACK)) {
 
-            //prev.performClick();
-            switchSearch(KWS_SEARCH);
+        //Toast.makeText(currentActivity, "parital "+ text, Toast.LENGTH_LONG).show();
+
+        if (text.equals(KEYPHRASE)) {
+            // Start search listening for menu options
+            switchSearch(MENU_SEARCH);
         }
         else if (text.equals(QUESTION_SEARCH))
             // TODO - implement getting text of the question and passing here
             switchSearch(QUESTION_SEARCH);
-        else
+
             //((TextView) findViewById(R.id.text)).setText(text);
-            // TODO- dont show text from here.  ONly show text from Final results
-            Toast.makeText(currentActivity, "PARTIAL "+ text, Toast.LENGTH_LONG).show();
+
     }
 
     /**
@@ -207,41 +169,32 @@ public class VoiceRecognizer implements RecognitionListener {
             //TODO - here is where you should be making calls and doing stuff, not partial
             makeText(currentActivity, "Full: " + text, Toast.LENGTH_SHORT).show();
 
+            Log.e("DEBUG", "Full Recognizer received " + text);
+
             if (text.equals(FORWARD)) {
-                //TODO - DONT make calls here
 
-                //next.performClick();
-                Log.e("DEBUG","Recognizer received NEXT");
-                EventBus.getDefault().post(new VoiceInstructionEvent(true));
-
-
-                switchSearch(KWS_SEARCH);
+                EventBus.getDefault().post(new VoiceInstructionEvent(text));
             }
             else if (text.equals(BACK)) {
 
-                //prev.performClick();
-                switchSearch(KWS_SEARCH);
+                EventBus.getDefault().post(new VoiceInstructionEvent(text));
+
+            } else if (text.equals("repeat")) {
+
+                EventBus.getDefault().post(new VoiceInstructionEvent(text));
+
+            } else if (text.equals("ingredients")) {
+                EventBus.getDefault().post(new VoiceInstructionEvent(text));
+            } else if (text.equals("directions")) {
+                EventBus.getDefault().post(new VoiceInstructionEvent(text));
+            } else if (text.equals(QUESTION_SEARCH)) {
+
+                //EventBus.getDefault().post(new VoiceInstructionEvent(text));
+                switchSearch(QUESTION_SEARCH);
             }
 
+
         }
-    }
-
-    public void sendSwipeEvent(){
-        Log.e("DEBUG", "Sending Swipe");
-        long downTime = SystemClock.uptimeMillis();
-        long eventTime = SystemClock.uptimeMillis()+ 10;
-        float x = 0.0f;
-        float y = 0.0f;
-        int metaState = 0;
-        MotionEvent motionEvent = MotionEvent.obtain(
-                downTime,
-                eventTime,
-                MotionEvent.AXIS_HSCROLL,
-                x,
-                y,
-                metaState);
-
-        currentActivity.findViewById(R.id.viewpager).dispatchTouchEvent(motionEvent);
     }
 
     @Override
@@ -260,20 +213,14 @@ public class VoiceRecognizer implements RecognitionListener {
     private void switchSearch(String searchName) {
         recognizer.stop();
 
+        Log.e("DEBUG", "Starting the search "+searchName);
         // If we are not spotting, start listening with timeout (10000 ms or 10 seconds).
         if (searchName.equals(KWS_SEARCH))
             recognizer.startListening(searchName);
-        else
+        else {
+
             recognizer.startListening(searchName, 10000);
-
-        //TODO - fix get recsources()
-        //String caption = currentActivity.getString(captions.get(searchName));
-        //((TextView) findViewById(R.id.text)).setText(caption);
-        //Toast.makeText(currentActivity, "Search Started", Toast.LENGTH_LONG).show();
-    }
-
-    public void initSwitchSearch(){
-        switchSearch(KWS_SEARCH);
+        }
     }
 
     private void setupRecognizer(File assetsDir) throws IOException {
@@ -300,18 +247,9 @@ public class VoiceRecognizer implements RecognitionListener {
         File menuGrammar = new File(assetsDir, "menu.gram");
         recognizer.addGrammarSearch(MENU_SEARCH, menuGrammar);
 
-        // TODO - do we need these defined as grammar searches? NO?
-        // Create grammar-based search for digit recognition
-        //File digitsGrammar = new File(assetsDir, "digits.gram");
-        //recognizer.addGrammarSearch(FORWARD, digitsGrammar);
-
-        // Create grammar-based search for digit recognition
-        //File digits2Grammar = new File(assetsDir, "digits.gram");
-        //recognizer.addGrammarSearch(BACK, digits2Grammar);
-
-        // Create language model search
-        File languageModel = new File(assetsDir, "weather.dmp");
-        recognizer.addNgramSearch(QUESTION_SEARCH, languageModel);
+        // Create grammar-based search for cooking words
+        File cookingGrammar = new File(assetsDir, "cooking.gram");
+        recognizer.addGrammarSearch(QUESTION_SEARCH, cookingGrammar);
     }
 
     @Override
