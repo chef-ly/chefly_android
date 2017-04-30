@@ -46,7 +46,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
     private ViewPager pager;
     private TextView favoritesHeader;
     private TextView recipesHeader;
-
+    private TextView ingredientsHeader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,12 +70,19 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                if (position == 1) {
+                if (position == 2) {
+                    ingredientsHeader.setPaintFlags(ingredientsHeader.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+                    recipesHeader.setPaintFlags(0);
+                    favoritesHeader.setPaintFlags(0);
+                }
+                else if (position == 1) {
                     favoritesHeader.setPaintFlags(favoritesHeader.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
                     recipesHeader.setPaintFlags(0);
+                    ingredientsHeader.setPaintFlags(0);
                 } else {
                     recipesHeader.setPaintFlags(recipesHeader.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
                     favoritesHeader.setPaintFlags(0);
+                    ingredientsHeader.setPaintFlags(0);
                 }
             }
 
@@ -89,25 +96,36 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         });
 
         // Header links
+        ingredientsHeader = (TextView) findViewById(R.id.ingredientsHeader);
         favoritesHeader = (TextView) findViewById(R.id.favortiesHeader);
         recipesHeader = (TextView) findViewById(R.id.recipesHeader);
 
         View.OnClickListener headerListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (v.getId() == favoritesHeader.getId()) {
+                if (v.getId() == ingredientsHeader.getId()) {
+                    ingredientsHeader.setPaintFlags(ingredientsHeader.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+                    recipesHeader.setPaintFlags(0);
+                    favoritesHeader.setPaintFlags(0);
+                    //TODO change page to ingedietns
+                    pager.setCurrentItem(2);
+                }
+                else if (v.getId() == favoritesHeader.getId()) {
                     favoritesHeader.setPaintFlags(favoritesHeader.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
                     recipesHeader.setPaintFlags(0);
+                    ingredientsHeader.setPaintFlags(0);
                     //TODO change page to favs
                     pager.setCurrentItem(1);
                 } else {
                     recipesHeader.setPaintFlags(recipesHeader.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
                     favoritesHeader.setPaintFlags(0);
+                    ingredientsHeader.setPaintFlags(0);
                     //TODO change page to recipes
                     pager.setCurrentItem(0);
                 }
             }
         };
+        ingredientsHeader.setOnClickListener(headerListener);
         favoritesHeader.setOnClickListener(headerListener);
         recipesHeader.setOnClickListener(headerListener);
 

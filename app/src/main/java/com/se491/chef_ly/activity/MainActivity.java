@@ -144,8 +144,6 @@ public class    MainActivity extends AppCompatActivity implements LoaderManager.
 
     private void login(String emailOrUsername, String password) {
 
-
-
         Log.d(TAG, "LOGIN ENTERED");
         Auth0 auth0 = new Auth0(getString(R.string.auth0_client_id), getString(R.string.auth0_domain));
         AuthenticationAPIClient client = new AuthenticationAPIClient(auth0);
@@ -160,6 +158,7 @@ public class    MainActivity extends AppCompatActivity implements LoaderManager.
                         // Navigate to your next activity
                         Intent recipeListIntent = new Intent(MainActivity.this, RecipeListActivity.class);
                         recipeListIntent.putExtra("name", "aaa");
+                        recipeListIntent.putExtra("recipeList", serverRecipes);
                         startActivity(recipeListIntent);
                     }
 
@@ -201,10 +200,11 @@ public class    MainActivity extends AppCompatActivity implements LoaderManager.
         super.onNewIntent(intent);
     }
 
-    private void socialLogin() {
+
+    private void socialLogin(String connection) {
         Auth0 auth0 = new Auth0(getString(R.string.auth0_client_id), getString(R.string.auth0_domain));
         WebAuthProvider.init(auth0)
-                .withConnection("facebook")
+                .withConnection(connection)
                 .start(MainActivity.this, new AuthCallback() {
                     @Override
                     public void onFailure(@NonNull Dialog dialog) {
@@ -269,11 +269,10 @@ public class    MainActivity extends AppCompatActivity implements LoaderManager.
                 startActivity(recipeListIntent);
                 break;
             case R.id.webLoginButton:
-                socialLogin();
-
+                socialLogin("facebook");
                 break;
             case R.id.googleLoginButton:
-                //googleLogin();
+                socialLogin("google-oauth2");
                 break;
             case R.id.signUp:
                 Intent registerIntent = new Intent(MainActivity.this, RegisterActivity.class);
