@@ -106,20 +106,7 @@ public class VoiceRecognizer implements RecognitionListener {
             }
         }.execute();
     }
-//TODO - fix this
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-//                                           @NonNull int[] grantResults) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//
-//        if (requestCode == PERMISSIONS_REQUEST_RECORD_AUDIO) {
-//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                runRecognizerSetup();
-//            } else {
-//                finish();
-//            }
-//        }
-//    }
+
 
     //TODO - fix this.  Do we need to destroy this?
 //    @Override
