@@ -37,7 +37,6 @@ import com.mashape.unirest.request.BaseRequest;
 import com.se491.chef_ly.R;
 import com.se491.chef_ly.http.HttpConnection;
 import com.se491.chef_ly.http.RequestMethod;
-import com.se491.chef_ly.model.UserSessionManager;
 import com.se491.chef_ly.utils.CredentialsManager;
 import com.se491.chef_ly.model.RecipeList;
 import com.se491.chef_ly.utils.GetRecipesFromServer;
@@ -147,23 +146,41 @@ public class    MainActivity extends AppCompatActivity implements LoaderManager.
 
     }
 
+    /*{
+        "realm": "Username-Password-Authentication",
+            "grant_type":"password",
+            "client_id": "zeCz4YI9I8nAHSZg2q4wnMIExGvENAu4",
+            "username": "davidshchang@gmail.com",
+            "password": "***********",
+            "audience": "chefly-api",
+            "scope": "userinfo",
+            "client_secret": "V6OTEUuZ_Gm_T7ZSD82IzZfcHVLtspDTiZN3Jm_ELkFULenqfGydQP_V1jRk4MQz"
+    }*/
+
     private void login(final String emailOrUsername, String password) {
 
+
         Log.d(TAG, "LOGIN ENTERED");
+        Login login = new Login(emailOrUsername, password);
+        login.execute(new RequestMethod());
+        Log.d(TAG, "LOGIN SUCCESS");
+
+       /*
+        ******ANTIQUATED LOGIN METHOD******
         Auth0 auth0 = new Auth0(getString(R.string.auth0_client_id), getString(R.string.auth0_domain));
         AuthenticationAPIClient client = new AuthenticationAPIClient(auth0);
         String connectionName = getString(R.string.auth0_databaseConnection);
         client.login(emailOrUsername, password, connectionName)
-                .setAudience("https://chefly.auth0.com/api/")
+                .setAudience("chefly-api")
+                .setScope("userinfo openid")
                 .start(new BaseCallback<Credentials, AuthenticationException>() {
                     @Override
                     public void onSuccess(Credentials credentials) {
-                        Log.d(TAG, credentials.getType());
-                        Log.d(TAG, credentials.getIdToken());
-                        Log.d(TAG, credentials.getAccessToken());
+
                         Log.d(TAG, "LOGIN SUCCESS!");
-                        Login login = new Login();
-                        login.execute(new RequestMethod());
+                        Log.d(TAG, credentials.getAccessToken());
+
+
                         // Store credentials- how do we want to do this? Store in shared preferences?
                         CredentialsManager.saveCredentials(MainActivity.this, credentials);
                         CredentialsManager.saveUsername(MainActivity.this, emailOrUsername);
@@ -186,7 +203,7 @@ public class    MainActivity extends AppCompatActivity implements LoaderManager.
                        // CredentialsManager.deleteCredentials(MainActivity.this);
 
                     }
-                });
+                });*/
 
     }
 
@@ -309,40 +326,44 @@ public class    MainActivity extends AppCompatActivity implements LoaderManager.
     }
 
 
-
+    //TODO: Find way to store the login strings in resources. Formatting for HTTP calls gets in way. */
     class Login extends AsyncTask<RequestMethod, Integer, String> {
-        public Login() {
+        private String emailOrUsername;
+        private String password;
+        private String response;
 
+        public Login(String emailOrUsername, String password) {
+            this.emailOrUsername = emailOrUsername;
+            this.password = password;
         }
 
         @Override
         protected String doInBackground(RequestMethod... requestMethod) {
-            String urlString = "https://chefly.auth0.com/authorize";
+            String urlString = "https://chefly.auth0.com/oauth/token";
             RequestMethod rm = new RequestMethod();
             rm.setEndPoint(urlString);
-            //try {
-                rm.setParam("audience", "https://chefly.auth0.com/api/");
-                rm.setParam("redirect_uri", "http://chefly-dev.herokuapp.com/*");
-                rm.setParam("scope", "read:user");
-//            } catch (UnsupportedEncodingException e) {
-//                e.printStackTrace();
-//            }
+
+                rm.setParam("audience", "chefly-api");
+                rm.setParam("scope", "userinfo openid");
+                rm.setParam("username", emailOrUsername);
+                rm.setParam("password", password);
+
             rm.setParam("client_id", getString(R.string.auth0_client_id));
-            try {
+            /*try {
                 rm.setParam("code_challenge", this.generateCodeChallenge() );
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             } catch (NoSuchAlgorithmException e) {
                 e.printStackTrace();
-            }
+            }*/
             rm.setParam("code_challenge_method", getString(R.string.auth0_code_challenge_method));
-            rm.setParam("response_type", "code");
-            rm.setMethod("GET");
+            rm.setParam("grant_type", "password");
+            rm.setMethod("POST");
             String response = "";
             try {
                 response = HttpConnection.downloadFromFeed(rm);
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException ex) {
+                ex.printStackTrace();
             }
             return response;
         }
@@ -350,7 +371,11 @@ public class    MainActivity extends AppCompatActivity implements LoaderManager.
         @Override
         protected void onPostExecute(String response){
             Log.d(TAG, "LOGIN TOKEN RESPONSE: " + response);
-            WebView wv = new WebView(MainActivity.this);
+            this.response = response;
+        }
+
+        public String getReponse(){
+            return response;
         }
 
         String generateCodeChallenge() throws UnsupportedEncodingException, NoSuchAlgorithmException{

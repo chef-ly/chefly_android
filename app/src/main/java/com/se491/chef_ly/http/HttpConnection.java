@@ -59,7 +59,7 @@ public class HttpConnection {
         Response response = client.newCall(request).execute(); //synchronous request
         //check if the request is successful
         if (response.isSuccessful()) {
-            return response.body().string();
+
         } else {
             Log.d(TAG, response.toString());
             throw new IOException("Exception: response code " + response.code());
