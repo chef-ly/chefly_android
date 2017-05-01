@@ -40,12 +40,11 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="next">Next</string>
     <string name="noFavorites">No Favorites</string>
-<<<<<<< HEAD
-    <string name="findRecipes">Find Recipes</string>
-    <string name="searchIngredients">Search a recipe based on the ingredients you have</string>
+
+    <string name="findrecipes">Find Recipes</string>
+    <string name="searchingredients">Search a recipe based on the ingredients you have</string>
     <string name="search_hint">Enter an ingredient</string>
-=======
->>>>>>> 5de3d7c1b57d35a557fbd8f36f60c7726e1667d1
+
     <string name="of">of</string>
     <string name="one">1.0</string>
     <string name="or">Or</string>

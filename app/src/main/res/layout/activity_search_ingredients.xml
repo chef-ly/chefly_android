@@ -11,7 +11,7 @@
         tools:context="com.se491.chef_ly.activity.nav_activities.SearchIngredients">
     <TextView
         android:id="@+id/searchIngredients"
-        android:text="@string/searchIngredients"
+        android:text="@string/searchingredients"
         android:textSize="20sp"
         android:textAlignment="center"
         android:padding="10dp"
@@ -69,7 +69,7 @@
 
     <Button
         android:id="@+id/findRecipes"
-        android:text="@string/findRecipes"
+        android:text="@string/findrecipes"
         android:background="@color/black"
         android:textColor="@color/white"
         android:textSize="20sp"
