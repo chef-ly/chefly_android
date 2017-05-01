@@ -74,6 +74,7 @@
             android:name=".activity.nav_activities.ShoppingListActivity"
             android:windowSoftInputMode="adjustPan" />
         <activity android:name=".activity.nav_activities.UserProfileActivity"></activity>
+        <activity android:name=".activity.nav_activities.SearchIngredients"></activity>
     </application>
 
 </manifest>
