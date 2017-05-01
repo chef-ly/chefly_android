@@ -8,7 +8,7 @@
         android:paddingStart="25dp"
         android:paddingEnd="25dp"
         android:background="@color/background_light"
-        tools:context="com.se491.chef_ly.activity.nav_activities.UserProfileActivity">
+        tools:context="com.se491.chef_ly.activity.nav_activities.SearchIngredients">
     <TextView
         android:id="@+id/searchIngredients"
         android:text="@string/searchIngredients"

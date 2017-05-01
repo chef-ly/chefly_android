@@ -16,14 +16,14 @@ public class SearchIngredients extends AppCompatActivity implements View.OnClick
     private TextView email;
     private Button addIn;
     private Button findRecipeBtn;
-        @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_search_ingredients);
             ingredients = (EditText) findViewById(R.id.ingredient1EditText);
 
             //findRecipe(selectedIngredient.toString());
-            setContentView(R.layout.activity_search_ingredients);
+
 
             addIn = (Button) findViewById(R.id.addINBtn);
             addIn.setOnClickListener(this);
