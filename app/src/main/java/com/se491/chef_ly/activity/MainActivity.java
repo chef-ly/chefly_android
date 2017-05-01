@@ -33,7 +33,7 @@ import com.se491.chef_ly.utils.GetRecipesFromServer;
 import com.se491.chef_ly.utils.NetworkHelper;
 
 
-public class    MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<RecipeList>, View.OnClickListener{
+public class  MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<RecipeList>, View.OnClickListener{
 
     private EditText username;
     private EditText password;

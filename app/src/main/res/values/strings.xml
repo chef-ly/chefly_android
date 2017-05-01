@@ -40,7 +40,9 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="next">Next</string>
     <string name="noFavorites">No Favorites</string>
-    <string name="searchIngre">Ingredients</string>
+    <string name="findRecipes">Find Recipes</string>
+    <string name="searchIngredients">Search a recipe based on the ingredients you have</string>
+    <string name="search_hint">Enter an ingredient</string>
     <string name="of">of</string>
     <string name="one">1.0</string>
     <string name="or">Or</string>
