@@ -1,11 +1,16 @@
 package com.se491.chef_ly.activity;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -43,6 +48,8 @@ public class  MainActivity extends AppCompatActivity implements LoaderManager.Lo
     private static final String urlString ="https://chefly-prod.herokuapp.com/list/random/10";
     RecipeList serverRecipes;
 
+    /* Used to handle permission request from PocketSphinx*/
+    private static final int PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +114,16 @@ public class  MainActivity extends AppCompatActivity implements LoaderManager.Lo
         */
 
 
+        // Request permissions from the user here so that everything works better on GetCookingActivity
+        Log.e("DEBUG", "Starting check");
+       // int permissionCheck = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.RECORD_AUDIO);
+        if (ContextCompat.checkSelfPermission(MainActivity.this,
+                Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            Log.e("DEBUG", "Requesting permissions!");
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.RECORD_AUDIO}, PERMISSIONS_REQUEST_RECORD_AUDIO);
+
+            return;
+        }
 
     }
 
@@ -162,6 +179,18 @@ public class  MainActivity extends AppCompatActivity implements LoaderManager.Lo
                     }
                 });
         // proper login
+    }
+
+        @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Thinks, now you can talk to chef.ly!", Toast.LENGTH_LONG).show();
+
+            } else {
+                Toast.makeText(this, "You didn't grant chef.ly permission to use the mic.", Toast.LENGTH_LONG).show();
+            }
+
     }
 
 //for social connections like google and fb

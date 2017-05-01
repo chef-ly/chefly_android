@@ -67,7 +67,10 @@
                     android:layout_weight="0.5"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content" />
+<<<<<<< HEAD
 
+=======
+>>>>>>> 5de3d7c1b57d35a557fbd8f36f60c7726e1667d1
 
             </LinearLayout>
             </LinearLayout>

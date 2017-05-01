@@ -71,6 +71,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+<<<<<<< HEAD
 
                  if (position == 1) {
                     favoritesHeader.setPaintFlags(favoritesHeader.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
@@ -80,6 +81,14 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
                     recipesHeader.setPaintFlags(recipesHeader.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
                     favoritesHeader.setPaintFlags(0);
 
+=======
+                if (position == 1) {
+                    favoritesHeader.setPaintFlags(favoritesHeader.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+                    recipesHeader.setPaintFlags(0);
+                } else {
+                    recipesHeader.setPaintFlags(recipesHeader.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+                    favoritesHeader.setPaintFlags(0);
+>>>>>>> 5de3d7c1b57d35a557fbd8f36f60c7726e1667d1
                 }
             }
 
@@ -93,30 +102,45 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         });
 
         // Header links
+<<<<<<< HEAD
 
+=======
+>>>>>>> 5de3d7c1b57d35a557fbd8f36f60c7726e1667d1
         favoritesHeader = (TextView) findViewById(R.id.favortiesHeader);
         recipesHeader = (TextView) findViewById(R.id.recipesHeader);
 
         View.OnClickListener headerListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+<<<<<<< HEAD
 
                 if (v.getId() == favoritesHeader.getId()) {
                     favoritesHeader.setPaintFlags(favoritesHeader.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
                     recipesHeader.setPaintFlags(0);
 
+=======
+                if (v.getId() == favoritesHeader.getId()) {
+                    favoritesHeader.setPaintFlags(favoritesHeader.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+                    recipesHeader.setPaintFlags(0);
+>>>>>>> 5de3d7c1b57d35a557fbd8f36f60c7726e1667d1
                     //TODO change page to favs
                     pager.setCurrentItem(1);
                 } else {
                     recipesHeader.setPaintFlags(recipesHeader.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
                     favoritesHeader.setPaintFlags(0);
+<<<<<<< HEAD
 
+=======
+>>>>>>> 5de3d7c1b57d35a557fbd8f36f60c7726e1667d1
                     //TODO change page to recipes
                     pager.setCurrentItem(0);
                 }
             }
         };
+<<<<<<< HEAD
 
+=======
+>>>>>>> 5de3d7c1b57d35a557fbd8f36f60c7726e1667d1
         favoritesHeader.setOnClickListener(headerListener);
         recipesHeader.setOnClickListener(headerListener);
 
