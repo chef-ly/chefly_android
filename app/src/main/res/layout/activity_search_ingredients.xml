@@ -37,20 +37,20 @@
         android:layout_below="@+id/searchIngredients"
         android:layout_marginTop="11dp" />
 
-    <Button
-        android:id="@+id/addINBtn"
-        android:text="@string/plus"
-        android:textColor="@color/black"
-        android:textSize="20sp"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:background="@drawable/circlebutton"
-        android:shadowDx="0"
-        android:shadowDy="0"
-        android:shadowRadius="5"
-        android:layout_below="@+id/ingredient1EditText"
-        android:layout_marginLeft="1dip"
-        android:layout_alignParentEnd="true" />
+    <!--<Button-->
+        <!--android:id="@+id/addINBtn"-->
+        <!--android:text="@string/plus"-->
+        <!--android:textColor="@color/black"-->
+        <!--android:textSize="20sp"-->
+        <!--android:layout_width="30dp"-->
+        <!--android:layout_height="30dp"-->
+        <!--android:background="@drawable/circlebutton"-->
+        <!--android:shadowDx="0"-->
+        <!--android:shadowDy="0"-->
+        <!--android:shadowRadius="5"-->
+        <!--android:layout_below="@+id/ingredient1EditText"-->
+        <!--android:layout_marginLeft="1dip"-->
+        <!--android:layout_alignParentEnd="true" />-->
 
 
     <!--<ListView-->
@@ -75,9 +75,9 @@
         android:textSize="20sp"
         android:layout_gravity="start"
         android:padding="5dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="10dp"
-        android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ingredient1EditText"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="12dp" />
 </RelativeLayout>

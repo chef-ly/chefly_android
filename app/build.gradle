@@ -66,6 +66,7 @@ android {
         paid {}
         alpha {
             applicationId 'com.se491.chef_ly.alpha'
+            buildConfigField "boolean", "free", "true"
         }
     }
     lintOptions {

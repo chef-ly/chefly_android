@@ -42,8 +42,8 @@
     <string name="noFavorites">No Favorites</string>
 
     <string name="findrecipes">Find Recipes</string>
-    <string name="searchingredients">Search a recipe based on the ingredients you have</string>
-    <string name="search_hint">Enter an ingredient</string>
+    <string name="searchingredients">Search a recipe based on the ingredients you have. Enter Ingredients separated by comma</string>
+    <string name="search_hint">fish,rice,vegetables</string>
 
     <string name="of">of</string>
     <string name="one">1.0</string>

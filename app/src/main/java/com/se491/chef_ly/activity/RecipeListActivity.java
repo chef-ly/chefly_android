@@ -26,11 +26,14 @@ import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.mashape.unirest.http.exceptions.UnirestException;
 import com.se491.chef_ly.Databases.DatabaseHandler;
 import com.se491.chef_ly.R;
 import com.se491.chef_ly.activity.nav_activities.SearchIngredients;
 import com.se491.chef_ly.activity.nav_activities.ShoppingListActivity;
 import com.se491.chef_ly.activity.nav_activities.UserProfileActivity;
+import com.se491.chef_ly.http.MyService;
+import com.se491.chef_ly.http.RequestMethod;
 import com.se491.chef_ly.model.RecipeInformation;
 import com.se491.chef_ly.model.RecipeList;
 import com.se491.chef_ly.utils.CredentialsManager;
@@ -48,7 +51,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
     private TextView favoritesHeader;
     private TextView recipesHeader;
     //private TextView ingredientsHeader;
-
+    private static final String urlString ="http://www.chef-ly.com/search";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -193,12 +196,31 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
     protected void onNewIntent(Intent intent) {
         handleIntent(intent);
     }
-
+//search by title
     private void handleIntent(Intent intent) {
 
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
             Toast.makeText(this, query, Toast.LENGTH_SHORT).show();
+            // Put Search Logic Here
+            RequestMethod requestPackage = new RequestMethod();
+            requestPackage.setEndPoint(urlString);//find the url
+            requestPackage.setParam("title",query);//send the query
+            requestPackage.setMethod("POST");//send the post method request
+            Intent in = new Intent(this, MyService.class);
+            intent.putExtra(MyService.REQUEST_PACKAGE, requestPackage);
+            startService(in);
+            //update existing list by taking the new list back, at that point craches
+            Bundle extras = in.getExtras();
+            RecipeList list = extras.getParcelable("recipeList");
+            if(list != null){
+                serverRecipes = list;
+                server.updateListAdapter(serverRecipes);
+            }else{
+                Log.d(TAG, "Error - No recipes loaded from server");
+                Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
+                //TODO handle case where no recipes are retrieved from server
+            }
         } else {
             Log.d(TAG, "Intent does not equal action search");
         }
