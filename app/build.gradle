@@ -121,9 +121,10 @@ jacoco {
 dependencies {
     compile 'com.android.support:support-v4:25.+'
 }
-dependencies {
-    compile 'com.android.support.constraint:constraint-layout:+'
-}
+//dependencies {
+//    compile 'com.android.support.constraint:constraint-layout:+'
+//compile 'com.android.support.constraint:constraint-layout:1.0.1'
+//}
 jacocoAndroidUnitTestReport {
     csv.enabled false
     html.enabled true
