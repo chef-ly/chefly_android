@@ -1,4 +1,4 @@
-package com.se491.chef_ly;
+package com.se491.chef_ly.activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;

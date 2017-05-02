@@ -68,14 +68,14 @@ android {
     productFlavors {
         free {}
         paid {}
-        alpha {
-            applicationId 'com.se491.chef_ly.alpha'
-            buildConfigField "boolean", "free", "true"
-            minSdkVersion 21
-            targetSdkVersion 25
-            versionCode 1
-            versionName "1.0"
-        }
+//        alpha {
+//            applicationId 'com.se491.chef_ly.alpha'
+//            buildConfigField "boolean", "free", "true"
+//            minSdkVersion 21
+//            targetSdkVersion 25
+//            versionCode 1
+//            versionName "1.0"
+//        }
     }
     lintOptions {
         abortOnError false
