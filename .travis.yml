@@ -47,7 +47,7 @@ script:
   - adb devices   #Display list of devices
   #- adb shell input keyevent 82 &
   - adb shell input tap 650 300
-  - ./gradlew build  -PdisablePreDex --stacktrace
+  - ./gradlew build connectedCheck -PdisablePreDex --stacktrace
    #- ./gradlew connectedAndroidTest
   #- ./gradlew build -x lint
   # './gradlew clean build'
