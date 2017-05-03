@@ -349,18 +349,6 @@ public class ListViewFragment extends Fragment implements LoaderManager.LoaderCa
                 if(!image.isEmpty()){
                     Glide.with(context)
                             .load(image)
-                            .listener(new RequestListener<String, GlideDrawable>() {
-                                @Override
-                                public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                                    Log.d(TAG, "Error loading image -> " + e.getMessage());
-                                    return false;
-                                }
-                                @Override
-                                public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                                    Log.d(TAG, "Image loaded!");
-                                    return false;
-                                }
-                            })
                             .error(R.drawable.noimageavailable)
                             .placeholder(R.drawable.circular_gradient)
                             .centerCrop()
@@ -373,7 +361,6 @@ public class ListViewFragment extends Fragment implements LoaderManager.LoaderCa
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
             return row;
         }
 
