@@ -17,8 +17,12 @@ import org.json.JSONObject;
 public class HttpConnection {
     private static final String TAG = "HttpConnection";
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    private String statusMessage;
 
-    public static String downloadFromFeed(RequestMethod requestPackage)
+    public HttpConnection(){}
+
+
+    public String downloadFromFeed(RequestMethod requestPackage)
             throws IOException {
 
         String address = requestPackage.getEndpoint();
@@ -59,11 +63,19 @@ public class HttpConnection {
         Response response = client.newCall(request).execute(); //synchronous request
         //check if the request is successful
         if (response.isSuccessful()) {
-
+            this.statusMessage = response.message();
+            return response.body().string();
         } else {
             Log.d(TAG, response.toString());
             throw new IOException("Exception: response code " + response.code());
         }
+    }
+
+    public String getStatusMessage(){
+        if(this.statusMessage != null)
+            return this.statusMessage;
+        else
+            return null;
     }
 
 

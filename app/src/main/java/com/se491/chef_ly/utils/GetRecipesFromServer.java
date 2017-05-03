@@ -24,9 +24,10 @@ public class GetRecipesFromServer extends AsyncTaskLoader<RecipeList> {
     public RecipeList loadInBackground() {
         String response;
         try {
-            response = HttpConnection.downloadFromFeed(requestPackage);
+            HttpConnection http = new HttpConnection();
+            response = http.downloadFromFeed(requestPackage);
         } catch (IOException e) {
-            //e.printStackTrace();
+            e.printStackTrace();
             return new RecipeList();
         }
         Log.d("AsyncTaskLoader","Response -> " + response);

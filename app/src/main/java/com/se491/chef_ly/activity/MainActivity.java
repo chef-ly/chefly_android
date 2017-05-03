@@ -33,10 +33,14 @@ import com.auth0.android.provider.AuthCallback;
 import com.auth0.android.provider.WebAuthProvider;
 import com.auth0.android.result.Credentials;
 import com.auth0.android.result.UserProfile;
-import com.mashape.unirest.request.BaseRequest;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.se491.chef_ly.R;
 import com.se491.chef_ly.http.HttpConnection;
 import com.se491.chef_ly.http.RequestMethod;
+import com.se491.chef_ly.model.LoginCredentials;
 import com.se491.chef_ly.utils.CredentialsManager;
 import com.se491.chef_ly.model.RecipeList;
 import com.se491.chef_ly.utils.GetRecipesFromServer;
@@ -44,6 +48,7 @@ import com.se491.chef_ly.utils.NetworkHelper;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -57,7 +62,7 @@ public class    MainActivity extends AppCompatActivity implements LoaderManager.
     private final String TAG = "MainActivity";
     private Lock mLock;
     private Handler splashHandler;
-    private static final String urlString ="https://chefly-prod.herokuapp.com/list/random/10";
+    private static final String urlString ="http://www.chef-ly.com/list/random/10";
     RecipeList serverRecipes;
 
 
@@ -146,24 +151,37 @@ public class    MainActivity extends AppCompatActivity implements LoaderManager.
 
     }
 
-    /*{
-        "realm": "Username-Password-Authentication",
-            "grant_type":"password",
-            "client_id": "zeCz4YI9I8nAHSZg2q4wnMIExGvENAu4",
-            "username": "davidshchang@gmail.com",
-            "password": "***********",
-            "audience": "chefly-api",
-            "scope": "userinfo",
-            "client_secret": "V6OTEUuZ_Gm_T7ZSD82IzZfcHVLtspDTiZN3Jm_ELkFULenqfGydQP_V1jRk4MQz"
-    }*/
-
     private void login(final String emailOrUsername, String password) {
 
 
         Log.d(TAG, "LOGIN ENTERED");
         Login login = new Login(emailOrUsername, password);
         login.execute(new RequestMethod());
-        Log.d(TAG, "LOGIN SUCCESS");
+        //need to wait for login to complete,
+        if(login.getStatusMessage().contains("200")){
+            Log.d(TAG, "LOGIN SUCCESS");
+            GsonBuilder gsonBuilder = new GsonBuilder();
+            Gson gson = gsonBuilder.create();
+            Type type = new TypeToken<Credentials>(){}.getType();
+            Credentials credentials = gson.fromJson(login.getReponse(), type);
+            //store login credentials
+            CredentialsManager.saveCredentials(MainActivity.this, credentials);
+            CredentialsManager.saveUsername(MainActivity.this, emailOrUsername);
+
+            // Navigate to your next activity
+            Intent recipeListIntent = new Intent(MainActivity.this, RecipeListActivity.class);
+            recipeListIntent.putExtra("name", emailOrUsername);
+            recipeListIntent.putExtra("recipeList", serverRecipes);
+            startActivity(recipeListIntent);
+        }
+        else{
+            Log.d(TAG, "LOGIN FAIL");
+            String errorMsg = "Sign in request failed";
+            showToast(errorMsg);
+
+            // CredentialsManager.deleteCredentials(MainActivity.this);
+        }
+
 
        /*
         ******ANTIQUATED LOGIN METHOD******
@@ -331,6 +349,7 @@ public class    MainActivity extends AppCompatActivity implements LoaderManager.
         private String emailOrUsername;
         private String password;
         private String response;
+        private String statusMessage;
 
         public Login(String emailOrUsername, String password) {
             this.emailOrUsername = emailOrUsername;
@@ -356,12 +375,14 @@ public class    MainActivity extends AppCompatActivity implements LoaderManager.
             } catch (NoSuchAlgorithmException e) {
                 e.printStackTrace();
             }*/
-            rm.setParam("code_challenge_method", getString(R.string.auth0_code_challenge_method));
+            //rm.setParam("code_challenge_method", getString(R.string.auth0_code_challenge_method));
             rm.setParam("grant_type", "password");
             rm.setMethod("POST");
             String response = "";
             try {
-                response = HttpConnection.downloadFromFeed(rm);
+                HttpConnection http = new HttpConnection();
+                response = http.downloadFromFeed(rm);
+                this.statusMessage = http.getStatusMessage();
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -370,13 +391,20 @@ public class    MainActivity extends AppCompatActivity implements LoaderManager.
 
         @Override
         protected void onPostExecute(String response){
-            Log.d(TAG, "LOGIN TOKEN RESPONSE: " + response);
-            this.response = response;
+            if (response.equals(null) | response.equals("")){
+                Log.d(TAG, "Invalid Login HTTP Response");
+            }
+            else {
+                Log.d(TAG, "LOGIN TOKEN RESPONSE: " + response);
+                this.response = response;
+            }
         }
 
         public String getReponse(){
-            return response;
+            return this.response;
         }
+
+        public String getStatusMessage() { return this.statusMessage; }
 
         String generateCodeChallenge() throws UnsupportedEncodingException, NoSuchAlgorithmException{
             SecureRandom sr = new SecureRandom();
