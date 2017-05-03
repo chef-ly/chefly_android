@@ -71,11 +71,20 @@ public class VoiceRecognizer implements RecognitionListener {
 
     public void startRec(){
         switchSearch(KWS_SEARCH);
+        Log.e("DEBUG", "Starting voice Recognizer");
     }
     public void stopRec(){
         recognizer.stop();
+        Log.e("DEBUG", "Stopping voice Recognizer");
     }
 
+    public void killRec() {
+        if (recognizer != null) {
+            recognizer.cancel();
+            recognizer.shutdown();
+            Log.e("DEBUG", "Killed Voice Recognizer");
+        }
+    }
     // --- PocketSphinx functions
     private void runRecognizerSetup() {
         // Recognizer initialization is a time-consuming and it involves IO,
@@ -99,38 +108,13 @@ public class VoiceRecognizer implements RecognitionListener {
                 if (result != null) {
                     Toast.makeText(currentActivity, "Failed to init recognizer " + result, Toast.LENGTH_SHORT).show();
                 } else {
-                    //TODO - move to the listener for textToSpeech to be done
+
                     Toast.makeText(currentActivity, "Recognizer initialized!", Toast.LENGTH_SHORT).show();
                     switchSearch(KWS_SEARCH);
                 }
             }
         }.execute();
     }
-//TODO - fix this
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-//                                           @NonNull int[] grantResults) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//
-//        if (requestCode == PERMISSIONS_REQUEST_RECORD_AUDIO) {
-//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                runRecognizerSetup();
-//            } else {
-//                finish();
-//            }
-//        }
-//    }
-
-    //TODO - fix this.  Do we need to destroy this?
-//    @Override
-//    public void onDestroy() {
-//        ////super.onDestroy();
-//
-//        if (recognizer != null) {
-//            recognizer.cancel();
-//            recognizer.shutdown();
-//        }
-//    }
 
     /**
      * In partial result we get quick updates about current hypothesis. In
@@ -166,7 +150,8 @@ public class VoiceRecognizer implements RecognitionListener {
         //((TextView) findViewById(R.id.text)).setText("");
         if (hypothesis != null) {
             String text = hypothesis.getHypstr();
-            //TODO - here is where you should be making calls and doing stuff, not partial
+
+            //here is where you should be making calls and doing stuff, not partial
             makeText(currentActivity, "Full: " + text, Toast.LENGTH_SHORT).show();
 
             Log.e("DEBUG", "Full Recognizer received " + text);

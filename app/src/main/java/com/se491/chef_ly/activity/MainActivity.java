@@ -113,14 +113,6 @@ public class    MainActivity extends AppCompatActivity implements LoaderManager.
         ////////////////////////////////////////////////////////////////////////////////////////////
         */
 
-
-        // Request permissions from the user here so that everything works better on GetCookingActivity
-        int permissionCheck = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.RECORD_AUDIO);
-        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.RECORD_AUDIO}, PERMISSIONS_REQUEST_RECORD_AUDIO);
-            return;
-        }
-
     }
 
     private void setupViews() {
@@ -176,18 +168,6 @@ public class    MainActivity extends AppCompatActivity implements LoaderManager.
                     }
                 });
         // proper login
-    }
-
-        @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Thinks, now you can talk to chef.ly!", Toast.LENGTH_LONG).show();
-
-            } else {
-                Toast.makeText(this, "You didn't grant chef.ly permission to use the mic.", Toast.LENGTH_LONG).show();
-            }
-
     }
 
 //for social connections like google and fb

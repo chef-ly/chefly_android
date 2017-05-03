@@ -2,13 +2,105 @@
 
 grammar cooking;
 
-<cook> = chicken  |
-         how      |
+<cook> = how      |
          much     |
          which    |
          step     |
          add      |
-         flour    |
-         sauce;
+         almonds		|
+         american		|
+         and		|
+         arugula		|
+         baby		|
+         barbecue		|
+         bay		|
+         beans		|
+         beef		|
+         bell		|
+         bison		|
+         black		|
+         bread		|
+         broth		|
+         buns		|
+         canned		|
+         champagne		|
+         cheese		|
+         chicken		|
+         chickpeas		|
+         chili		|
+         chips		|
+         chuck		|
+         ciabatta		|
+         clove		|
+         cooked		|
+         coriander		|
+         corn		|
+         crumbs		|
+         cumin		|
+         curly		|
+         dijon		|
+         egg		|
+         fillet		|
+         flour		|
+         fresh		|
+         garlic		|
+         grapefruit		|
+         green		|
+         ground		|
+         hamburger		|
+         hearts		|
+         hemp		|
+         hot		|
+         iceberg		|
+         jack		|
+         juice		|
+         kale		|
+         ketchup		|
+         kosher		|
+         leaf		|
+         lemon		|
+         lettuce		|
+         low-sodium		|
+         mayo		|
+         mint		|
+         mix		|
+         mustard		|
+         oats		|
+         of		|
+         oil		|
+         olive		|
+         onion		|
+         onions		|
+         paprika		|
+         parsley		|
+         pepitas		|
+         pepper		|
+         pickle		|
+         pickles		|
+         plain		|
+         powder		|
+         quinoa		|
+         red		|
+         relish		|
+         rolled		|
+         rolls		|
+         sage		|
+         salad		|
+         salmon		|
+         salsa		|
+         salt		|
+         sauce		|
+         sea		|
+         seasoning		|
+         shallots		|
+         smoked		|
+         soy		|
+         sub		|
+         sweet		|
+         taco		|
+         tomato		|
+         turkey		|
+         vegetable		|
+         vinegar		|;
 
 public <cooking> = <cook>+;
