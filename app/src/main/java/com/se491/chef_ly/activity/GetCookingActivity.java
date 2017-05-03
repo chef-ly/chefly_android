@@ -318,6 +318,8 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
 
         // Unregister EventBus
         EventBus.getDefault().unregister(this);
+
+        Log.d(TAG,"OnDestroy <><><><><><><><><><><>");
     }
 
     @TargetApi(21)
@@ -346,17 +348,6 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
                 String.valueOf(numberSteps);
         stepText.setText(sb);
 
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        textToSpeech.stop();
-
-        // Unregister EventBus
-        EventBus.getDefault().unregister(this);
-
-        Log.d(TAG,"OnDestroy <><><><><><><><><><><>");
     }
 
     // This method will be called when the VoiceRec class sends a nextInstruction event

@@ -10,7 +10,6 @@ grammar cooking;
          almonds		|
          american		|
          and		|
-         arugula		|
          baby		|
          barbecue		|
          bay		|
@@ -26,12 +25,11 @@ grammar cooking;
          champagne		|
          cheese		|
          chicken		|
-         chickpeas		|
+         chick      |
+         peas		|
          chili		|
          chips		|
          chuck		|
-         ciabatta		|
-         clove		|
          cooked		|
          coriander		|
          corn		|
@@ -60,7 +58,8 @@ grammar cooking;
          leaf		|
          lemon		|
          lettuce		|
-         low-sodium		|
+         low        |
+         sodium		|
          mayo		|
          mint		|
          mix		|
@@ -73,13 +72,11 @@ grammar cooking;
          onions		|
          paprika		|
          parsley		|
-         pepitas		|
          pepper		|
          pickle		|
          pickles		|
          plain		|
          powder		|
-         quinoa		|
          red		|
          relish		|
          rolled		|
@@ -92,7 +89,6 @@ grammar cooking;
          sauce		|
          sea		|
          seasoning		|
-         shallots		|
          smoked		|
          soy		|
          sub		|
@@ -101,6 +97,6 @@ grammar cooking;
          tomato		|
          turkey		|
          vegetable		|
-         vinegar		|;
+         vinegar;
 
 public <cooking> = <cook>+;
