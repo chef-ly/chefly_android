@@ -29,12 +29,13 @@ public class GetRecipesFromServer extends AsyncTaskLoader<RecipeList> {
             //e.printStackTrace();
             return new RecipeList();
         }
-        Log.d("AsyncTaskLoader","Response -> " + response);
+
         GsonBuilder builder = new GsonBuilder();
 
         Gson gson = builder.create();
 
         Type type = new TypeToken<RecipeList>(){}.getType();
+        Log.d("AsyncTaskLoader","Response " + getId() + " -> " + response);
         return  gson.fromJson(response, type);
     }
 }

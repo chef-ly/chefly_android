@@ -69,6 +69,14 @@ public class RecipeList implements Parcelable, Iterable<RecipeInformation>{
     public void add(RecipeInformation recipe){
         recipes.add(recipe);
     }
+    public int remove(RecipeInformation recipe){
+        int res = recipes.indexOf(recipe);
+        recipes.remove(recipe);
+        return res;
+    }
+    public int indexOf(RecipeInformation r){
+        return recipes.indexOf(r);
+    }
     public boolean contains(RecipeInformation recipe){
         return recipes.contains(recipe);
     }

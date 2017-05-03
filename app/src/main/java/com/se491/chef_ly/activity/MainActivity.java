@@ -9,14 +9,12 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -33,9 +31,13 @@ import com.auth0.android.provider.WebAuthProvider;
 import com.auth0.android.result.Credentials;
 import com.se491.chef_ly.R;
 import com.se491.chef_ly.http.RequestMethod;
+import com.se491.chef_ly.model.RecipeInformation;
 import com.se491.chef_ly.model.RecipeList;
+import com.se491.chef_ly.utils.CredentialsManager;
 import com.se491.chef_ly.utils.GetRecipesFromServer;
 import com.se491.chef_ly.utils.NetworkHelper;
+
+import java.util.ArrayList;
 
 
 public class  MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<RecipeList>, View.OnClickListener{
@@ -46,10 +48,16 @@ public class  MainActivity extends AppCompatActivity implements LoaderManager.Lo
     private Lock mLock;
     private Handler splashHandler;
     private static final String urlString ="https://chefly-prod.herokuapp.com/list/random/10";
-    RecipeList serverRecipes;
+    //TODO update urlFacsString
+
+    private RecipeList serverRecipes;
+
 
     /* Used to handle permission request from PocketSphinx*/
     private static final int PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
+    private final int RECIPELISTID = 1201;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +69,7 @@ public class  MainActivity extends AppCompatActivity implements LoaderManager.Lo
         // Get recipes from server
         if(NetworkHelper.hasNetworkAccess(MainActivity.this)) //returns true if internet available
         {
-            //Toast.makeText(RecipeListActivity.this,"Internet Connection",Toast.LENGTH_LONG).show();
-            //register to listen the data
+            //Start AsyncTaskLoader to get recipes from server
             RequestMethod requestPackage = new RequestMethod();
             requestPackage.setEndPoint(urlString);
             requestPackage.setMethod("GET"); //  or requestPackage.setMethod("POST");
@@ -70,7 +77,8 @@ public class  MainActivity extends AppCompatActivity implements LoaderManager.Lo
             Bundle bundle = new Bundle();
             bundle.putParcelable("requestPackage", requestPackage);
 
-            getSupportLoaderManager().initLoader(1, bundle,this).forceLoad();
+            getSupportLoaderManager().initLoader(RECIPELISTID, bundle,this).forceLoad();
+
             splashHandler = new Handler();
             splashHandler.postDelayed(new Runnable() {
                 @Override
@@ -127,6 +135,13 @@ public class  MainActivity extends AppCompatActivity implements LoaderManager.Lo
 
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+
+    }
+
     private void setupViews() {
         Button signInBtn;
         TextView continueAsGuest;
@@ -160,6 +175,7 @@ public class  MainActivity extends AppCompatActivity implements LoaderManager.Lo
                         // Store credentials- how do we want to do this? Store in shared preferences?
                        // CredentialsManager.saveCredentials(MainActivity.this, credentials);
                         // Navigate to your next activity
+
                         Intent recipeListIntent = new Intent(MainActivity.this, RecipeListActivity.class);
                         recipeListIntent.putExtra("name", "aaa");
                         recipeListIntent.putExtra("recipeList", serverRecipes);
@@ -231,6 +247,7 @@ public class  MainActivity extends AppCompatActivity implements LoaderManager.Lo
                     @Override
                     public void onSuccess(@NonNull Credentials credentials) {
                         // Navigate to your next activity
+
                         Intent recipeListIntent = new Intent(MainActivity.this, RecipeListActivity.class);
                         recipeListIntent.putExtra("name", "aaa");
                         recipeListIntent.putExtra("recipeList", serverRecipes);
@@ -251,7 +268,7 @@ public class  MainActivity extends AppCompatActivity implements LoaderManager.Lo
 
     @Override
     public void onClick(View v) {
-
+        Toast.makeText(this, "onClick " + v.getId(), Toast.LENGTH_SHORT).show();
         switch (v.getId()) {
 
             case R.id.signInBtn:
@@ -300,15 +317,22 @@ public class  MainActivity extends AppCompatActivity implements LoaderManager.Lo
     //  LoaderManager callback method
     @Override
     public void onLoadFinished(Loader<RecipeList> loader, RecipeList data) {
-        serverRecipes = data;
-        splashHandler.removeCallbacksAndMessages(null);
-        setContentView(R.layout.activity_main);
-        setupViews();
+        int id = loader.getId();
+        if(id == RECIPELISTID){
+            serverRecipes = data;
+            splashHandler.removeCallbacksAndMessages(null);
+            setContentView(R.layout.activity_main);
+            setupViews();
+        }
+        Log.d(TAG, "OnLoadFinished " + loader.getId());
     }
     //  LoaderManager callback method
     @Override
     public void onLoaderReset(Loader<RecipeList> loader) {
-        serverRecipes = new RecipeList();
+
+        if(getTaskId() == RECIPELISTID){
+            serverRecipes = new RecipeList();
+        }
     }
 
 
