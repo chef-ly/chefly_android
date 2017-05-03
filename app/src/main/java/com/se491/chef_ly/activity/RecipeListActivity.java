@@ -207,6 +207,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
             requestPackage.setEndPoint(urlString);//find the url
             requestPackage.setParam("title",query);//send the query
             requestPackage.setMethod("POST");//send the post method request
+
             Intent in = new Intent(this, MyService.class);
             intent.putExtra(MyService.REQUEST_PACKAGE, requestPackage);
             startService(in);

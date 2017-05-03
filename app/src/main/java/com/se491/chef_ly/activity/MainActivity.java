@@ -45,6 +45,7 @@ public class  MainActivity extends AppCompatActivity implements LoaderManager.Lo
     private final String TAG = "MainActivity";
     private Lock mLock;
     private Handler splashHandler;
+    private RequestMethod requestPackage;
     private static final String urlString ="https://chefly-prod.herokuapp.com/list/random/10";
     RecipeList serverRecipes;
 
@@ -63,10 +64,10 @@ public class  MainActivity extends AppCompatActivity implements LoaderManager.Lo
         {
             //Toast.makeText(RecipeListActivity.this,"Internet Connection",Toast.LENGTH_LONG).show();
             //register to listen the data
-            RequestMethod requestPackage = new RequestMethod();
+           requestPackage = new RequestMethod();
             requestPackage.setEndPoint(urlString);
             requestPackage.setMethod("GET"); //  or requestPackage.setMethod("POST");
-
+          //  serverConnection();
             Bundle bundle = new Bundle();
             bundle.putParcelable("requestPackage", requestPackage);
 
@@ -290,6 +291,22 @@ public class  MainActivity extends AppCompatActivity implements LoaderManager.Lo
     /*private boolean authenticate(Editable user, Editable password) {
         return User.authenticateExisting(user.toString(), password.toString());
     }*/
+
+//    public void serverConnection(){
+//        Bundle bundle = new Bundle();
+//        bundle.putParcelable("requestPackage", requestPackage);
+//
+//        getSupportLoaderManager().initLoader(1, bundle,this).forceLoad();
+//        splashHandler = new Handler();
+//        splashHandler.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                //ViewGroup group = (ViewGroup) findViewById(R.id.activity_main);
+//
+//                setContentView(R.layout.activity_main);
+//            }
+//        }, 5000);
+//    }
 
     //  LoaderManager callback method
     @Override
