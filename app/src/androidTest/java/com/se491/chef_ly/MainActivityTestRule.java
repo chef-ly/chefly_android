@@ -22,7 +22,7 @@ public class MainActivityTestRule<A extends Activity> extends ActivityTestRule<A
     }
 
     @Override
-    protected void afterActivityLaunched() { //after launched but before the @before/test execution
+    protected void afterActivityLaunched() { //after launched but before the @before/tests execution
         Log.e("MainActivityTestRule", "after launched");
         super.afterActivityLaunched();
     }

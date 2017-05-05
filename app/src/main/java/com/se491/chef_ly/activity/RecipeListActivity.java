@@ -1,8 +1,10 @@
 package com.se491.chef_ly.activity;
 
 import android.app.SearchManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,6 +13,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -45,6 +48,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
     private final int CREATE_RECIPE_CODE = 7212;
     private static RecipeList favoriteRecipes;
     private static RecipeList serverRecipes;
+    private  RecipeList newServerRecipes;
     private ListViewFragment favs;
     private ListViewFragment server;
     private ViewPager pager;
@@ -52,6 +56,10 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
     private TextView recipesHeader;
     //private TextView ingredientsHeader;
     private static final String urlString ="http://www.chef-ly.com/search";
+
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -135,6 +143,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+
     }
 
     @Override
@@ -212,11 +221,13 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
             intent.putExtra(MyService.REQUEST_PACKAGE, requestPackage);
             startService(in);
             //update existing list by taking the new list back, at that point craches
+            in = getIntent();
             Bundle extras = in.getExtras();
+
             RecipeList list = extras.getParcelable("recipeList");
             if(list != null){
-                serverRecipes = list;
-                server.updateListAdapter(serverRecipes);
+                newServerRecipes = list;
+                server.updateListAdapter(newServerRecipes);
             }else{
                 Log.d(TAG, "Error - No recipes loaded from server");
                 Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
