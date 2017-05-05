@@ -14,13 +14,11 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-<<<<<<< HEAD
-import android.support.v4.content.LocalBroadcastManager;
-=======
+
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.util.ArraySet;
->>>>>>> 524be7c1411be3031fd6a95416df7d2fbc3c82f8
+
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;

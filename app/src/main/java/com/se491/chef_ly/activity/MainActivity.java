@@ -204,7 +204,7 @@ public class  MainActivity extends AppCompatActivity implements LoaderManager.Lo
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
 
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Thinks, now you can talk to chef.ly!", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Thanks, now you can talk to chef.ly!", Toast.LENGTH_LONG).show();
 
             } else {
                 Toast.makeText(this, "You didn't grant chef.ly permission to use the mic.", Toast.LENGTH_LONG).show();
