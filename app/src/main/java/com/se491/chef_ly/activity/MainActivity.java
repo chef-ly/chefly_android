@@ -157,12 +157,13 @@ public class    MainActivity extends AppCompatActivity implements LoaderManager.
         Log.d(TAG, "LOGIN ENTERED");
         Login login = new Login(emailOrUsername, password);
         login.execute(new RequestMethod());
-        //need to wait for login to complete,
-        if(login.getStatusMessage().contains("200")){
+        //need to wait for login to complete, currently Async
+        /*if (login.getStatusMessage().contains("200")) {
             Log.d(TAG, "LOGIN SUCCESS");
             GsonBuilder gsonBuilder = new GsonBuilder();
             Gson gson = gsonBuilder.create();
-            Type type = new TypeToken<Credentials>(){}.getType();
+            Type type = new TypeToken<Credentials>() {
+            }.getType();
             Credentials credentials = gson.fromJson(login.getReponse(), type);
             //store login credentials
             CredentialsManager.saveCredentials(MainActivity.this, credentials);
@@ -172,15 +173,15 @@ public class    MainActivity extends AppCompatActivity implements LoaderManager.
             Intent recipeListIntent = new Intent(MainActivity.this, RecipeListActivity.class);
             recipeListIntent.putExtra("name", emailOrUsername);
             recipeListIntent.putExtra("recipeList", serverRecipes);
-            startActivity(recipeListIntent);
-        }
+            startActivity(recipeListIntent);*/
+      /*  }
         else{
             Log.d(TAG, "LOGIN FAIL");
             String errorMsg = "Sign in request failed";
             showToast(errorMsg);
-
-            // CredentialsManager.deleteCredentials(MainActivity.this);
-        }
+*/
+        // CredentialsManager.deleteCredentials(MainActivity.this);
+        // }
 
 
        /*
@@ -222,7 +223,6 @@ public class    MainActivity extends AppCompatActivity implements LoaderManager.
 
                     }
                 });*/
-
     }
 
 //for social connections like google and fb
@@ -390,13 +390,37 @@ public class    MainActivity extends AppCompatActivity implements LoaderManager.
         }
 
         @Override
-        protected void onPostExecute(String response){
-            if (response.equals(null) | response.equals("")){
+        protected void onPostExecute(String response) {
+            if (response.equals(null) | response.equals("")) {
                 Log.d(TAG, "Invalid Login HTTP Response");
-            }
-            else {
+
+            } else {
                 Log.d(TAG, "LOGIN TOKEN RESPONSE: " + response);
+                Log.d(TAG, "STATUS MESSAGE: " + this.getStatusMessage());
                 this.response = response;
+                if (this.getStatusMessage().contains("OK")) {
+                    Log.d(TAG, "LOGIN SUCCESS");
+                    GsonBuilder gsonBuilder = new GsonBuilder();
+                    Gson gson = gsonBuilder.create();
+                    Type type = new TypeToken<Credentials>() {
+                    }.getType();
+
+                    //is this legal?
+                    Credentials credentials = gson.fromJson(this.getReponse(), type);
+                    //store login credentials
+                    CredentialsManager.saveCredentials(MainActivity.this, credentials);
+                    CredentialsManager.saveUsername(MainActivity.this, emailOrUsername);
+
+                    // Navigate to your next activity
+                    Intent recipeListIntent = new Intent(MainActivity.this, RecipeListActivity.class);
+                    recipeListIntent.putExtra("name", emailOrUsername);
+                    recipeListIntent.putExtra("recipeList", serverRecipes);
+                    startActivity(recipeListIntent);
+                } else {
+                    Log.d(TAG, "LOGIN FAIL");
+                    String errorMsg = "Sign in request failed";
+                    showToast(errorMsg);
+                }
             }
         }
 
