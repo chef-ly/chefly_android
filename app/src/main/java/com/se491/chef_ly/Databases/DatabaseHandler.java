@@ -8,8 +8,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.google.gson.Gson;
-import com.se491.chef_ly.model.ExtendedIngredient;
-import com.se491.chef_ly.model.Ingredient;
 import com.se491.chef_ly.model.RecipeInformation;
 import com.se491.chef_ly.model.ShoppingListItem;
 
@@ -19,7 +17,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     private final String TAG = "DatabaseHandler";
     private static final String DB_FILE_NAME = "chefly.db";
-    private static final int DB_VERSION = 10;
+    private static final int DB_VERSION = 11;
 
     public DatabaseHandler(Context context) {
         super(context, DB_FILE_NAME, null, DB_VERSION);
@@ -40,6 +38,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL(RecipeTable.SQL_DELETE);
         db.execSQL(RecipeDetailTable.SQL_DELETE);
         db.execSQL(ShoppingList.SQL_DELETE);
+        db.execSQL(UserTable.SQL_DELETE);
         onCreate(db);
 
     }
@@ -233,4 +232,5 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
 
     }
+
 }
