@@ -1,12 +1,9 @@
 package com.se491.chef_ly.activity;
 
 import android.app.SearchManager;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Paint;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -31,7 +28,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.BaseAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,14 +35,11 @@ import com.auth0.android.result.Credentials;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import com.mashape.unirest.http.exceptions.UnirestException;
-import com.se491.chef_ly.Databases.DatabaseHandler;
 import com.se491.chef_ly.R;
 import com.se491.chef_ly.activity.nav_activities.SearchIngredients;
 import com.se491.chef_ly.activity.nav_activities.ShoppingListActivity;
 import com.se491.chef_ly.activity.nav_activities.UserProfileActivity;
 import com.se491.chef_ly.http.HttpConnection;
-import com.se491.chef_ly.http.MyService;
 import com.se491.chef_ly.http.RequestMethod;
 import com.se491.chef_ly.model.RecipeInformation;
 import com.se491.chef_ly.model.RecipeList;
@@ -79,9 +72,10 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
     private ArraySet<Integer> favListAdd = new ArraySet<>();
     private ArraySet<Integer> favListRemove = new ArraySet<>();
 
-    private static final String urlString ="http://www.chef-ly.com/search";
+    private static final String urlString ="http://www.chef-ly.com/search?q=";
 
     private final int FAVORTIESID = 601;
+    private final int SEARCHID = 1346;
     private static final String urlFavsString ="https://chefly-prod.herokuapp.com/user/favorites";
 
 
@@ -230,6 +224,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
     protected void onDestroy() {
         super.onDestroy();
 
+        //  Update favorites list for user on server
         new AsyncTask<String, Integer, Integer>(){
             @Override
             protected Integer doInBackground(String... params) {
@@ -293,26 +288,20 @@ Log.d(TAG, bodyAdd + " " + bodyRemove);
             Toast.makeText(this, query, Toast.LENGTH_SHORT).show();
             // Put Search Logic Here
             RequestMethod requestPackage = new RequestMethod();
-            requestPackage.setEndPoint(urlString);//find the url
-            requestPackage.setParam("title",query);//send the query
-            requestPackage.setMethod("POST");//send the post method request
+            requestPackage.setEndPoint(urlString + query.trim());//find the url
+            requestPackage.setMethod("GET");//send the post method request
+            Bundle searchRecipes = new Bundle();
+            searchRecipes.putParcelable("requestPackage", requestPackage);
 
-            Intent in = new Intent(this, MyService.class);
-            intent.putExtra(MyService.REQUEST_PACKAGE, requestPackage);
-            startService(in);
-            //update existing list by taking the new list back, at that point craches
-            in = getIntent();
-            Bundle extras = in.getExtras();
+            getSupportLoaderManager().initLoader(SEARCHID, searchRecipes,this).forceLoad();
+            //TODO
+            //TODO
+            //TODO
+            //TODO
+            //TODO
+            //TODO
 
-            RecipeList list = extras.getParcelable("recipeList");
-            if(list != null){
-                newServerRecipes = list;
-                server.updateListAdapter(newServerRecipes);
-            }else{
-                Log.d(TAG, "Error - No recipes loaded from server");
-                Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
-                //TODO handle case where no recipes are retrieved from server
-            }
+
         } else {
             Log.d(TAG, "Intent does not equal action search");
         }
@@ -479,6 +468,15 @@ Log.d(TAG, bodyAdd + " " + bodyRemove);
                 }
                 favs.updateListAdapter(favoriteRecipes);
 
+            }else if(id == SEARCHID){
+                Log.d(TAG, " Recipe Search -> " + data.size());
+                if(data.size() > 0){
+                    server.updateListAdapter(data);
+                }else{
+                    Log.d(TAG, "Error - No recipes loaded from server");
+                    Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
+                    //TODO handle case where no recipes are retrieved from server
+                }
             }
         Log.d(TAG, "OnLoadFinished " + loader.getId());
     }
@@ -488,6 +486,8 @@ Log.d(TAG, bodyAdd + " " + bodyRemove);
 
         if(getTaskId() == FAVORTIESID ){
             favoriteRecipes = new RecipeList();
+        }else if(getTaskId() == SEARCHID){
+            //TODO
         }
     }
 

@@ -16,17 +16,21 @@ import java.lang.reflect.Type;
 
 public class GetRecipesFromServer extends AsyncTaskLoader<RecipeList> {
     private RequestMethod requestPackage;
+    private final String TAG = "GETRECIPESFROMSERVER";
     public GetRecipesFromServer(Context c, RequestMethod method){
         super(c);
         this.requestPackage = method;
     }
     @Override
     public RecipeList loadInBackground() {
-        String response;
+        String response = "";
+        Log.d(TAG, requestPackage.getMethod() + " " + requestPackage.getEndpoint());
         try {
             response = HttpConnection.downloadFromFeed(requestPackage);
+            Log.d(TAG, response);
         } catch (IOException e) {
             //e.printStackTrace();
+            Log.d(TAG, response);
             return new RecipeList();
         }
 
@@ -36,6 +40,12 @@ public class GetRecipesFromServer extends AsyncTaskLoader<RecipeList> {
 
         Type type = new TypeToken<RecipeList>(){}.getType();
         Log.d("AsyncTaskLoader","Response " + getId() + " -> " + response);
-        return  gson.fromJson(response, type);
+        try{
+            return  gson.fromJson(response, type);
+        }catch(IllegalStateException e){
+            Log.d(TAG, "Error - RecipeListObject Required: " + e.getMessage());
+            return new RecipeList();
+        }
+
     }
 }
