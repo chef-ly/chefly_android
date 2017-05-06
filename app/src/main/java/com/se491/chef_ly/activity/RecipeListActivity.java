@@ -294,13 +294,6 @@ Log.d(TAG, bodyAdd + " " + bodyRemove);
             searchRecipes.putParcelable("requestPackage", requestPackage);
 
             getSupportLoaderManager().initLoader(SEARCHID, searchRecipes,this).forceLoad();
-            //TODO
-            //TODO
-            //TODO
-            //TODO
-            //TODO
-            //TODO
-
 
         } else {
             Log.d(TAG, "Intent does not equal action search");
