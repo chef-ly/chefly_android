@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.se491.chef_ly.http.HttpConnection;
 import com.se491.chef_ly.http.RequestMethod;
@@ -41,8 +42,9 @@ public class GetRecipesFromServer extends AsyncTaskLoader<RecipeList> {
         Type type = new TypeToken<RecipeList>(){}.getType();
         Log.d("AsyncTaskLoader","Response " + getId() + " -> " + response);
         try{
-            return  gson.fromJson(response, type);
-        }catch(IllegalStateException e){
+            RecipeList resp =  gson.fromJson(response, type);
+            return resp;
+        }catch(JsonSyntaxException e){
             Log.d(TAG, "Error - RecipeListObject Required: " + e.getMessage());
             return new RecipeList();
         }
