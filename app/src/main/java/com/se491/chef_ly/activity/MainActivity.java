@@ -205,6 +205,7 @@ public class  MainActivity extends AppCompatActivity implements LoaderManager.Lo
             } else {
                 Toast.makeText(this, "You didn't grant chef.ly permission to use the mic.", Toast.LENGTH_LONG).show();
             }
+        }
 
 
 //for social connections like google and fb
