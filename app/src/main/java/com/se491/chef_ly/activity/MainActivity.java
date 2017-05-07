@@ -205,21 +205,22 @@ public class  MainActivity extends AppCompatActivity implements LoaderManager.Lo
         } else {
             Toast.makeText(this, "You didn't grant chef.ly permission to use the mic.", Toast.LENGTH_LONG).show();
         }
+    }
 
 
 //for social connections like google and fb
 
-//        @Override
-//        protected void onNewIntent(Intent intent) {
-//            //Check if the result belongs to a pending web authentication
-//            if (WebAuthProvider.resume(intent)) {
-//                return;
-//            }
-//            super.onNewIntent(intent);
-//        }
+    @Override
+    protected void onNewIntent(Intent intent) {
+        //Check if the result belongs to a pending web authentication
+        if (WebAuthProvider.resume(intent)) {
+            return;
+        }
+        super.onNewIntent(intent);
+    }
 
 
-    public void socialLogin(String connection) {
+    private void socialLogin(String connection) {
         Auth0 auth0 = new Auth0(getString(R.string.auth0_client_id), getString(R.string.auth0_domain));
         WebAuthProvider.init(auth0)
                 .withConnection(connection)
