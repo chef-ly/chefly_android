@@ -1,20 +1,23 @@
 package com.se491.chef_ly.activity;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
-import android.webkit.WebView;
-import android.view.ViewGroup;
+
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -40,11 +43,14 @@ import com.google.gson.reflect.TypeToken;
 import com.se491.chef_ly.R;
 import com.se491.chef_ly.http.HttpConnection;
 import com.se491.chef_ly.http.RequestMethod;
-import com.se491.chef_ly.model.LoginCredentials;
+
 import com.se491.chef_ly.utils.CredentialsManager;
+import com.se491.chef_ly.model.RecipeInformation;
 import com.se491.chef_ly.model.RecipeList;
+import com.se491.chef_ly.utils.CredentialsManager;
 import com.se491.chef_ly.utils.GetRecipesFromServer;
 import com.se491.chef_ly.utils.NetworkHelper;
+
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -53,17 +59,27 @@ import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 
 
-public class    MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<RecipeList>, View.OnClickListener{
+public class  MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<RecipeList>, View.OnClickListener{
 
     private EditText username;
     private EditText password;
     private final String TAG = "MainActivity";
     private Lock mLock;
     private Handler splashHandler;
-    private static final String urlString ="http://www.chef-ly.com/list/random/10";
-    RecipeList serverRecipes;
+
+
+    private static final String urlString ="https://chefly-prod.herokuapp.com/list/random/10";
+    //TODO update urlFacsString
+
+    private RecipeList serverRecipes;
+
+
+    /* Used to handle permission request from PocketSphinx*/
+    private static final int PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
+    private final int RECIPELISTID = 1201;
 
 
     @Override
@@ -76,16 +92,18 @@ public class    MainActivity extends AppCompatActivity implements LoaderManager.
         // Get recipes from server
         if(NetworkHelper.hasNetworkAccess(MainActivity.this)) //returns true if internet available
         {
-            //Toast.makeText(RecipeListActivity.this,"Internet Connection",Toast.LENGTH_LONG).show();
-            //register to listen the data
+
+            //Start AsyncTaskLoader to get recipes from server
             RequestMethod requestPackage = new RequestMethod();
+
             requestPackage.setEndPoint(urlString);
             requestPackage.setMethod("GET"); //  or requestPackage.setMethod("POST");
-
+          //  serverConnection();
             Bundle bundle = new Bundle();
             bundle.putParcelable("requestPackage", requestPackage);
 
-            getSupportLoaderManager().initLoader(1, bundle,this).forceLoad();
+            getSupportLoaderManager().initLoader(RECIPELISTID, bundle,this).forceLoad();
+
             splashHandler = new Handler();
             splashHandler.postDelayed(new Runnable() {
                 @Override
@@ -129,6 +147,23 @@ public class    MainActivity extends AppCompatActivity implements LoaderManager.
         */
 
 
+        // Request permissions from the user here so that everything works better on GetCookingActivity
+        Log.e("DEBUG", "Starting check");
+       // int permissionCheck = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.RECORD_AUDIO);
+        if (ContextCompat.checkSelfPermission(MainActivity.this,
+                Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            Log.e("DEBUG", "Requesting permissions!");
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.RECORD_AUDIO}, PERMISSIONS_REQUEST_RECORD_AUDIO);
+
+            return;
+        }
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
 
     }
 
@@ -156,6 +191,18 @@ public class    MainActivity extends AppCompatActivity implements LoaderManager.
         Log.d(TAG, "LOGIN ENTERED");
         Login login = new Login(emailOrUsername, password);
         login.execute(new RequestMethod());
+
+    }
+
+        @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Thanks, now you can talk to chef.ly!", Toast.LENGTH_LONG).show();
+
+            } else {
+                Toast.makeText(this, "You didn't grant chef.ly permission to use the mic.", Toast.LENGTH_LONG).show();
+            }
 
     }
 
@@ -197,6 +244,7 @@ public class    MainActivity extends AppCompatActivity implements LoaderManager.
                     @Override
                     public void onSuccess(@NonNull Credentials credentials) {
                         // Navigate to your next activity
+
                         Intent recipeListIntent = new Intent(MainActivity.this, RecipeListActivity.class);
                         recipeListIntent.putExtra("name", "aaa");
                         recipeListIntent.putExtra("recipeList", serverRecipes);
@@ -217,7 +265,7 @@ public class    MainActivity extends AppCompatActivity implements LoaderManager.
 
     @Override
     public void onClick(View v) {
-
+        Toast.makeText(this, "onClick " + v.getId(), Toast.LENGTH_SHORT).show();
         switch (v.getId()) {
 
             case R.id.signInBtn:
@@ -257,6 +305,22 @@ public class    MainActivity extends AppCompatActivity implements LoaderManager.
         return User.authenticateExisting(user.toString(), password.toString());
     }*/
 
+//    public void serverConnection(){
+//        Bundle bundle = new Bundle();
+//        bundle.putParcelable("requestPackage", requestPackage);
+//
+//        getSupportLoaderManager().initLoader(1, bundle,this).forceLoad();
+//        splashHandler = new Handler();
+//        splashHandler.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                //ViewGroup group = (ViewGroup) findViewById(R.id.activity_main);
+//
+//                setContentView(R.layout.activity_main);
+//            }
+//        }, 5000);
+//    }
+
     //  LoaderManager callback method
     @Override
     public Loader<RecipeList> onCreateLoader(int id, Bundle args) {
@@ -266,15 +330,22 @@ public class    MainActivity extends AppCompatActivity implements LoaderManager.
     //  LoaderManager callback method
     @Override
     public void onLoadFinished(Loader<RecipeList> loader, RecipeList data) {
-        serverRecipes = data;
-        splashHandler.removeCallbacksAndMessages(null);
-        setContentView(R.layout.activity_main);
-        setupViews();
+        int id = loader.getId();
+        if(id == RECIPELISTID){
+            serverRecipes = data;
+            splashHandler.removeCallbacksAndMessages(null);
+            setContentView(R.layout.activity_main);
+            setupViews();
+        }
+        Log.d(TAG, "OnLoadFinished " + loader.getId());
     }
     //  LoaderManager callback method
     @Override
     public void onLoaderReset(Loader<RecipeList> loader) {
-        serverRecipes = new RecipeList();
+
+        if(getTaskId() == RECIPELISTID){
+            serverRecipes = new RecipeList();
+        }
     }
 
 

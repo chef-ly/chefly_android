@@ -3,7 +3,10 @@ package com.se491.chef_ly.http;
 import android.util.Log;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
+
+import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -37,6 +40,17 @@ public class HttpConnection {
 
         Request.Builder requestBuilder = new Request.Builder()
                 .url(address);
+
+        //  Add required HTTP Header
+        Map<String ,String > headers = requestPackage.getHeaders();
+        if(headers.size() > 0){
+            for(String k : headers.keySet()){
+                requestBuilder.addHeader( k, headers.get(k) );
+            }
+        }
+
+
+
 //check for post request
         if (requestPackage.getMethod().equals("POST")) {
             //extract the parameters from the request
@@ -54,13 +68,16 @@ public class HttpConnection {
             Log.d(TAG, msg);
 
             requestBuilder.post(body);
-            requestBuilder.addHeader("content-type", "application/json; charset=utf-8");
+
+            //requestBuilder.addHeader("content-type", "application/json; charset=utf-8");
+            requestBuilder.addHeader("content-type", "application/x-www-form-urlencoded");
         }
 
         Request request = requestBuilder.build();
 
         //get response with the use of the method newCall
         Response response = client.newCall(request).execute(); //synchronous request
+
         //check if the request is successful
         if (response.isSuccessful()) {
             this.statusMessage = response.message();

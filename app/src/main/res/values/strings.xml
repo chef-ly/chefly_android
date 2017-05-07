@@ -41,6 +41,11 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="next">Next</string>
     <string name="noFavorites">No Favorites</string>
+
+    <string name="findrecipes">Find Recipes</string>
+    <string name="searchingredients">Search a recipe based on the ingredients you have. Enter Ingredients separated by comma</string>
+    <string name="search_hint">fish,rice,vegetables</string>
+
     <string name="of">of</string>
     <string name="one">1.0</string>
     <string name="or">Or</string>

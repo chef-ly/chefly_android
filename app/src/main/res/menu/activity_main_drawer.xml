@@ -11,6 +11,10 @@
             android:icon="@drawable/shoppinglist"
             android:title="Shopping List" />
         <item
+            android:id="@+id/nav_search_ingredients"
+            android:icon="@drawable/search2"
+            android:title="Ingredients Search" />
+        <item
             android:id="@+id/contact_us"
             android:icon="@drawable/com_auth0_lock_ic_email"
             android:title="Contact Us" />
