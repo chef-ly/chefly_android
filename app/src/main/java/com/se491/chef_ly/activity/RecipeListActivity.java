@@ -246,7 +246,8 @@ Log.d(TAG, bodyAdd + " " + bodyRemove);
                 rm.setParam("add", bodyAdd);
                 rm.setParam("remove", bodyRemove);
                 try{
-                    HttpConnection.downloadFromFeed(rm);
+                    HttpConnection http = new HttpConnection();
+                    http.downloadFromFeed(rm);
                 }catch (IOException e){
                     return 0;
                 }
