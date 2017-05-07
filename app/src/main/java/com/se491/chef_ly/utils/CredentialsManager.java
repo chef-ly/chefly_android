@@ -22,7 +22,7 @@ public class CredentialsManager {
                 .putString(REFRESH_TOKEN, credentials.getRefreshToken())
                 .putString(ACCESS_TOKEN, credentials.getAccessToken())
                 .putString(TOKEN_TYPE, credentials.getType())
-                //.putLong(EXPIRES_IN, credentials.getExpiresIn())
+                .putLong(EXPIRES_IN, credentials.getExpiresIn())
                 .apply();
     }
 

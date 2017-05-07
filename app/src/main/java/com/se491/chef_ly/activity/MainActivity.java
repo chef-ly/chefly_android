@@ -153,76 +153,10 @@ public class    MainActivity extends AppCompatActivity implements LoaderManager.
 
     private void login(final String emailOrUsername, String password) {
 
-
         Log.d(TAG, "LOGIN ENTERED");
         Login login = new Login(emailOrUsername, password);
         login.execute(new RequestMethod());
-        //need to wait for login to complete, currently Async
-        /*if (login.getStatusMessage().contains("200")) {
-            Log.d(TAG, "LOGIN SUCCESS");
-            GsonBuilder gsonBuilder = new GsonBuilder();
-            Gson gson = gsonBuilder.create();
-            Type type = new TypeToken<Credentials>() {
-            }.getType();
-            Credentials credentials = gson.fromJson(login.getReponse(), type);
-            //store login credentials
-            CredentialsManager.saveCredentials(MainActivity.this, credentials);
-            CredentialsManager.saveUsername(MainActivity.this, emailOrUsername);
 
-            // Navigate to your next activity
-            Intent recipeListIntent = new Intent(MainActivity.this, RecipeListActivity.class);
-            recipeListIntent.putExtra("name", emailOrUsername);
-            recipeListIntent.putExtra("recipeList", serverRecipes);
-            startActivity(recipeListIntent);*/
-      /*  }
-        else{
-            Log.d(TAG, "LOGIN FAIL");
-            String errorMsg = "Sign in request failed";
-            showToast(errorMsg);
-*/
-        // CredentialsManager.deleteCredentials(MainActivity.this);
-        // }
-
-
-       /*
-        ******ANTIQUATED LOGIN METHOD******
-        Auth0 auth0 = new Auth0(getString(R.string.auth0_client_id), getString(R.string.auth0_domain));
-        AuthenticationAPIClient client = new AuthenticationAPIClient(auth0);
-        String connectionName = getString(R.string.auth0_databaseConnection);
-        client.login(emailOrUsername, password, connectionName)
-                .setAudience("chefly-api")
-                .setScope("userinfo openid")
-                .start(new BaseCallback<Credentials, AuthenticationException>() {
-                    @Override
-                    public void onSuccess(Credentials credentials) {
-
-                        Log.d(TAG, "LOGIN SUCCESS!");
-                        Log.d(TAG, credentials.getAccessToken());
-
-
-                        // Store credentials- how do we want to do this? Store in shared preferences?
-                        CredentialsManager.saveCredentials(MainActivity.this, credentials);
-                        CredentialsManager.saveUsername(MainActivity.this, emailOrUsername);
-
-                        // Navigate to your next activity
-                        Intent recipeListIntent = new Intent(MainActivity.this, RecipeListActivity.class);
-                        recipeListIntent.putExtra("name", emailOrUsername);
-                        recipeListIntent.putExtra("recipeList", serverRecipes);
-                        startActivity(recipeListIntent);
-                    }
-
-
-                    @Override
-                    public void onFailure(AuthenticationException error) {
-                        // Show error to user
-                        Log.d(TAG, "LOGIN FAIL");
-                        String errorMsg = "Sign in request failed";
-                        showToast(errorMsg);
-
-                       // CredentialsManager.deleteCredentials(MainActivity.this);
-
-                    }
-                });*/
     }
 
 //for social connections like google and fb
@@ -368,14 +302,6 @@ public class    MainActivity extends AppCompatActivity implements LoaderManager.
                 rm.setParam("password", password);
 
             rm.setParam("client_id", getString(R.string.auth0_client_id));
-            /*try {
-                rm.setParam("code_challenge", this.generateCodeChallenge() );
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            }*/
-            //rm.setParam("code_challenge_method", getString(R.string.auth0_code_challenge_method));
             rm.setParam("grant_type", "password");
             rm.setMethod("POST");
             String response = "";
@@ -416,6 +342,7 @@ public class    MainActivity extends AppCompatActivity implements LoaderManager.
                     recipeListIntent.putExtra("name", emailOrUsername);
                     recipeListIntent.putExtra("recipeList", serverRecipes);
                     startActivity(recipeListIntent);
+
                 } else {
                     Log.d(TAG, "LOGIN FAIL");
                     String errorMsg = "Sign in request failed";
