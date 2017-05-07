@@ -22,7 +22,11 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled = true
     }
-
+    configurations {
+        all*.exclude group: 'commons-logging', module: 'commons-logging'
+        all*.exclude group: 'org.apache.httpcomponents', module: 'httpclient'
+        all*.exclude group: 'org.json', module: 'json'
+    }
 
     buildTypes {
         release {
@@ -34,7 +38,7 @@ android {
                     def date = new Date();
                     def formattedDate = date.format('yyyMMddHHmmss')
                     output.outputFile = new File(output.outputFile.parent,
-                    output.outputFile.name.replace("-release", "-" + formattedDate)
+                            output.outputFile.name.replace("-release", "-" + formattedDate)
                     )
                 }
 
@@ -64,9 +68,14 @@ android {
     productFlavors {
         free {}
         paid {}
-        alpha {
-            applicationId 'com.se491.chef_ly.alpha'
-        }
+//        alpha {
+//            applicationId 'com.se491.chef_ly.alpha'
+//            buildConfigField "boolean", "free", "true"
+//            minSdkVersion 21
+//            targetSdkVersion 25
+//            versionCode 1
+//            versionName "1.0"
+//        }
     }
     lintOptions {
         abortOnError false
@@ -99,6 +108,7 @@ dependencies {
     androidTestCompile 'com.android.support.test:runner:0.5'
     androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'
     compile project(':pocketsphinx-android-5prealpha-release')
+
 }
 
 dependencies {
@@ -109,7 +119,11 @@ jacoco {
     toolVersion = '0.7.5.201505241946'
 }
 dependencies {
-    compile 'com.android.support:support-v4:25.+'
+    compile 'com.android.support:support-v4:25.3.1'
+}
+dependencies {
+    // compile 'com.android.support.constraint:constraint-layout:+'
+    compile 'com.android.support.constraint:constraint-layout:1.0.1'
 }
 dependencies {
     compile 'com.android.support.constraint:constraint-layout:+'

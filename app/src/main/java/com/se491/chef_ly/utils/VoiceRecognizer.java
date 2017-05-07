@@ -116,6 +116,20 @@ public class VoiceRecognizer implements RecognitionListener {
         }.execute();
     }
 
+
+
+    //TODO - fix this.  Do we need to destroy this?
+//    @Override
+//    public void onDestroy() {
+//        ////super.onDestroy();
+//
+//        if (recognizer != null) {
+//            recognizer.cancel();
+//            recognizer.shutdown();
+//        }
+//    }
+
+
     /**
      * In partial result we get quick updates about current hypothesis. In
      * keyword spotting mode we can react here, in other modes we need to wait

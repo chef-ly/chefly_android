@@ -4,13 +4,18 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
-import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
+import android.support.v4.util.ArraySet;
+
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -26,27 +31,53 @@ import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.se491.chef_ly.Databases.DatabaseHandler;
+import com.auth0.android.result.Credentials;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.se491.chef_ly.R;
+import com.se491.chef_ly.activity.nav_activities.SearchIngredients;
 import com.se491.chef_ly.activity.nav_activities.ShoppingListActivity;
 import com.se491.chef_ly.activity.nav_activities.UserProfileActivity;
+import com.se491.chef_ly.http.HttpConnection;
+import com.se491.chef_ly.http.RequestMethod;
 import com.se491.chef_ly.model.RecipeInformation;
 import com.se491.chef_ly.model.RecipeList;
 import com.se491.chef_ly.utils.CredentialsManager;
+import com.se491.chef_ly.utils.GetRecipesFromServer;
+
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 
 public class RecipeListActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
-                                                                        ListViewFragment.OnFragmentInteractionListener {
+        ListViewFragment.OnFragmentInteractionListener, LoaderManager.LoaderCallbacks<RecipeList> {
 
     private static final String TAG = "RecipeListActivity";
     private final int CREATE_RECIPE_CODE = 7212;
-    private static RecipeList favoriteRecipes;
-    private static RecipeList serverRecipes;
+
+    private  RecipeList newServerRecipes;
+
+    private RecipeList favoriteRecipes;
+    private RecipeList serverRecipes;
+
     private ListViewFragment favs;
     private ListViewFragment server;
     private ViewPager pager;
     private TextView favoritesHeader;
     private TextView recipesHeader;
-    private TextView ingredientsHeader;
+    //private TextView ingredientsHeader;
+
+    private ArrayList<Integer> favorites;
+    private ArraySet<Integer> favListAdd = new ArraySet<>();
+    private ArraySet<Integer> favListRemove = new ArraySet<>();
+
+    private static final String urlString ="http://www.chef-ly.com/search?q=";
+
+    private final int FAVORTIESID = 601;
+    private final int SEARCHID = 1346;
+    private static final String urlFavsString ="https://chefly-prod.herokuapp.com/user/favorites";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,12 +88,31 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         //Initialize recipe lists
         serverRecipes = new RecipeList();
         favoriteRecipes = new RecipeList();
+        favorites = new ArrayList<>();
+
+        //Start AsyncTaskLoader to get FavoriteRecipes
+        Credentials cred = CredentialsManager.getCredentials(getApplicationContext());
+        String t = cred.getAccessToken();
+        Log.d(TAG, "Token -> " + t);
+        if(t != null){
+            RequestMethod requestPackageFavs = new RequestMethod();
+            requestPackageFavs.setEndPoint(urlFavsString);
+            requestPackageFavs.setMethod("GET");
+            requestPackageFavs.setHeader("Authorization: Bearer", t);
+            Bundle bundlefavs = new Bundle();
+            bundlefavs.putParcelable("requestPackage", requestPackageFavs);
+
+            getSupportLoaderManager().initLoader(FAVORTIESID, bundlefavs,this).forceLoad();
+        }{
+            Toast.makeText(this, "Could not retrieve favorites, token is null", Toast.LENGTH_SHORT).show();
+        }
+
 
         // PageViewer
         pager = (ViewPager) findViewById(R.id.viewpager);
-        favs = ListViewFragment.newInstance("Favorites", "1");
+        favs = ListViewFragment.newInstance("Favorites", "2");
 
-        server = ListViewFragment.newInstance("Recipes", "2");
+        server = ListViewFragment.newInstance("Recipes", "1");
 
         ListViewFragment[] frags = {server, favs};
         pager.setAdapter(new RecipeListPagerAdapter(getSupportFragmentManager(), frags));
@@ -70,19 +120,14 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                if (position == 2) {
-                    ingredientsHeader.setPaintFlags(ingredientsHeader.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-                    recipesHeader.setPaintFlags(0);
-                    favoritesHeader.setPaintFlags(0);
-                }
-                else if (position == 1) {
+               if (position == 2) {
                     favoritesHeader.setPaintFlags(favoritesHeader.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
                     recipesHeader.setPaintFlags(0);
-                    ingredientsHeader.setPaintFlags(0);
+                   // ingredientsHeader.setPaintFlags(0);
                 } else {
                     recipesHeader.setPaintFlags(recipesHeader.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
                     favoritesHeader.setPaintFlags(0);
-                    ingredientsHeader.setPaintFlags(0);
+                   // ingredientsHeader.setPaintFlags(0);
                 }
             }
 
@@ -96,36 +141,27 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         });
 
         // Header links
-        ingredientsHeader = (TextView) findViewById(R.id.ingredientsHeader);
+       // ingredientsHeader = (TextView) findViewById(R.id.ingredientsHeader);
         favoritesHeader = (TextView) findViewById(R.id.favortiesHeader);
         recipesHeader = (TextView) findViewById(R.id.recipesHeader);
 
         View.OnClickListener headerListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (v.getId() == ingredientsHeader.getId()) {
-                    ingredientsHeader.setPaintFlags(ingredientsHeader.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-                    recipesHeader.setPaintFlags(0);
-                    favoritesHeader.setPaintFlags(0);
-                    //TODO change page to ingedietns
-                    pager.setCurrentItem(2);
-                }
-                else if (v.getId() == favoritesHeader.getId()) {
+              if (v.getId() == favoritesHeader.getId()) {
                     favoritesHeader.setPaintFlags(favoritesHeader.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
                     recipesHeader.setPaintFlags(0);
-                    ingredientsHeader.setPaintFlags(0);
-                    //TODO change page to favs
+                  //  ingredientsHeader.setPaintFlags(0);
                     pager.setCurrentItem(1);
                 } else {
                     recipesHeader.setPaintFlags(recipesHeader.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
                     favoritesHeader.setPaintFlags(0);
-                    ingredientsHeader.setPaintFlags(0);
-                    //TODO change page to recipes
+                  //  ingredientsHeader.setPaintFlags(0);
                     pager.setCurrentItem(0);
                 }
             }
         };
-        ingredientsHeader.setOnClickListener(headerListener);
+       // ingredientsHeader.setOnClickListener(headerListener);
         favoritesHeader.setOnClickListener(headerListener);
         recipesHeader.setOnClickListener(headerListener);
 
@@ -143,6 +179,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+
     }
 
     @Override
@@ -157,8 +194,17 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         Bundle extras = intent.getExtras();
         String user = extras.getString("name");
         RecipeList list = extras.getParcelable("recipeList");
+
         if(list != null){
             serverRecipes = list;
+            if(favorites.size() > 0){
+                for(RecipeInformation r : serverRecipes){
+                    if(favorites.contains(r.getId())){
+                        r.setFavorite(true);
+                    }
+                }
+            }
+
             server.updateListAdapter(serverRecipes);
         }else{
             Log.d(TAG, "Error - No recipes loaded from server");
@@ -166,22 +212,52 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
             //TODO handle case where no recipes are retrieved from server
         }
 
-        // Get recipes from local db
-        DatabaseHandler db = new DatabaseHandler(getApplicationContext());
-        if (favoriteRecipes != null) {
-            favoriteRecipes.addAll(db.getRecipes());
-        } else {
-            favoriteRecipes = new RecipeList(db.getRecipes());
-        }
-
-        // Notify list view adapter that the list has changed
-        favs.updateListAdapter(favoriteRecipes);
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        //  Update favorites list for user on server
+        new AsyncTask<String, Integer, Integer>(){
+            @Override
+            protected Integer doInBackground(String... params) {
+                GsonBuilder builder = new GsonBuilder();
+
+                Gson gson = builder.create();
+                Type type = new TypeToken<ArrayList<Integer>>(){}.getType();
+                String bodyAdd = gson.toJson(favListAdd, type);
+                String bodyRemove = gson.toJson(favListRemove, type);
+                String token = CredentialsManager.getCredentials(getApplicationContext()).getAccessToken();
+                if(token == null){
+                    token = "test";
+                }
+Log.d(TAG, bodyAdd + " " + bodyRemove);
+                RequestMethod rm = new RequestMethod();
+                rm.setEndPoint(urlFavsString);
+                rm.setMethod("POST");
+                rm.setHeader("Authorization: Bearer", token);
+                rm.setParam("add", bodyAdd);
+                rm.setParam("remove", bodyRemove);
+                try{
+                    HttpConnection.downloadFromFeed(rm);
+                }catch (IOException e){
+                    return 0;
+                }
+                return 200;
+            }
+
+            @Override
+            protected void onPostExecute(Integer integer) {
+                super.onPostExecute(integer);
+            }
+        }.execute();
     }
 
     @Override
@@ -204,12 +280,21 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
     protected void onNewIntent(Intent intent) {
         handleIntent(intent);
     }
-
+//search by title
     private void handleIntent(Intent intent) {
 
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
             Toast.makeText(this, query, Toast.LENGTH_SHORT).show();
+            // Put Search Logic Here
+            RequestMethod requestPackage = new RequestMethod();
+            requestPackage.setEndPoint(urlString + query.trim());//find the url
+            requestPackage.setMethod("GET");//send the post method request
+            Bundle searchRecipes = new Bundle();
+            searchRecipes.putParcelable("requestPackage", requestPackage);
+
+            getSupportLoaderManager().initLoader(SEARCHID, searchRecipes,this).forceLoad();
+
         } else {
             Log.d(TAG, "Intent does not equal action search");
         }
@@ -217,8 +302,35 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
 
     // PageViewer
     @Override
-    public void onFragmentInteraction(Uri uri) {
+    public void onFragmentInteraction(RecipeInformation r, boolean add) {
+        //  For passing recipes from fragments to parent Acitivity
+        int id = r.getId();
+        if(add){
+            favoriteRecipes.add(r);
+            favs.addRecipe(r);
 
+            if(favListRemove.contains(id)){
+                favListRemove.remove(id);
+            }else{
+                favListAdd.add(id);
+            }
+            Log.d(TAG, "Add");
+
+        }else{
+            favoriteRecipes.remove(r);
+            favs.removeRecipe(r);
+            server.removeFavorite(r);
+
+            if(favListAdd.contains(id)){
+                favListAdd.remove(id);
+            }else{
+                favListRemove.add(id);
+            }
+            Log.d(TAG, "Remove");
+
+        }
+
+        Log.d(TAG, "Fav Recipe size = " + favoriteRecipes.size());
     }
 
     //For navigation drawer
@@ -291,6 +403,10 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
                 Intent intent = new Intent(this.getApplicationContext(), ShoppingListActivity.class);
                 startActivity(intent);
                 break;
+            case R.id.nav_search_ingredients:
+                Intent in = new Intent(this, SearchIngredients.class);
+                startActivity(in);
+                break;
             case R.id.contact_us:
                 Toast.makeText(this, "Contact Us!", Toast.LENGTH_SHORT).show();
                 break;
@@ -326,6 +442,47 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         return true;
     }
 
+
+    //  LoaderManager callback method
+    @Override
+    public Loader<RecipeList> onCreateLoader(int id, Bundle args) {
+        RequestMethod rm = args.getParcelable("requestPackage");
+        return  new GetRecipesFromServer(getApplicationContext(), rm);
+    }
+    //  LoaderManager callback method
+    @Override
+    public void onLoadFinished(Loader<RecipeList> loader, RecipeList data) {
+        int id = loader.getId();
+            if(id == FAVORTIESID){
+                favoriteRecipes = data;
+                for(RecipeInformation r : favoriteRecipes){
+                    favorites.add(r.getId());
+                    r.setFavorite(true);
+                }
+                favs.updateListAdapter(favoriteRecipes);
+
+            }else if(id == SEARCHID){
+                Log.d(TAG, " Recipe Search -> " + data.size());
+                if(data.size() > 0){
+                    server.updateListAdapter(data);
+                }else{
+                    Log.d(TAG, "Error - No recipes loaded from server");
+                    Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
+                    //TODO handle case where no recipes are retrieved from server
+                }
+            }
+        Log.d(TAG, "OnLoadFinished " + loader.getId());
+    }
+    //  LoaderManager callback method
+    @Override
+    public void onLoaderReset(Loader<RecipeList> loader) {
+
+        if(getTaskId() == FAVORTIESID ){
+            favoriteRecipes = new RecipeList();
+        }else if(getTaskId() == SEARCHID){
+            //TODO
+        }
+    }
 
     private class RecipeListPagerAdapter extends FragmentPagerAdapter {
         private ListViewFragment[] pages;

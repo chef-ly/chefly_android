@@ -23,6 +23,7 @@ public class RecipeInformation implements Parcelable {
     private int aggregateLikes;
     private int spoonacularScore;
     private int servings;
+    private boolean favorite;
 
 
     public RecipeInformation(int id, String title, String image, int servings) {
@@ -30,6 +31,7 @@ public class RecipeInformation implements Parcelable {
         this.title = title;
         this.image = image;
         this.servings = servings;
+        this.favorite = false;
     }
 
     public RecipeInformation(int id, String title, int readyInMinutes, String image, String instructions,
@@ -51,6 +53,7 @@ public class RecipeInformation implements Parcelable {
         this.aggregateLikes = aggregateLikes;
         this.spoonacularScore = spoonacularScore;
         this.servings = servings;
+        this.favorite = false;
     }
 
     protected RecipeInformation(Parcel in) {
@@ -69,6 +72,7 @@ public class RecipeInformation implements Parcelable {
         aggregateLikes = in.readInt();
         spoonacularScore = in.readInt();
         servings = in.readInt();
+        favorite = in.readInt() != 0 ;
     }
 
     @Override
@@ -88,6 +92,7 @@ public class RecipeInformation implements Parcelable {
         dest.writeInt(aggregateLikes);
         dest.writeInt(spoonacularScore);
         dest.writeInt(servings);
+        dest.writeInt(favorite ? 1 : 0);
     }
 
     @Override
@@ -165,5 +170,12 @@ public class RecipeInformation implements Parcelable {
 
     public int getServings() {
         return servings;
+    }
+
+    public boolean isFavorite(){
+        return favorite;
+    }
+    public void setFavorite(boolean fav){
+        this.favorite = fav;
     }
 }
