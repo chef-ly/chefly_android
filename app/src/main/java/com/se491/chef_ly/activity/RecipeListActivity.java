@@ -98,7 +98,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
             RequestMethod requestPackageFavs = new RequestMethod();
             requestPackageFavs.setEndPoint(urlFavsString);
             requestPackageFavs.setMethod("GET");
-            requestPackageFavs.setHeader("Authorization: Bearer", t);
+            requestPackageFavs.setHeader("Authorization", "Bearer " + t);
             Bundle bundlefavs = new Bundle();
             bundlefavs.putParcelable("requestPackage", requestPackageFavs);
 
@@ -242,7 +242,7 @@ Log.d(TAG, bodyAdd + " " + bodyRemove);
                 RequestMethod rm = new RequestMethod();
                 rm.setEndPoint(urlFavsString);
                 rm.setMethod("POST");
-                rm.setHeader("Authorization: Bearer", token);
+                rm.setHeader("Authorization", "Bearer " + token);
                 rm.setParam("add", bodyAdd);
                 rm.setParam("remove", bodyRemove);
                 try{
