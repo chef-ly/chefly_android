@@ -163,7 +163,8 @@ public class RecipeDetailActivity extends AppCompatActivity {
                 protected Long doInBackground(RequestMethod... params) {
                     for (RequestMethod r : params) {
                         try {
-                            resp = HttpConnection.downloadFromFeed(r);
+                            HttpConnection http = new HttpConnection();
+                            resp = http.downloadFromFeed(r);
 
                             GsonBuilder builder = new GsonBuilder();
 

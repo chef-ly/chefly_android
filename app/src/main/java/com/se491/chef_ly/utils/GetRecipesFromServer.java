@@ -27,11 +27,12 @@ public class GetRecipesFromServer extends AsyncTaskLoader<RecipeList> {
         String response = "";
         Log.d(TAG, requestPackage.getMethod() + " " + requestPackage.getEndpoint());
         try {
-            response = HttpConnection.downloadFromFeed(requestPackage);
-            Log.d(TAG, response);
+
+            HttpConnection http = new HttpConnection();
+            response = http.downloadFromFeed(requestPackage);
         } catch (IOException e) {
-            //e.printStackTrace();
-            Log.d(TAG, response);
+            e.printStackTrace();
+
             return new RecipeList();
         }
 
