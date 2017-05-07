@@ -147,18 +147,6 @@ public class  MainActivity extends AppCompatActivity implements LoaderManager.Lo
         */
 
 
-        // Request permissions from the user here so that everything works better on GetCookingActivity
-        Log.e("DEBUG", "Starting check");
-        // int permissionCheck = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.RECORD_AUDIO);
-        if (ContextCompat.checkSelfPermission(MainActivity.this,
-                Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            Log.e("DEBUG", "Requesting permissions!");
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.RECORD_AUDIO}, PERMISSIONS_REQUEST_RECORD_AUDIO);
-
-            return;
-        }
-
-
     }
 
     @Override
