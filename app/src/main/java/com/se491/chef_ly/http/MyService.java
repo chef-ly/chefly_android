@@ -39,7 +39,8 @@ public class MyService extends IntentService {
         Log.d(TAG, "Request Package Endpoint-> " + requestPackage.getEndpoint() );
         String response;
         try {
-            response = HttpConnection.downloadFromFeed(requestPackage);
+            HttpConnection http = new HttpConnection();
+            response = http.downloadFromFeed(requestPackage);
         } catch (IOException e) {
             //e.printStackTrace();
             return;

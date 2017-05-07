@@ -1,7 +1,8 @@
 <resources>
     <string name="auth0_client_id">zeCz4YI9I8nAHSZg2q4wnMIExGvENAu4</string>
-    <string name="auth0_domain">chefly.auth0.com</string>
+    <string name="auth0_domain">https://chefly.auth0.com</string>
     <string name="auth0_databaseConnection">Username-Password-Authentication</string>
+    <string name="auth0_api_url">"https://chefly.auth0.com/api/"</string>
     <string name="webLogin">Login with Facebook</string>
     <string name="googleLogin">Login with Google</string>
     <string name="addRemove">Add Remove</string>
@@ -122,5 +123,8 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_edit">EditActivity</string>
+    <string name="auth0_code_challenge_method">S256</string>
+    <string name="auth0_redirect_url">http://chefly-dev.herokuapp.com/*</string>
+    <string name="auth0_scope_readUser">read:user</string>
 
 </resources>

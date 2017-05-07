@@ -14,6 +14,7 @@ import org.junit.runner.RunWith;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.pressImeActionButton;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withParent;
@@ -32,7 +33,8 @@ public class RegisterTest {
         // Added a sleep statement to match the app's execution delay.
         // The recommended way to handle such scenarios is to use Espresso idling resources:
         // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        PermissionGranter.allowPermissionsIfNeeded("RECORD_AUDIO");
+
+      //  PermissionGranter.allowPermissionsIfNeeded("RECORD_AUDIO");
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
@@ -53,19 +55,12 @@ public class RegisterTest {
                         isDisplayed()));
         button.perform(click());
 
-        ViewInteraction button2 = onView(
-                allOf(withId(R.id.registerButton), withText("Next"),
+        ViewInteraction editText = onView(
+                allOf(withId(R.id.registerInput),
                         withParent(allOf(withId(R.id.activity_register),
                                 withParent(withId(android.R.id.content)))),
                         isDisplayed()));
-        button2.perform(click());
-
-        ViewInteraction button3 = onView(
-                allOf(withId(R.id.registerButton), withText("Next"),
-                        withParent(allOf(withId(R.id.activity_register),
-                                withParent(withId(android.R.id.content)))),
-                        isDisplayed()));
-        button3.perform(click());
+        editText.perform(pressImeActionButton());
 
     }
 

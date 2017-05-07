@@ -38,6 +38,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.se491.chef_ly.R;
 import com.se491.chef_ly.utils.DialogPopUp;
 import com.se491.chef_ly.utils.VoiceInstructionEvent;
@@ -74,6 +75,8 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
     private boolean ingredientsShowing = false;
     private boolean directionsShowing = false;
 
+    /* Used to handle permission request from PocketSphinx*/
+    private static final int PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
 
     private int width ;
     private int height ;
@@ -217,6 +220,12 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
             }
         });
 
+        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO);
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, PERMISSIONS_REQUEST_RECORD_AUDIO);
+            return;
+        }
+
         voiceRec.runRec();
     }
 
@@ -274,6 +283,46 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
         EventBus.getDefault().register(this);
     }
 
+    @Override
+    public void onPause(){
+        super.onPause();
+         //TODO - pause the voiceRec and TTS
+
+        // stop voice rec
+        voiceRec.stopRec();
+
+        textToSpeech.stop();
+    }
+
+//    @Override
+//    public void onResume(){
+//        super.onResume();
+//
+//        //TODO - resume voiceRec and TTS
+//
+//        // restart voice rec
+//        if (voiceRec != null) {
+
+//            voiceRec.startRec();
+//        }
+//
+//    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        // calls cancel and shutdown on the recognizer
+        voiceRec.killRec();
+
+        textToSpeech.stop();
+
+        // Unregister EventBus
+        EventBus.getDefault().unregister(this);
+
+        Log.d(TAG,"OnDestroy <><><><><><><><><><><>");
+    }
+
     @TargetApi(21)
     @SuppressWarnings("deprecation")
     private void read(String s) {
@@ -300,17 +349,6 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
                 String.valueOf(numberSteps);
         stepText.setText(sb);
 
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        textToSpeech.stop();
-
-        // Unregister EventBus
-        EventBus.getDefault().unregister(this);
-
-        Log.d(TAG,"OnDestroy <><><><><><><><><><><>");
     }
 
     // This method will be called when the VoiceRec class sends a nextInstruction event
@@ -352,6 +390,18 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
         } else if (event.getInstruction().equals("question")){
             //TODO - make chefly icon at bottom of screen blow to show hes listening
 
+        } else if (event.getInstruction().equals("listen")){
+            //btnSpeak.setImageDrawable(getResources().getDrawable(R.drawable.heartselected, getApplicationContext().getTheme()));
+            //ImageView imgFp = (ImageView) findViewById(R.id.btnSpeak);
+            //imgFp.setImageResource(0);
+            //imgFp.setImageResource(R.drawable.heartselected);
+            ImageView image = (ImageView) findViewById(R.id.btnSpeak);
+            Glide.with(getApplicationContext())
+                    .load(R.drawable.heartselected)
+                    .asGif()
+                    .crossFade()
+                    .into(image);
+            //((ImageView) v.findViewById(R.id.ImageView1)).setImageResource(0);
         }
         else {
                 Toast.makeText(this, "Can you please say that again?", Toast.LENGTH_LONG).show();
@@ -390,10 +440,26 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
 
         @Override
         public void onStart(String ID) {
-            //recognizer.stop();
+
             Log.e("DEBUG", "The TTS is starting to speak!");
+            //btnSpeak.setImageDrawable(getResources().getDrawable(R.drawable.chefly, getApplicationContext().getTheme()));
             voiceRec.stopRec();
 
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PERMISSIONS_REQUEST_RECORD_AUDIO) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                //runRecognizerSetup();
+                voiceRec.runRec();
+                Toast.makeText(this, "Thinks, now you can talk to chef.ly!", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, "You didn't grant chef.ly permission to use the mic.", Toast.LENGTH_LONG).show();
+            finish();
         }
     }
 

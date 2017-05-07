@@ -152,7 +152,6 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
         requestPackage.setParam("email",userEmail);
         requestPackage.setParam("password",password);
         requestPackage.setParam("username", username);
-        //requestPackage.setParam("password", password); //filter data if i want
         requestPackage.setMethod("POST");
         Intent intent = new Intent(this, MyService.class);
         intent.putExtra(MyService.REQUEST_PACKAGE, requestPackage);

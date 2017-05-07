@@ -35,7 +35,7 @@ public class GIFView extends View {
 
     private void initializeView() {
 //R.drawable.loader - our animated GIF
-        InputStream is = getContext().getResources().openRawResource(+ R.drawable.CheflyIntro1);
+        InputStream is = getContext().getResources().openRawResource(+ R.drawable.cheflyintro1);
         mMovie = Movie.decodeStream(is);
     }
 
