@@ -64,7 +64,9 @@ public class HttpConnection {
             Log.d(TAG, msg);
 
             requestBuilder.post(body);
-            requestBuilder.addHeader("content-type", "application/json; charset=utf-8");
+
+            //requestBuilder.addHeader("content-type", "application/json; charset=utf-8");
+            requestBuilder.addHeader("content-type", "application/x-www-form-urlencoded");
         }
 
         Request request = requestBuilder.build();

@@ -25,7 +25,7 @@ android {
     configurations {
         all*.exclude group: 'commons-logging', module: 'commons-logging'
         all*.exclude group: 'org.apache.httpcomponents', module: 'httpclient'
-        all*.exclude  group: 'org.json', module: 'json'
+        all*.exclude group: 'org.json', module: 'json'
     }
 
     buildTypes {
@@ -38,7 +38,7 @@ android {
                     def date = new Date();
                     def formattedDate = date.format('yyyMMddHHmmss')
                     output.outputFile = new File(output.outputFile.parent,
-                    output.outputFile.name.replace("-release", "-" + formattedDate)
+                            output.outputFile.name.replace("-release", "-" + formattedDate)
                     )
                 }
 
@@ -122,8 +122,11 @@ dependencies {
     compile 'com.android.support:support-v4:25.3.1'
 }
 dependencies {
-   // compile 'com.android.support.constraint:constraint-layout:+'
+    // compile 'com.android.support.constraint:constraint-layout:+'
     compile 'com.android.support.constraint:constraint-layout:1.0.1'
+}
+dependencies {
+    compile 'com.android.support.constraint:constraint-layout:+'
 }
 jacocoAndroidUnitTestReport {
     csv.enabled false
