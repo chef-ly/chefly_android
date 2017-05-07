@@ -224,9 +224,9 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, PERMISSIONS_REQUEST_RECORD_AUDIO);
             return;
+        } else {
+            voiceRec.runRec();
         }
-
-        voiceRec.runRec();
     }
 
     // TODO - add onPause and onResume where the speech and recognizer are stopped
