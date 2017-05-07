@@ -133,6 +133,7 @@ public class VoiceRecognizer implements RecognitionListener {
         if (text.equals(KEYPHRASE)) {
             // Start search listening for menu options
             switchSearch(MENU_SEARCH);
+            EventBus.getDefault().post(new VoiceInstructionEvent("listen"));
         }
         else if (text.equals(QUESTION_SEARCH))
             // TODO - implement getting text of the question and passing here

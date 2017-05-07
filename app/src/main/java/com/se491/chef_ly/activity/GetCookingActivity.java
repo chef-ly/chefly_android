@@ -38,6 +38,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.se491.chef_ly.R;
 import com.se491.chef_ly.utils.DialogPopUp;
 import com.se491.chef_ly.utils.VoiceInstructionEvent;
@@ -389,6 +390,18 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
         } else if (event.getInstruction().equals("question")){
             //TODO - make chefly icon at bottom of screen blow to show hes listening
 
+        } else if (event.getInstruction().equals("listen")){
+            //btnSpeak.setImageDrawable(getResources().getDrawable(R.drawable.heartselected, getApplicationContext().getTheme()));
+            //ImageView imgFp = (ImageView) findViewById(R.id.btnSpeak);
+            //imgFp.setImageResource(0);
+            //imgFp.setImageResource(R.drawable.heartselected);
+            ImageView image = (ImageView) findViewById(R.id.btnSpeak);
+            Glide.with(getApplicationContext())
+                    .load(R.drawable.heartselected)
+                    .asGif()
+                    .crossFade()
+                    .into(image);
+            //((ImageView) v.findViewById(R.id.ImageView1)).setImageResource(0);
         }
         else {
                 Toast.makeText(this, "Can you please say that again?", Toast.LENGTH_LONG).show();
@@ -429,6 +442,7 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
         public void onStart(String ID) {
 
             Log.e("DEBUG", "The TTS is starting to speak!");
+            //btnSpeak.setImageDrawable(getResources().getDrawable(R.drawable.chefly, getApplicationContext().getTheme()));
             voiceRec.stopRec();
 
         }
