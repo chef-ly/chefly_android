@@ -14,7 +14,9 @@ import org.junit.runner.RunWith;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static android.support.test.espresso.action.ViewActions.pressImeActionButton;
+import static android.support.test.espresso.action.ViewActions.replaceText;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withParent;
@@ -33,8 +35,6 @@ public class RegisterTest {
         // Added a sleep statement to match the app's execution delay.
         // The recommended way to handle such scenarios is to use Espresso idling resources:
         // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-
-      //  PermissionGranter.allowPermissionsIfNeeded("RECORD_AUDIO");
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
@@ -48,6 +48,13 @@ public class RegisterTest {
                         isDisplayed()));
         appCompatTextView.perform(click());
 
+        ViewInteraction editText = onView(
+                allOf(withId(R.id.registerInput),
+                        withParent(allOf(withId(R.id.activity_register),
+                                withParent(withId(android.R.id.content)))),
+                        isDisplayed()));
+        editText.perform(replaceText("berio16@hotmail.com"), closeSoftKeyboard());
+
         ViewInteraction button = onView(
                 allOf(withId(R.id.registerButton), withText("Next"),
                         withParent(allOf(withId(R.id.activity_register),
@@ -55,15 +62,49 @@ public class RegisterTest {
                         isDisplayed()));
         button.perform(click());
 
-        ViewInteraction editText = onView(
+        ViewInteraction editText2 = onView(
                 allOf(withId(R.id.registerInput),
                         withParent(allOf(withId(R.id.activity_register),
                                 withParent(withId(android.R.id.content)))),
                         isDisplayed()));
-        editText.perform(pressImeActionButton());
+        editText2.perform(replaceText("Lara"), closeSoftKeyboard());
+
+        ViewInteraction button2 = onView(
+                allOf(withId(R.id.registerButton), withText("Next"),
+                        withParent(allOf(withId(R.id.activity_register),
+                                withParent(withId(android.R.id.content)))),
+                        isDisplayed()));
+        button2.perform(click());
+
+        ViewInteraction editText3 = onView(
+                allOf(withId(R.id.registerInput),
+                        withParent(allOf(withId(R.id.activity_register),
+                                withParent(withId(android.R.id.content)))),
+                        isDisplayed()));
+        editText3.perform(replaceText("Nana9999!"), closeSoftKeyboard());
+
+
+        ViewInteraction button4 = onView(
+                allOf(withId(R.id.registerButton), withText("Next"),
+                        withParent(allOf(withId(R.id.activity_register),
+                                withParent(withId(android.R.id.content)))),
+                        isDisplayed()));
+        button4.perform(click());
+
+        ViewInteraction editText6 = onView(
+                allOf(withId(R.id.registerInput),
+                        withParent(allOf(withId(R.id.activity_register),
+                                withParent(withId(android.R.id.content)))),
+                        isDisplayed()));
+        editText6.perform(replaceText("Nana9999!"), closeSoftKeyboard());
+
+        ViewInteraction editText7 = onView(
+                allOf(withId(R.id.registerInput), withText("Nana9999!"),
+                        withParent(allOf(withId(R.id.activity_register),
+                                withParent(withId(android.R.id.content)))),
+                        isDisplayed()));
+        editText7.perform(pressImeActionButton());
 
     }
-
-    //delete token from database     auth0.users.delete({ id: theUserId })
 
 }

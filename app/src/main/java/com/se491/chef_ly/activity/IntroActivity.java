@@ -19,7 +19,7 @@ public class IntroActivity extends AppCompatActivity  implements IntroFragment.O
 
         ViewPager pager = (ViewPager) findViewById(R.id.introPager);
 
-        IntroFragment one = IntroFragment.newInstance(1, R.drawable.cheflyintroslides);
+        //IntroFragment one = IntroFragment.newInstance(1, R.drawable.cheflyintroslides);
         //IntroFragment two = IntroFragment.newInstance(2, R.drawable.cheflyintroslides2);
         //IntroFragment three = IntroFragment.newInstance(3, R.drawable.cheflyintroslides3);
         //IntroFragment four = IntroFragment.newInstance(4, R.drawable.cheflyintroslides4);
