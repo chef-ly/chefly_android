@@ -13,12 +13,12 @@
     <string name="bonAppetit">Bon Appetit!</string>
     <string name="by">by </string>
     <string name="categoryHint">Italian, French, Dessert, Lunch, Quick, &#8230;</string>
-    <string name="chooseUsername">Create a new username</string>
+    <string name="chooseUsername">Create a new username:\n*must be between 4 to 20 characters</string>
     <string name="clearPurchased">Clear Purchased</string>
     <string name="contentDescriptionRecipe">A picture of the recipe</string>
     <string name="continueAsGuest"><u>Skip</u></string>
     <string name="continueWithSocial">Continue with social</string>
-    <string name="createPassword">Enter Password that includes at least 8 characters with at least 1 uppers,lower,number and symbol</string>
+    <string name="createPassword">Create a new Password:\n * Must have 8 characters in length\n *At least one digit,symbol,Lower/Upper case letter\n</string>
     <string name="createPasswordAgain">Please Re-enter password for match confirmation</string>
     <string name="createRecipe">Create Recipe</string>
     <string name="difficulty">Difficulty: </string>

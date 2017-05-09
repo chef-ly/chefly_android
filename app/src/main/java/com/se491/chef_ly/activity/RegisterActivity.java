@@ -24,6 +24,10 @@ import com.se491.chef_ly.http.RequestMethod;
 
 import android.util.Log;
 import com.se491.chef_ly.R;
+import com.se491.chef_ly.utils.CredentialsManager;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class RegisterActivity extends Activity implements View.OnClickListener {
 
@@ -49,14 +53,24 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
             Log.d(TAG, token);
 
             if (token != null) {
-                // Direct user to list view
-                Intent recipeListIntent = new Intent(RegisterActivity.this, RecipeListActivity.class);
-                recipeListIntent.putExtra("name", username);
-                startActivity(recipeListIntent);
+                // Direct user to login screen
+                Toast.makeText(getApplicationContext(), "Registration is successful", Toast.LENGTH_SHORT).show();
+            //    Intent recipeListIntent = new Intent(RegisterActivity.this, RecipeListActivity.class);
+                Intent loginIntent = new Intent(RegisterActivity.this, MainActivity.class);
+                startActivity(loginIntent);
                 finish();
-            } else {
+            }
+//            else if(token.exist){ is already in CredentialsManager.getCredentials()?
+//                Toast.makeText(getApplicationContext(), "You are already registered", Toast.LENGTH_SHORT).show();
+//                Intent loginIntent = new Intent(RegisterActivity.this, MainActivity.class);
+//                startActivity(loginIntent);
+//                finish();
+//            }
+            else {
                 Toast.makeText(getApplicationContext(), "There was a problem while registering your account", Toast.LENGTH_SHORT).show();
-                Intent mainIntent = new Intent(RegisterActivity.this, MainActivity.class);
+               //the username or email already exist
+                //go back to repeat register steps
+                Intent mainIntent = new Intent(RegisterActivity.this, RegisterActivity.class);
                 startActivity(mainIntent);
                 finish();
             }
@@ -107,20 +121,26 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
         CharSequence currentInstruction = instruction.getText();
 
         if (currentInstruction.equals(getResources().getText(R.string.enterUserEmail))) {
+            //check if email exist
             userEmail = input.getText().toString(); //save user email
             instruction.setText(R.string.chooseUsername); // update instruction
             input.setText(""); // clear input
             input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD); // hide password
         } else if (currentInstruction.equals(getResources().getText(R.string.chooseUsername))) {
+            //check if username exist
             username = input.getText().toString();
             instruction.setText(R.string.createPassword);
             input.setText("");
             nextButton.setText(R.string.next);
         } else if (currentInstruction.equals(getResources().getText(R.string.createPassword))) {
-            password = input.getText().toString();
-            instruction.setText(R.string.createPasswordAgain); // update instruction
-            input.setText(""); // clear input
-            nextButton.setText(R.string.done); // Change text of button
+                password = input.getText().toString();
+            if (isValid(password)) {
+                instruction.setText(R.string.createPasswordAgain); // update instruction
+                input.setText(""); // clear input
+                nextButton.setText(R.string.done); // Change text of button
+            } else {
+                Toast.makeText(getApplicationContext(), "The password is invalid, Please try again", Toast.LENGTH_SHORT).show();
+            }
         } else if (currentInstruction.equals(getResources().getText(R.string.createPasswordAgain))) {
             // check if password matches new input
             if (input.getText().toString().equals(password)) {
@@ -130,6 +150,37 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
             }
         }
     }
+
+
+    public static boolean isValid(String password)
+    {
+        Boolean atleastOneUpper = false;
+        Boolean atleastOneLower = false;
+
+            if(password.length()>=8) {
+
+                Pattern digit = Pattern.compile("[0-9]");
+                Pattern special = Pattern.compile("[!@#$%&*()_+=|<>?{}\\[\\]~-]");
+        for (int i = 0; i < password.length(); i++) {
+            if (Character.isUpperCase(password.charAt(i))) {
+                atleastOneUpper = true;
+            }
+            else if (Character.isLowerCase(password.charAt(i))) {
+                atleastOneLower = true;
+            }
+            }
+                Matcher hasDigit = digit.matcher(password);
+                Matcher hasSpecial = special.matcher(password);
+
+                return (atleastOneUpper && atleastOneLower && hasDigit.find() && hasSpecial.find());
+
+            }
+            else
+                return false;
+        }
+
+
+
 
     private void registerNewUser() throws UnirestException {
         Log.d(TAG, "Register new user entered");

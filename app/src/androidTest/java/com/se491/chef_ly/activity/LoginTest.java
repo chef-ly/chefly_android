@@ -14,7 +14,8 @@ import org.junit.runner.RunWith;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.pressImeActionButton;
+import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static android.support.test.espresso.action.ViewActions.replaceText;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withParent;
@@ -23,47 +24,43 @@ import static org.hamcrest.Matchers.allOf;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class RegisterTest {
+public class LoginTest {
 
     @Rule
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
 
     @Test
-    public void registerTest() {
+    public void loginTest() {
         // Added a sleep statement to match the app's execution delay.
         // The recommended way to handle such scenarios is to use Espresso idling resources:
         // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-
-      //  PermissionGranter.allowPermissionsIfNeeded("RECORD_AUDIO");
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        ViewInteraction appCompatTextView = onView(
-                allOf(withId(R.id.signUp), withText("Join for free"),
+        ViewInteraction appCompatEditText = onView(
+                allOf(withId(R.id.useremail),
                         withParent(allOf(withId(R.id.activity_main),
                                 withParent(withId(android.R.id.content)))),
                         isDisplayed()));
-        appCompatTextView.perform(click());
+        appCompatEditText.perform(replaceText("berio16@hotmail.com"), closeSoftKeyboard());
 
-        ViewInteraction button = onView(
-                allOf(withId(R.id.registerButton), withText("Next"),
-                        withParent(allOf(withId(R.id.activity_register),
+        ViewInteraction appCompatEditText2 = onView(
+                allOf(withId(R.id.password),
+                        withParent(allOf(withId(R.id.activity_main),
                                 withParent(withId(android.R.id.content)))),
                         isDisplayed()));
-        button.perform(click());
+        appCompatEditText2.perform(replaceText("Barbie123!"), closeSoftKeyboard());
 
-        ViewInteraction editText = onView(
-                allOf(withId(R.id.registerInput),
-                        withParent(allOf(withId(R.id.activity_register),
+        ViewInteraction appCompatButton = onView(
+                allOf(withId(R.id.signInBtn), withText("Login"),
+                        withParent(allOf(withId(R.id.activity_main),
                                 withParent(withId(android.R.id.content)))),
                         isDisplayed()));
-        editText.perform(pressImeActionButton());
+        appCompatButton.perform(click());
 
     }
-
-    //delete token from database     auth0.users.delete({ id: theUserId })
 
 }
