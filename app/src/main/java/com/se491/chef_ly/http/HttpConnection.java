@@ -44,8 +44,11 @@ public class HttpConnection {
         //  Add required HTTP Header
         Map<String ,String > headers = requestPackage.getHeaders();
         if(headers.size() > 0){
+            Log.d(TAG, "Headers --> " + headers.size());
             for(String k : headers.keySet()){
-                requestBuilder.addHeader( k, headers.get(k) );
+                if(k != null){
+                    requestBuilder.addHeader( k, headers.get(k) );
+                }
             }
         }
 

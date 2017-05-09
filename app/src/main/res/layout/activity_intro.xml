@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/black"
     tools:context="com.se491.chef_ly.activity.IntroActivity">
 
     <android.support.v4.view.ViewPager
@@ -11,9 +12,10 @@
         android:layout_height="match_parent">
 
     </android.support.v4.view.ViewPager>
-
-   <com.se491.chef_ly.utils.GIFView
-       android:layout_width="match_parent"
-       android:layout_height="wrap_content" />
-
+    <Button
+        android:id="@+id/skip"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 </RelativeLayout>

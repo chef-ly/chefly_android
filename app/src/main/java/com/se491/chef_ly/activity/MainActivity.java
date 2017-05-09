@@ -274,6 +274,15 @@ public class  MainActivity extends AppCompatActivity implements LoaderManager.Lo
                 recipeListIntent.putExtra("name", "guest");
                 recipeListIntent.putExtra("recipeList", serverRecipes);
                 startActivity(recipeListIntent);
+
+/*                startActivity(new Intent(MainActivity.this, IntroActivity.class));
+
+                //TODO
+                //TODO
+                //TODO
+                //TODO
+                //TODO
+                //TODO*/
                 break;
             case R.id.webLoginButton:
                 socialLogin("facebook");

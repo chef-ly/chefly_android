@@ -76,7 +76,7 @@
             android:windowSoftInputMode="adjustPan" />
         <activity android:name=".activity.nav_activities.UserProfileActivity" />
         <activity android:name=".activity.nav_activities.SearchIngredients" />
-        <activity android:name=".activity.IntroActivity"></activity>
+        <activity android:name=".activity.IntroActivity" />
     </application>
 
 </manifest>
