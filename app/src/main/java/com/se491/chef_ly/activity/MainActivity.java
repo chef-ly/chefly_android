@@ -200,7 +200,6 @@ public class  MainActivity extends AppCompatActivity implements LoaderManager.Lo
 
     @Override
     protected void onNewIntent(Intent intent) {
-        //Check if the result belongs to a pending web authentication
         if (WebAuthProvider.resume(intent)) {
             return;
         }
@@ -208,8 +207,8 @@ public class  MainActivity extends AppCompatActivity implements LoaderManager.Lo
     }
 
 
-    private void socialLogin(String connection) {
-        Auth0 auth0 = new Auth0(getString(R.string.auth0_client_id), getString(R.string.auth0_domain));
+    private void socialLogin(String connection) {  //getString(R.string.auth0_domain
+        Auth0 auth0 = new Auth0(getString(R.string.auth0_client_id),getString(R.string.auth0_domain));
         WebAuthProvider.init(auth0)
                 .withConnection(connection)
                 .start(MainActivity.this, new AuthCallback() {
