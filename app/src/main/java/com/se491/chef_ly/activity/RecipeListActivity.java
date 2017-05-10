@@ -225,40 +225,43 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         super.onDestroy();
 
         //  Update favorites list for user on server
-        new AsyncTask<String, Integer, Integer>(){
-            @Override
-            protected Integer doInBackground(String... params) {
-                GsonBuilder builder = new GsonBuilder();
+        if(favListAdd.size() > 0 || favListRemove.size() > 0){
+            new AsyncTask<String, Integer, Integer>(){
+                @Override
+                protected Integer doInBackground(String... params) {
+                    GsonBuilder builder = new GsonBuilder();
 
-                Gson gson = builder.create();
-                Type type = new TypeToken<ArrayList<Integer>>(){}.getType();
-                String bodyAdd = gson.toJson(favListAdd, type);
-                String bodyRemove = gson.toJson(favListRemove, type);
-                String token = CredentialsManager.getCredentials(getApplicationContext()).getAccessToken();
-                if(token == null){
-                    token = "test";
+                    Gson gson = builder.create();
+                    Type type = new TypeToken<ArrayList<Integer>>(){}.getType();
+                    String bodyAdd = gson.toJson(favListAdd, type);
+                    String bodyRemove = gson.toJson(favListRemove, type);
+                    String token = CredentialsManager.getCredentials(getApplicationContext()).getAccessToken();
+                    if(token == null){
+                        token = "test";
+                    }
+                    Log.d(TAG, bodyAdd + " " + bodyRemove);
+                    RequestMethod rm = new RequestMethod();
+                    rm.setEndPoint(urlFavsString);
+                    rm.setMethod("POST");
+                    rm.setHeader("Authorization", "Bearer " + token);
+                    rm.setParam("add", bodyAdd);
+                    rm.setParam("remove", bodyRemove);
+                    try{
+                        HttpConnection http = new HttpConnection();
+                        http.downloadFromFeed(rm);
+                    }catch (IOException e){
+                        return 0;
+                    }
+                    return 200;
                 }
-Log.d(TAG, bodyAdd + " " + bodyRemove);
-                RequestMethod rm = new RequestMethod();
-                rm.setEndPoint(urlFavsString);
-                rm.setMethod("POST");
-                rm.setHeader("Authorization", "Bearer " + token);
-                rm.setParam("add", bodyAdd);
-                rm.setParam("remove", bodyRemove);
-                try{
-                    HttpConnection http = new HttpConnection();
-                    http.downloadFromFeed(rm);
-                }catch (IOException e){
-                    return 0;
-                }
-                return 200;
-            }
 
-            @Override
-            protected void onPostExecute(Integer integer) {
-                super.onPostExecute(integer);
-            }
-        }.execute();
+                @Override
+                protected void onPostExecute(Integer integer) {
+                    super.onPostExecute(integer);
+                }
+            }.execute();
+        }
+
     }
 
     @Override

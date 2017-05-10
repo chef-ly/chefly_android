@@ -1,7 +1,6 @@
 package com.se491.chef_ly.activity;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -12,17 +11,9 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.se491.chef_ly.R;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link IntroFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link IntroFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class IntroFragment extends Fragment{
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+
     private static final String ARG_PARAM1 = "pageNum";
     private static final String ARG_PARAM2 = "layout";
 
@@ -71,10 +62,9 @@ public class IntroFragment extends Fragment{
         return v;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
+    public void getPageNum(int page) {
         if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+            mListener.onFragmentInteraction(pageNum);
         }
     }
 
@@ -105,8 +95,8 @@ public class IntroFragment extends Fragment{
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
+    interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void onFragmentInteraction(int page);
     }
 }

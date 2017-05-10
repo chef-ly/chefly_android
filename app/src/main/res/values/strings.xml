@@ -24,6 +24,7 @@
     <string name="difficulty">Difficulty: </string>
     <string name="directions">Directions</string>
     <string name="done">Done</string>
+    <string name="dot">&#8226;</string>
     <string name="edit">Edit</string>
     <string name="edit_directionView">edit direction step</string>
     <string name="email">heinsd@hotmail.com</string>
@@ -35,6 +36,7 @@
     <string name="getCooking">Let\'s get cooking!</string>
     <string name="ingredient">Ingredient</string>
     <string name="ingredients">Ingredients</string>
+    <string name="introImageDescription">Animated GIF showing app usage</string>
     <string name="level">Difficulty</string>
     <string name="minutes">Minutes</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -70,6 +72,7 @@
     <string name="shoppingList">Shopping List</string>
     <string name="signIn">Login</string>
     <string name="signUp"><u>Join for free</u></string>
+    <string name="skip">Skip</string>
     <string name="forgotpassword"><u>Forgot Password?</u></string>
     <string name="step">Step</string>
     <string name="time">Time</string>
