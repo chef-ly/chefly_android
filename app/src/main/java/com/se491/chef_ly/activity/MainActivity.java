@@ -33,6 +33,7 @@ import com.auth0.android.result.Credentials;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.se491.chef_ly.BuildConfig;
 import com.se491.chef_ly.R;
 import com.se491.chef_ly.http.HttpConnection;
 import com.se491.chef_ly.http.RequestMethod;
@@ -80,16 +81,22 @@ public class  MainActivity extends AppCompatActivity implements LoaderManager.Lo
 
 
 
-        SharedPreferences sharedPreferences =
-                PreferenceManager.getDefaultSharedPreferences(this);
-        // Check if we need to display our OnboardingFragment
-        if (!sharedPreferences.getBoolean("FirstTimeRun", false)) {
+        if(!BuildConfig.DEBUG){
+            SharedPreferences sharedPreferences =
+                    PreferenceManager.getDefaultSharedPreferences(this);
+            // Check if we need to display our OnboardingFragment
+            if (!sharedPreferences.getBoolean("FirstTimeRun", false)) {
+                Log.d(TAG, "First time run-> True");
+                // The user hasn't seen the OnboardingFragment yet, so show it
+                startActivityForResult(new Intent(this, IntroActivity.class), INTROACTIVITYCODE);
+            }else{
+                Log.d(TAG, "First time run-> False");
+                startRecipeLoader();
+            }
+        }else{
             Log.d(TAG, "First time run-> True");
             // The user hasn't seen the OnboardingFragment yet, so show it
             startActivityForResult(new Intent(this, IntroActivity.class), INTROACTIVITYCODE);
-        }else{
-            Log.d(TAG, "First time run-> False");
-            startRecipeLoader();
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////
