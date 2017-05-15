@@ -289,9 +289,14 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
          //TODO - pause the voiceRec and TTS
 
         // stop voice rec
-        voiceRec.stopRec();
+        if (voiceRec != null) {
+            Log.e("DEBUG", "voiceRec is not null!");
+           // voiceRec.stopRec();
+        }
 
-        textToSpeech.stop();
+        if (textToSpeech != null) {
+            textToSpeech.stop();
+        }
     }
 
 //    @Override
@@ -453,13 +458,14 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSIONS_REQUEST_RECORD_AUDIO) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 //runRecognizerSetup();
                 voiceRec.runRec();
-                Toast.makeText(this, "Thinks, now you can talk to chef.ly!", Toast.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(this, "You didn't grant chef.ly permission to use the mic.", Toast.LENGTH_LONG).show();
-            finish();
+                Toast.makeText(this, "Thanks, now you can talk to chef.ly!", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this, "You didn't grant chef.ly permission to use the mic.", Toast.LENGTH_LONG).show();
+                finish();
+            }
         }
     }
 
