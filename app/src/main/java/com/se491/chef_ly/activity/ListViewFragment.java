@@ -2,6 +2,7 @@ package com.se491.chef_ly.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -23,10 +24,12 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.se491.chef_ly.R;
+import com.se491.chef_ly.application.CheflyApplication;
 import com.se491.chef_ly.http.RequestMethod;
 import com.se491.chef_ly.model.RecipeInformation;
 import com.se491.chef_ly.model.RecipeList;
 import com.se491.chef_ly.utils.GetRecipesFromServer;
+import com.squareup.leakcanary.RefWatcher;
 
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -99,6 +102,7 @@ public class ListViewFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     @Override
+    @Deprecated
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
@@ -108,9 +112,9 @@ public class ListViewFragment extends Fragment implements LoaderManager.LoaderCa
         emptyView = v.findViewById(R.id.emptyList);
 
         if(title.equals("Favorites")){
-            emptyView.setBackground(getResources().getDrawable(R.drawable.emptylist, null));
+            emptyView.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.emptylist));
         }else{
-            emptyView.setBackground(getResources().getDrawable(R.drawable.emptylistwelcome, null));
+            emptyView.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.emptylistwelcome));
         }
 
         listView.setAdapter(new ListViewFragment.RecipeAdapter(getContext(), list, mListener));
@@ -277,6 +281,15 @@ public class ListViewFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onLoaderReset(Loader<RecipeList> loader) {
 
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+
+        RefWatcher refWatcher = CheflyApplication.getRefWatcher(getContext());
+        refWatcher.watch(this);
     }
 
     static private class RecipeAdapter extends BaseAdapter {

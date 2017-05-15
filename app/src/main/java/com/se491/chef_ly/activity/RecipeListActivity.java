@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.compat.BuildConfig;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -39,12 +40,14 @@ import com.se491.chef_ly.R;
 import com.se491.chef_ly.activity.nav_activities.SearchIngredients;
 import com.se491.chef_ly.activity.nav_activities.ShoppingListActivity;
 import com.se491.chef_ly.activity.nav_activities.UserProfileActivity;
+import com.se491.chef_ly.application.CheflyApplication;
 import com.se491.chef_ly.http.HttpConnection;
 import com.se491.chef_ly.http.RequestMethod;
 import com.se491.chef_ly.model.RecipeInformation;
 import com.se491.chef_ly.model.RecipeList;
 import com.se491.chef_ly.utils.CredentialsManager;
 import com.se491.chef_ly.utils.GetRecipesFromServer;
+import com.squareup.leakcanary.RefWatcher;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -258,6 +261,10 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
                     super.onPostExecute(integer);
                 }
             }.execute();
+        }
+        if(BuildConfig.DEBUG){
+            RefWatcher refWatcher = CheflyApplication.getRefWatcher(this);
+            refWatcher.watch(this);
         }
 
     }

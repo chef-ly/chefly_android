@@ -1,12 +1,16 @@
 package com.se491.chef_ly.utils;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -39,12 +43,19 @@ public class DialogPopUp extends DialogFragment{
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         return inflater.inflate(R.layout.fragment_dialog_popup, container);
     }
+
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        //Remove title bar from dialog
+        Window w = getDialog().getWindow();
+        if(w != null){
+            w.requestFeature(Window.FEATURE_NO_TITLE);
+        }
 
         if(showTitle){
             TextView title = (TextView) view.findViewById(R.id.title);
@@ -53,6 +64,7 @@ public class DialogPopUp extends DialogFragment{
         }
 
         Button exit = (Button) view.findViewById(R.id.exit);
+        exit.bringToFront();
         exit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -70,7 +82,7 @@ public class DialogPopUp extends DialogFragment{
 
         int leftMargin=30;
         int topMargin=1;
-        int rightMargin=30;
+        int rightMargin=55;
         int bottomMargin=1;
 
         tableRowParams.setMargins(leftMargin,topMargin,rightMargin,bottomMargin);
