@@ -1,5 +1,6 @@
 package com.se491.chef_ly.http;
 
+import android.support.compat.BuildConfig;
 import android.util.Log;
 
 import java.io.IOException;
@@ -36,7 +37,12 @@ public class HttpConnection {
             address = String.format("%s?%s", address, encodedParams);
         }
 //create request object
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client;
+        if(BuildConfig.DEBUG){
+            client = new OkHttpClient.Builder().addInterceptor(new LoggingInterceptor()).build();
+        }else{
+            client = new OkHttpClient();
+        }
 
         Request.Builder requestBuilder = new Request.Builder()
                 .url(address);

@@ -68,7 +68,6 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
     private TextView recipesHeader;
     //private TextView ingredientsHeader;
 
-    private ArrayList<Integer> favorites;
     private ArraySet<Integer> favListAdd = new ArraySet<>();
     private ArraySet<Integer> favListRemove = new ArraySet<>();
 
@@ -76,7 +75,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
 
     private final int FAVORTIESID = 601;
     private final int SEARCHID = 1346;
-    private static final String urlFavsString ="https://chefly-prod.herokuapp.com/user/favorites";
+    private static final String urlFavsString ="http://www.chef-ly.com/user/favorites";
 
 
     @Override
@@ -88,7 +87,6 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         //Initialize recipe lists
         serverRecipes = new RecipeList();
         favoriteRecipes = new RecipeList();
-        favorites = new ArrayList<>();
 
         //Start AsyncTaskLoader to get FavoriteRecipes
         Credentials cred = CredentialsManager.getCredentials(getApplicationContext());
@@ -103,7 +101,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
             bundlefavs.putParcelable("requestPackage", requestPackageFavs);
 
             getSupportLoaderManager().initLoader(FAVORTIESID, bundlefavs,this).forceLoad();
-        }{
+        }else{
             Toast.makeText(this, "Could not retrieve favorites, token is null", Toast.LENGTH_SHORT).show();
         }
 
@@ -197,13 +195,13 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
 
         if(list != null){
             serverRecipes = list;
-            if(favorites.size() > 0){
-                for(RecipeInformation r : serverRecipes){
-                    if(favorites.contains(r.getId())){
-                        r.setFavorite(true);
-                    }
-                }
-            }
+//            if(favorites.size() > 0){
+//                for(RecipeInformation r : serverRecipes){
+//                    if(favorites.contains(r.getId())){
+//                        r.setFavorite(true);
+//                    }
+//                }
+//            }
 
             server.updateListAdapter(serverRecipes);
         }else{
@@ -460,10 +458,11 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
             if(id == FAVORTIESID){
                 favoriteRecipes = data;
                 for(RecipeInformation r : favoriteRecipes){
-                    favorites.add(r.getId());
+                    //favorites.add(r.getId());
                     r.setFavorite(true);
                 }
                 favs.updateListAdapter(favoriteRecipes);
+
 
             }else if(id == SEARCHID){
                 Log.d(TAG, " Recipe Search -> " + data.size());
