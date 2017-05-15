@@ -27,6 +27,9 @@
     <color name="table_color1">#FDFFDF</color>
     <color name="table_color2">#dadbcb</color>
 
+    <color name="unselectedDot">#56ffffff</color>
+    <color name="selectedDot">#ffffff</color>
+
 
     <!-- TODO: For testing interpreter -->
     <color name="bg_gradient_start">#31244e</color>

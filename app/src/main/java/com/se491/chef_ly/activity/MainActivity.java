@@ -1,16 +1,15 @@
 package com.se491.chef_ly.activity;
 
-import android.Manifest;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -23,31 +22,24 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.accounts.AccountManager;
 
 import com.auth0.android.Auth0;
-import com.auth0.android.authentication.AuthenticationAPIClient;
 import com.auth0.android.authentication.AuthenticationException;
-import com.auth0.android.callback.BaseCallback;
-import com.auth0.android.jwt.JWT;
 import com.auth0.android.lock.Lock;
-import com.auth0.android.lock.internal.configuration.OAuthConnection;
 import com.auth0.android.provider.AuthCallback;
 import com.auth0.android.provider.WebAuthProvider;
 import com.auth0.android.result.Credentials;
-import com.auth0.android.result.UserProfile;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.se491.chef_ly.BuildConfig;
 import com.se491.chef_ly.R;
 import com.se491.chef_ly.http.HttpConnection;
 import com.se491.chef_ly.http.RequestMethod;
 
 import com.se491.chef_ly.utils.CredentialsManager;
-import com.se491.chef_ly.model.RecipeInformation;
 import com.se491.chef_ly.model.RecipeList;
-import com.se491.chef_ly.utils.CredentialsManager;
 import com.se491.chef_ly.utils.GetRecipesFromServer;
 import com.se491.chef_ly.utils.NetworkHelper;
 
@@ -55,12 +47,9 @@ import com.se491.chef_ly.utils.NetworkHelper;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
-import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.util.ArrayList;
-
 
 public class  MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<RecipeList>, View.OnClickListener{
 
@@ -69,6 +58,7 @@ public class  MainActivity extends AppCompatActivity implements LoaderManager.Lo
     private final String TAG = "MainActivity";
     private Lock mLock;
     private Handler splashHandler;
+    private final int INTROACTIVITYCODE = 1775;
 
 
     private static final String urlString ="https://chefly-prod.herokuapp.com/list/random/10";
@@ -88,6 +78,67 @@ public class  MainActivity extends AppCompatActivity implements LoaderManager.Lo
         setContentView(R.layout.splash_layout);
 
         serverRecipes = new RecipeList();
+
+
+
+        if(!BuildConfig.DEBUG){
+            SharedPreferences sharedPreferences =
+                    PreferenceManager.getDefaultSharedPreferences(this);
+            // Check if we need to display our OnboardingFragment
+            if (!sharedPreferences.getBoolean("FirstTimeRun", false)) {
+                Log.d(TAG, "First time run-> True");
+                // The user hasn't seen the OnboardingFragment yet, so show it
+                startActivityForResult(new Intent(this, IntroActivity.class), INTROACTIVITYCODE);
+            }else{
+                Log.d(TAG, "First time run-> False");
+                startRecipeLoader();
+            }
+        }else{
+            Log.d(TAG, "First time run-> True");
+            // The user hasn't seen the OnboardingFragment yet, so show it
+            startActivityForResult(new Intent(this, IntroActivity.class), INTROACTIVITYCODE);
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        /*  Register receiver for Alarm
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("alarm");
+        final CheflyTimer c = CheflyTimer.getInstance(getApplicationContext());
+        registerReceiver(new AlarmReceiver(c), filter);
+        // Timer test
+
+        c.setTimer("test",60, getApplicationContext());
+        c.setTimer("test2",10, getApplicationContext());
+        //  simulate checking a timer after 30 seconds
+        Handler h = new Handler();
+        h.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(MainActivity.this, "time remaining = " + c.getTimerStatus("test"), Toast.LENGTH_SHORT).show();
+            }
+        },30*1000);
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        */
+
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == INTROACTIVITYCODE){
+            startRecipeLoader();
+        }
+    }
+/*
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(!viewsSet){
+            setupViews();
+        }
+    }*/
+    private void startRecipeLoader(){
 
         // Get recipes from server
         if(NetworkHelper.hasNetworkAccess(MainActivity.this)) //returns true if internet available
@@ -121,57 +172,29 @@ public class  MainActivity extends AppCompatActivity implements LoaderManager.Lo
             Log.d(TAG, "No Internet Connection");
         }
 
-
-        //Toast.makeText(getApplicationContext(), "Welcome To Chef.ly", Toast.LENGTH_SHORT).show();
-
-
-        ////////////////////////////////////////////////////////////////////////////////////////////
-        /*  Register receiver for Alarm
-        IntentFilter filter = new IntentFilter();
-        filter.addAction("alarm");
-        final CheflyTimer c = CheflyTimer.getInstance(getApplicationContext());
-        registerReceiver(new AlarmReceiver(c), filter);
-        // Timer test
-
-        c.setTimer("test",60, getApplicationContext());
-        c.setTimer("test2",10, getApplicationContext());
-        //  simulate checking a timer after 30 seconds
-        Handler h = new Handler();
-        h.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(MainActivity.this, "time remaining = " + c.getTimerStatus("test"), Toast.LENGTH_SHORT).show();
-            }
-        },30*1000);
-        ////////////////////////////////////////////////////////////////////////////////////////////
-        */
-
-
     }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-
-    }
-
     private void setupViews() {
-        Button signInBtn;
-        TextView continueAsGuest;
-        TextView signUp;
-        ImageButton webLoginButton = (ImageButton) findViewById(R.id.webLoginButton);
-        webLoginButton.setOnClickListener(this);
-        ImageButton googleLoginButton = (ImageButton) findViewById(R.id.googleLoginButton);
-        googleLoginButton.setOnClickListener(this);
-        username = (EditText) findViewById(R.id.useremail);
-        password = (EditText) findViewById(R.id.password);
-        signInBtn = (Button) findViewById(R.id.signInBtn);
-        signInBtn.setOnClickListener(this);
-        continueAsGuest = (TextView) findViewById(R.id.continueAsGuest);
-        continueAsGuest.setOnClickListener(this);
-        signUp = (TextView) findViewById(R.id.signUp);
-        signUp.setOnClickListener(this);
+        try{
+            Button signInBtn;
+            TextView continueAsGuest;
+            TextView signUp;
+            ImageButton webLoginButton = (ImageButton) findViewById(R.id.webLoginButton);
+            webLoginButton.setOnClickListener(this);
+            ImageButton googleLoginButton = (ImageButton) findViewById(R.id.googleLoginButton);
+            googleLoginButton.setOnClickListener(this);
+            username = (EditText) findViewById(R.id.useremail);
+            password = (EditText) findViewById(R.id.password);
+            signInBtn = (Button) findViewById(R.id.signInBtn);
+            signInBtn.setOnClickListener(this);
+            continueAsGuest = (TextView) findViewById(R.id.continueAsGuest);
+            continueAsGuest.setOnClickListener(this);
+            signUp = (TextView) findViewById(R.id.signUp);
+            signUp.setOnClickListener(this);
+
+        }catch (NullPointerException e){
+            Log.d(TAG, "Failed to set views");
+        }
+
 
     }
 
@@ -185,7 +208,7 @@ public class  MainActivity extends AppCompatActivity implements LoaderManager.Lo
 
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
 
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(this, "Thanks, now you can talk to chef.ly!", Toast.LENGTH_LONG).show();
@@ -200,7 +223,6 @@ public class  MainActivity extends AppCompatActivity implements LoaderManager.Lo
 
     @Override
     protected void onNewIntent(Intent intent) {
-        //Check if the result belongs to a pending web authentication
         if (WebAuthProvider.resume(intent)) {
             return;
         }
@@ -208,8 +230,8 @@ public class  MainActivity extends AppCompatActivity implements LoaderManager.Lo
     }
 
 
-    private void socialLogin(String connection) {
-        Auth0 auth0 = new Auth0(getString(R.string.auth0_client_id), getString(R.string.auth0_domain));
+    private void socialLogin(String connection) {  //getString(R.string.auth0_domain
+        Auth0 auth0 = new Auth0(getString(R.string.auth0_client_id),getString(R.string.auth0_domain));
         WebAuthProvider.init(auth0)
                 .withConnection(connection)
                 .start(MainActivity.this, new AuthCallback() {
@@ -235,10 +257,7 @@ public class  MainActivity extends AppCompatActivity implements LoaderManager.Lo
                     public void onSuccess(@NonNull Credentials credentials) {
                         // Navigate to your next activity
 
-                        Intent recipeListIntent = new Intent(MainActivity.this, RecipeListActivity.class);
-                        recipeListIntent.putExtra("name", "aaa");
-                        recipeListIntent.putExtra("recipeList", serverRecipes);
-                        startActivity(recipeListIntent);
+                        startRecipeListActivity("aaa");
                     }
                 });
     }
@@ -255,7 +274,7 @@ public class  MainActivity extends AppCompatActivity implements LoaderManager.Lo
 
     @Override
     public void onClick(View v) {
-        Toast.makeText(this, "onClick " + v.getId(), Toast.LENGTH_SHORT).show();
+Log.d(TAG, "On Click - " + v.getId());
         switch (v.getId()) {
 
             case R.id.signInBtn:
@@ -271,10 +290,8 @@ public class  MainActivity extends AppCompatActivity implements LoaderManager.Lo
 
                 break;
             case R.id.continueAsGuest:
-                Intent recipeListIntent = new Intent(MainActivity.this, RecipeListActivity.class);
-                recipeListIntent.putExtra("name", "guest");
-                recipeListIntent.putExtra("recipeList", serverRecipes);
-                startActivity(recipeListIntent);
+                startRecipeListActivity("guest");
+
                 break;
             case R.id.webLoginButton:
                 socialLogin("facebook");
@@ -318,6 +335,7 @@ public class  MainActivity extends AppCompatActivity implements LoaderManager.Lo
         return  new GetRecipesFromServer(getApplicationContext(), rm);
     }
     //  LoaderManager callback method
+
     @Override
     public void onLoadFinished(Loader<RecipeList> loader, RecipeList data) {
         int id = loader.getId();
@@ -338,15 +356,31 @@ public class  MainActivity extends AppCompatActivity implements LoaderManager.Lo
         }
     }
 
+    private void startRecipeListActivity(String name){
+        /*//TODO - Remove shared pref setting of FirstTimeRun
+        SharedPreferences.Editor sharedPreferencesEditor =
+                PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
+        sharedPreferencesEditor.putBoolean("FirstTimeRun", false);
+        sharedPreferencesEditor.apply();*/
+
+        Intent recipeListIntent = new Intent(MainActivity.this, RecipeListActivity.class);
+        recipeListIntent.putExtra("name", name);
+        recipeListIntent.putExtra("recipeList", serverRecipes);
+        Log.d(TAG, "ServerRecipes size = " + serverRecipes.size());
+        startActivity(recipeListIntent);
+
+
+    }
+
 
     //TODO: Find way to store the login strings in resources. Formatting for HTTP calls gets in way. */
-    class Login extends AsyncTask<RequestMethod, Integer, String> {
+    private class Login extends AsyncTask<RequestMethod, Integer, String> {
         private String emailOrUsername;
         private String password;
         private String response;
         private String statusMessage;
 
-        public Login(String emailOrUsername, String password) {
+        Login(String emailOrUsername, String password) {
             this.emailOrUsername = emailOrUsername;
             this.password = password;
         }
@@ -378,7 +412,7 @@ public class  MainActivity extends AppCompatActivity implements LoaderManager.Lo
 
         @Override
         protected void onPostExecute(String response) {
-            if (response.equals(null) | response.equals("")) {
+            if (response == null || response.equals("")) {
                 Log.d(TAG, "Invalid Login HTTP Response");
 
             } else {
@@ -398,11 +432,7 @@ public class  MainActivity extends AppCompatActivity implements LoaderManager.Lo
                     CredentialsManager.saveCredentials(MainActivity.this, credentials);
                     CredentialsManager.saveUsername(MainActivity.this, emailOrUsername);
 
-                    // Navigate to your next activity
-                    Intent recipeListIntent = new Intent(MainActivity.this, RecipeListActivity.class);
-                    recipeListIntent.putExtra("name", emailOrUsername);
-                    recipeListIntent.putExtra("recipeList", serverRecipes);
-                    startActivity(recipeListIntent);
+                    startRecipeListActivity(emailOrUsername);
 
                 } else {
                     Log.d(TAG, "LOGIN FAIL");
@@ -412,11 +442,11 @@ public class  MainActivity extends AppCompatActivity implements LoaderManager.Lo
             }
         }
 
-        public String getReponse(){
+        String getReponse(){
             return this.response;
         }
 
-        public String getStatusMessage() { return this.statusMessage; }
+        String getStatusMessage() { return this.statusMessage; }
 
         String generateCodeChallenge() throws UnsupportedEncodingException, NoSuchAlgorithmException{
             SecureRandom sr = new SecureRandom();

@@ -1,17 +1,13 @@
 package com.se491.chef_ly.activity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,21 +17,15 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.auth0.android.result.Credentials;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 import com.se491.chef_ly.R;
 import com.se491.chef_ly.http.RequestMethod;
 import com.se491.chef_ly.model.RecipeInformation;
 import com.se491.chef_ly.model.RecipeList;
-import com.se491.chef_ly.utils.CredentialsManager;
 import com.se491.chef_ly.utils.GetRecipesFromServer;
 
 import java.util.Date;
@@ -105,7 +95,7 @@ public class ListViewFragment extends Fragment implements LoaderManager.LoaderCa
 
 
 
-        Log.d(TAG, "results -> " + title + " " + pageNum );
+        Log.d(TAG + "/" + title, "results -> " + title + " " + pageNum );
     }
 
     @Override
@@ -132,7 +122,7 @@ public class ListViewFragment extends Fragment implements LoaderManager.LoaderCa
                 RecipeInformation recipe = ((RecipeInformation) l.getAdapter().getItem(position));
                 //intent.putExtra("recipe", String.valueOf(recipeID));
                 intent.putExtra("recipeDetail", recipe);
-                Log.d(TAG, "Recipe Clicked: id -> " + recipe.getId());
+                Log.d(TAG + "/" + title, "Recipe Clicked: id -> " + recipe.getId());
                 startActivity(intent);
             }
         });
@@ -145,23 +135,27 @@ public class ListViewFragment extends Fragment implements LoaderManager.LoaderCa
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                //TODO remove limit and or wait for user to scroll past end of list to load more
-                if(firstVisibleItem+visibleItemCount + 2 == totalItemCount && totalItemCount!=0  && totalItemCount < 25) {
+                // Only load more recipes for the recipes side, favorites has its own logic
+                if(title.equals("Recipes")){
+                    //TODO remove limit and or wait for user to scroll past end of list to load more
+                    if(firstVisibleItem+visibleItemCount + 2 == totalItemCount && totalItemCount!=0  && totalItemCount < 25) {
 
-                    if(!isLoading.get()){
-                        Log.d(TAG, "Getting more recipes from server");
-                        isLoading.set(true);
+                        if(!isLoading.get()){
+                            Log.d(TAG + "/" + title, "Getting more recipes from server");
+                            isLoading.set(true);
 
-                        RequestMethod requestPackage = new RequestMethod();
-                        requestPackage.setEndPoint(urlString);
-                        requestPackage.setMethod("GET"); //  or requestPackage.setMethod("POST");
+                            RequestMethod requestPackage = new RequestMethod();
+                            requestPackage.setEndPoint(urlString);
+                            requestPackage.setMethod("GET"); //  or requestPackage.setMethod("POST");
 
-                        Bundle bundle = new Bundle();
-                        bundle.putParcelable("requestPackage", requestPackage);
+                            Bundle bundle = new Bundle();
+                            bundle.putParcelable("requestPackage", requestPackage);
 
-                        getLoaderManager().initLoader((new Date()).hashCode() , bundle, callbacks).forceLoad();
+                            getLoaderManager().initLoader((new Date()).hashCode() , bundle, callbacks).forceLoad();
+                        }
                     }
                 }
+
             }
         });
         final Handler h = new Handler();
@@ -233,7 +227,7 @@ public class ListViewFragment extends Fragment implements LoaderManager.LoaderCa
         }
         if(listView != null) {
             ((BaseAdapter) listView.getAdapter()).notifyDataSetChanged();
-            Log.d(TAG, "ListView updated " + title + " " + listView.getAdapter().getCount() + " list " + list.size());
+            Log.d(TAG + "/" + title, "ListView updated " + title + " " + listView.getAdapter().getCount() + " list " + list.size());
             //listView.setVisibility(View.VISIBLE);
         }
     }
@@ -248,21 +242,29 @@ public class ListViewFragment extends Fragment implements LoaderManager.LoaderCa
     }
     public void removeFavorite(RecipeInformation r){
         int index = list.indexOf(r);
-        list.get(index).setFavorite(false);
+        if(index > 0){
+            list.get(index).setFavorite(false);
+        }else{
+            Log.d(TAG + "/" + title, "Remove Favorite index -> " + index);
+            for(RecipeInformation rec : list){
+                Log.d(TAG + "/" + title, "ID -> " + rec.getId());
+            }
+        }
+
         ((BaseAdapter) listView.getAdapter()).notifyDataSetChanged();
     }
 
     //  LoaderManager callback method
     @Override
     public Loader<RecipeList> onCreateLoader(int id, Bundle args) {
-        Log.d(TAG, "Loader Created");
+        Log.d(TAG + "/" + title, "Loader Created");
         RequestMethod rm = args.getParcelable("requestPackage");
         return  new GetRecipesFromServer(getContext(), rm);
     }
     //  LoaderManager callback method
     @Override
     public void onLoadFinished(Loader<RecipeList> loader, RecipeList data) {
-        Log.d(TAG, "Loader - OnLoadFinish");
+        Log.d(TAG + "/" + title, "Loader - OnLoadFinish");
         for(RecipeInformation recipe : data){
             list.add(recipe);
         }

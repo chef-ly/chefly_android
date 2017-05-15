@@ -1,6 +1,6 @@
 <resources>
     <string name="auth0_client_id">zeCz4YI9I8nAHSZg2q4wnMIExGvENAu4</string>
-    <string name="auth0_domain">https://chefly.auth0.com</string>
+    <string name="auth0_domain">chefly.auth0.com</string>
     <string name="auth0_databaseConnection">Username-Password-Authentication</string>
     <string name="auth0_api_url">"https://chefly.auth0.com/api/"</string>
     <string name="webLogin">Login with Facebook</string>
@@ -13,17 +13,18 @@
     <string name="bonAppetit">Bon Appetit!</string>
     <string name="by">by </string>
     <string name="categoryHint">Italian, French, Dessert, Lunch, Quick, &#8230;</string>
-    <string name="chooseUsername">Create a new username</string>
+    <string name="chooseUsername">Create a new username:\n*must be between 4 to 20 characters</string>
     <string name="clearPurchased">Clear Purchased</string>
     <string name="contentDescriptionRecipe">A picture of the recipe</string>
     <string name="continueAsGuest"><u>Skip</u></string>
     <string name="continueWithSocial">Continue with social</string>
-    <string name="createPassword">Enter Password that includes at least 8 characters with at least 1 uppers,lower,number and symbol</string>
+    <string name="createPassword">Create a new Password:\n * Must have 8 characters in length\n *At least one digit,symbol,Lower/Upper case letter\n</string>
     <string name="createPasswordAgain">Please Re-enter password for match confirmation</string>
     <string name="createRecipe">Create Recipe</string>
     <string name="difficulty">Difficulty: </string>
     <string name="directions">Directions</string>
     <string name="done">Done</string>
+    <string name="dot">&#8226;</string>
     <string name="edit">Edit</string>
     <string name="edit_directionView">edit direction step</string>
     <string name="email">heinsd@hotmail.com</string>
@@ -35,6 +36,7 @@
     <string name="getCooking">Let\'s get cooking!</string>
     <string name="ingredient">Ingredient</string>
     <string name="ingredients">Ingredients</string>
+    <string name="introImageDescription">Animated GIF showing app usage</string>
     <string name="level">Difficulty</string>
     <string name="minutes">Minutes</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -70,6 +72,7 @@
     <string name="shoppingList">Shopping List</string>
     <string name="signIn">Login</string>
     <string name="signUp"><u>Join for free</u></string>
+    <string name="skip">Skip</string>
     <string name="forgotpassword"><u>Forgot Password?</u></string>
     <string name="step">Step</string>
     <string name="time">Time</string>
