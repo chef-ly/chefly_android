@@ -31,6 +31,10 @@ public class LoginTest {
 
     @Test
     public void loginTest() {
+        ViewInteraction appCompatButton = onView(
+                allOf(withId(R.id.skipBtn), withText("Skip"), isDisplayed()));
+        appCompatButton.perform(click());
+
         // Added a sleep statement to match the app's execution delay.
         // The recommended way to handle such scenarios is to use Espresso idling resources:
         // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
@@ -45,21 +49,21 @@ public class LoginTest {
                         withParent(allOf(withId(R.id.activity_main),
                                 withParent(withId(android.R.id.content)))),
                         isDisplayed()));
-        appCompatEditText.perform(replaceText("berio16@hotmail.com"), closeSoftKeyboard());
+        appCompatEditText.perform(replaceText("athinaverr@yahoo.com"), closeSoftKeyboard());
 
         ViewInteraction appCompatEditText2 = onView(
                 allOf(withId(R.id.password),
                         withParent(allOf(withId(R.id.activity_main),
                                 withParent(withId(android.R.id.content)))),
                         isDisplayed()));
-        appCompatEditText2.perform(replaceText("Barbie123!"), closeSoftKeyboard());
+        appCompatEditText2.perform(replaceText("YabbaDabba%0"), closeSoftKeyboard());
 
-        ViewInteraction appCompatButton = onView(
+        ViewInteraction appCompatButton2 = onView(
                 allOf(withId(R.id.signInBtn), withText("Login"),
                         withParent(allOf(withId(R.id.activity_main),
                                 withParent(withId(android.R.id.content)))),
                         isDisplayed()));
-        appCompatButton.perform(click());
+        appCompatButton2.perform(click());
 
     }
 
