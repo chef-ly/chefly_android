@@ -3,8 +3,9 @@ package com.se491.chef_ly.activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.content.pm.PackageManager;
+import android.graphics.Paint;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -16,7 +17,6 @@ import android.text.Editable;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
-
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -29,20 +29,19 @@ import com.auth0.android.lock.Lock;
 import com.auth0.android.provider.AuthCallback;
 import com.auth0.android.provider.WebAuthProvider;
 import com.auth0.android.result.Credentials;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.se491.chef_ly.BuildConfig;
 import com.se491.chef_ly.R;
+import com.se491.chef_ly.application.CheflyApplication;
 import com.se491.chef_ly.http.HttpConnection;
 import com.se491.chef_ly.http.RequestMethod;
-
-import com.se491.chef_ly.utils.CredentialsManager;
 import com.se491.chef_ly.model.RecipeList;
+import com.se491.chef_ly.utils.CredentialsManager;
 import com.se491.chef_ly.utils.GetRecipesFromServer;
 import com.se491.chef_ly.utils.NetworkHelper;
-
+import com.squareup.leakcanary.RefWatcher;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -81,7 +80,7 @@ public class  MainActivity extends AppCompatActivity implements LoaderManager.Lo
 
 
 
-        if(!BuildConfig.DEBUG){
+        if(BuildConfig.DEBUG){
             SharedPreferences sharedPreferences =
                     PreferenceManager.getDefaultSharedPreferences(this);
             // Check if we need to display our OnboardingFragment
@@ -130,14 +129,35 @@ public class  MainActivity extends AppCompatActivity implements LoaderManager.Lo
             startRecipeLoader();
         }
     }
-/*
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(BuildConfig.DEBUG){
+            RefWatcher refWatcher = CheflyApplication.getRefWatcher(this);
+            refWatcher.watch(this);
+        }
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
-        if(!viewsSet){
-            setupViews();
+        Credentials credentials = CredentialsManager.getCredentials(this);
+        TextView skip = (TextView) findViewById(R.id.continueAsGuest);
+        if (skip != null) {
+            if (credentials.getAccessToken() == null) {
+                skip.setText(getString(R.string.continueAsGuest));
+                skip.setPaintFlags(skip.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+            }else {
+                String name = CredentialsManager.getUsername(this);
+                String msg = getString(R.string.welcomeback) + (name != null? " " + name : "");
+                skip.setText(msg);
+                skip.setPaintFlags(skip.getPaintFlags()| Paint.UNDERLINE_TEXT_FLAG);
+            }
         }
-    }*/
+
+    }
+
     private void startRecipeLoader(){
 
         // Get recipes from server
@@ -173,6 +193,8 @@ public class  MainActivity extends AppCompatActivity implements LoaderManager.Lo
         }
 
     }
+
+
     private void setupViews() {
         try{
             Button signInBtn;
@@ -344,6 +366,15 @@ Log.d(TAG, "On Click - " + v.getId());
             splashHandler.removeCallbacksAndMessages(null);
             setContentView(R.layout.activity_main);
             setupViews();
+
+           Credentials credentials = CredentialsManager.getCredentials(this);
+            if (credentials.getAccessToken() != null) {
+                TextView skip = (TextView) findViewById(R.id.continueAsGuest);
+                String name = CredentialsManager.getUsername(this);
+                String msg = getString(R.string.welcomeback) + (name != null? " " + name : "");
+                skip.setText(msg);
+                skip.setPaintFlags(skip.getPaintFlags()| Paint.UNDERLINE_TEXT_FLAG);
+            }
         }
         Log.d(TAG, "OnLoadFinished " + loader.getId());
     }
