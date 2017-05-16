@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.compat.BuildConfig;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -27,6 +28,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.se491.chef_ly.Databases.DatabaseHandler;
 import com.se491.chef_ly.R;
+import com.se491.chef_ly.application.CheflyApplication;
 import com.se491.chef_ly.http.HttpConnection;
 import com.se491.chef_ly.http.RequestMethod;
 import com.se491.chef_ly.model.ExtendedIngredient;
@@ -34,6 +36,7 @@ import com.se491.chef_ly.model.RecipeInformation;
 import com.se491.chef_ly.model.ShoppingListItem;
 import com.se491.chef_ly.model.Step;
 import com.se491.chef_ly.utils.NetworkHelper;
+import com.squareup.leakcanary.RefWatcher;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -227,6 +230,11 @@ public class RecipeDetailActivity extends AppCompatActivity {
             if(item.getId() == -9999){
                 db.addItemToShoppingList(item.getName(),item.isPurchased());
             }
+        }
+
+        if(BuildConfig.DEBUG){
+            RefWatcher refWatcher = CheflyApplication.getRefWatcher(this);
+            refWatcher.watch(this);
         }
     }
 

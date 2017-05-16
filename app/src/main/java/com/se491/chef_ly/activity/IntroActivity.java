@@ -16,7 +16,10 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.se491.chef_ly.BuildConfig;
 import com.se491.chef_ly.R;
+import com.se491.chef_ly.application.CheflyApplication;
+import com.squareup.leakcanary.RefWatcher;
 
 public class IntroActivity extends AppCompatActivity  implements IntroFragment.OnFragmentInteractionListener, View.OnClickListener{
 
@@ -114,6 +117,11 @@ public class IntroActivity extends AppCompatActivity  implements IntroFragment.O
                 PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
         sharedPreferencesEditor.putBoolean("FirstTimeRun", true);
         sharedPreferencesEditor.apply();
+
+        if(BuildConfig.DEBUG){
+            RefWatcher refWatcher = CheflyApplication.getRefWatcher(this);
+            refWatcher.watch(this);
+        }
 
     }
 

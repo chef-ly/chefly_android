@@ -80,7 +80,7 @@ public class  MainActivity extends AppCompatActivity implements LoaderManager.Lo
 
 
 
-        if(BuildConfig.DEBUG){
+        if(!BuildConfig.DEBUG){
             SharedPreferences sharedPreferences =
                     PreferenceManager.getDefaultSharedPreferences(this);
             // Check if we need to display our OnboardingFragment

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.BuildConfig;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.widget.Button;
@@ -19,12 +20,14 @@ import com.auth0.android.authentication.AuthenticationAPIClient;
 import com.auth0.android.authentication.AuthenticationException;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import com.se491.chef_ly.application.CheflyApplication;
 import com.se491.chef_ly.http.MyService;
 import com.se491.chef_ly.http.RequestMethod;
 
 import android.util.Log;
 import com.se491.chef_ly.R;
 import com.se491.chef_ly.utils.CredentialsManager;
+import com.squareup.leakcanary.RefWatcher;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -115,6 +118,11 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
 
         LocalBroadcastManager.getInstance(getApplicationContext())
                 .unregisterReceiver(mBroadcastReceiver);
+
+        if(BuildConfig.DEBUG){
+            RefWatcher refWatcher = CheflyApplication.getRefWatcher(this);
+            refWatcher.watch(this);
+        }
     }
 
     private void handleRegisterButtonClick() throws UnirestException {

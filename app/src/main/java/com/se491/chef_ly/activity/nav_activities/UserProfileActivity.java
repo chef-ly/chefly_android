@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.se491.chef_ly.R;
+import com.se491.chef_ly.utils.CredentialsManager;
 
 import org.w3c.dom.Text;
 
@@ -62,10 +63,12 @@ public class UserProfileActivity extends AppCompatActivity implements View.OnCli
         userName.setClickable(false);
         userName.setInputType(InputType.TYPE_NULL);
         userName.clearFocus();
+        userName.setText(CredentialsManager.getUsername(this));
         editTextBackground = userName.getBackground();
         userName.setBackgroundResource(R.color.transparent);
 
         email = (TextView) findViewById(R.id.email);
+        email.setText(CredentialsManager.getUsername(this));
 
     }
 
