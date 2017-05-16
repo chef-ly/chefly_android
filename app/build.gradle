@@ -97,7 +97,7 @@ dependencies {
     compile 'com.android.support:support-v4:25.3.1'
     compile 'com.auth0.android:auth0:1.7.0'
     compile 'com.auth0.android:lock:2.4.0'
-    compile 'com.github.bumptech.glide:glide:3.7.0'
+    compile 'com.github.bumptech.glide:glide:3.8.0'
     compile 'com.google.android.gms:play-services-appindexing:9.8.0'
     compile 'com.google.code.gson:gson:2.8.0'
     compile 'com.mashape.unirest:unirest-java:1.4.9'

@@ -41,10 +41,10 @@ public class IntroActivity extends AppCompatActivity  implements IntroFragment.O
 
         pager = (ViewPager) findViewById(R.id.introPager);
 
-        IntroFragment one = IntroFragment.newInstance(1, R.drawable.cheflyintroslides);
-        IntroFragment two = IntroFragment.newInstance(2, R.drawable.chefly_intro_slides2);
-        IntroFragment three = IntroFragment.newInstance(3, R.drawable.chefly_intro_slides3);
-        IntroFragment four = IntroFragment.newInstance(4, R.drawable.chefly_intro_slides4);
+        IntroFragment one = IntroFragment.newInstance(1, R.drawable.intro1);
+        IntroFragment two = IntroFragment.newInstance(2, R.drawable.intro2);
+        IntroFragment three = IntroFragment.newInstance(3, R.drawable.intro3);
+        IntroFragment four = IntroFragment.newInstance(4, R.drawable.intro4);
         final IntroFragment[] pages = {one,two,three,four};
         pager.setAdapter(new introPagerAdapter(getSupportFragmentManager(), pages));
 
