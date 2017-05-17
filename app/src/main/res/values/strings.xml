@@ -88,6 +88,7 @@
     <string name="forward_caption">Going to next step</string>
     <string name="back_caption">Going back to previous</string>
     <string name="question_caption">Ask chefly a question about what to do next</string>
+    <string name="welcomeback"><u>Welcome Back</u></string>
 
     <string name="minus">-</string>
     <string name="plus">+</string>

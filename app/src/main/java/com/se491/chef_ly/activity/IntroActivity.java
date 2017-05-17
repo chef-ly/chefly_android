@@ -16,7 +16,10 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.se491.chef_ly.BuildConfig;
 import com.se491.chef_ly.R;
+import com.se491.chef_ly.application.CheflyApplication;
+import com.squareup.leakcanary.RefWatcher;
 
 public class IntroActivity extends AppCompatActivity  implements IntroFragment.OnFragmentInteractionListener, View.OnClickListener{
 
@@ -41,10 +44,10 @@ public class IntroActivity extends AppCompatActivity  implements IntroFragment.O
 
         pager = (ViewPager) findViewById(R.id.introPager);
 
-        IntroFragment one = IntroFragment.newInstance(1, R.drawable.cheflyintroslides);
-        IntroFragment two = IntroFragment.newInstance(2, R.drawable.chefly_intro_slides2);
-        IntroFragment three = IntroFragment.newInstance(3, R.drawable.chefly_intro_slides3);
-        IntroFragment four = IntroFragment.newInstance(4, R.drawable.chefly_intro_slides4);
+        IntroFragment one = IntroFragment.newInstance(1, R.drawable.intro1);
+        IntroFragment two = IntroFragment.newInstance(2, R.drawable.intro2);
+        IntroFragment three = IntroFragment.newInstance(3, R.drawable.intro3);
+        IntroFragment four = IntroFragment.newInstance(4, R.drawable.intro4);
         final IntroFragment[] pages = {one,two,three,four};
         pager.setAdapter(new introPagerAdapter(getSupportFragmentManager(), pages));
 
@@ -114,6 +117,11 @@ public class IntroActivity extends AppCompatActivity  implements IntroFragment.O
                 PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
         sharedPreferencesEditor.putBoolean("FirstTimeRun", true);
         sharedPreferencesEditor.apply();
+
+        if(BuildConfig.DEBUG){
+            RefWatcher refWatcher = CheflyApplication.getRefWatcher(this);
+            refWatcher.watch(this);
+        }
 
     }
 

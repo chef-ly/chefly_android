@@ -2,23 +2,15 @@ package com.se491.chef_ly.activity;
 
 import android.Manifest;
 import android.annotation.TargetApi;
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.BlurMaskFilter;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.SystemClock;
-import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.support.annotation.NonNull;
+import android.support.compat.BuildConfig;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -34,43 +26,42 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.se491.chef_ly.R;
+import com.se491.chef_ly.application.CheflyApplication;
 import com.se491.chef_ly.utils.DialogPopUp;
 import com.se491.chef_ly.utils.VoiceInstructionEvent;
 import com.se491.chef_ly.utils.VoiceRecognizer;
+import com.squareup.leakcanary.RefWatcher;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.Locale;
-import java.text.BreakIterator;
-import java.util.zip.Inflater;
 
 public class GetCookingActivity extends AppCompatActivity implements GetCookingFragment.OnFragmentInteractionListener {
 
-    private Button exit;
+
 
     private TextView stepText;
     private TextToSpeech textToSpeech;
-    private ImageButton btnSpeak;
     private ViewPager pager;
 
     private DialogPopUp ingredientsPopup;
     private DialogPopUp directionsPopup;
     private final String TAG = "GetCookingActivity";
-    private final int REQ_CODE_SPEECH_INPUT = 100;
+    //private final int REQ_CODE_SPEECH_INPUT = 100;
     private ArrayList<String> directions;
     private int step;
     private boolean hasDirections = false;
     private int numberSteps;
-
+    private ttsUtteranceListener speechListener;
 
     private boolean ingredientsShowing = false;
     private boolean directionsShowing = false;
@@ -84,15 +75,12 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
 
     private VoiceRecognizer voiceRec = new VoiceRecognizer(GetCookingActivity.this);
 
-
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_get_cooking);
 
+        speechListener = new ttsUtteranceListener();
 
         DisplayMetrics metrics = getResources().getDisplayMetrics();
         width = metrics.widthPixels;
@@ -157,6 +145,7 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
         // Text view to display the current step number
         stepText = (TextView) findViewById(R.id.step) ;
         //Exit Button
+        Button exit;
         exit = (Button) findViewById(R.id.exit);
         exit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -166,9 +155,8 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
             }
         });
 
-
+        ImageButton btnSpeak;
         btnSpeak = (ImageButton) findViewById(R.id.btnSpeak);
-
         btnSpeak.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -223,7 +211,7 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
         int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO);
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, PERMISSIONS_REQUEST_RECORD_AUDIO);
-            return;
+            //return;
         } else {
             voiceRec.runRec();
         }
@@ -243,7 +231,7 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
 
 
         }else{
-            DialogPopUp ingredientsPopup = DialogPopUp.newInstance(getResources().getString(R.string.ingredients), new ArrayList<String>());
+            ingredientsPopup = DialogPopUp.newInstance(getResources().getString(R.string.ingredients), new ArrayList<String>());
         }
 
         // Split up the directions to more "digestible" (wink wink) pieces
@@ -317,15 +305,23 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
     protected void onDestroy() {
         super.onDestroy();
 
+        pager.clearOnPageChangeListeners();
         // calls cancel and shutdown on the recognizer
         voiceRec.killRec();
-
+        voiceRec = null;
         textToSpeech.stop();
+        textToSpeech.shutdown();
+        speechListener= null;
+        textToSpeech = null;
 
         // Unregister EventBus
         EventBus.getDefault().unregister(this);
 
-        Log.d(TAG,"OnDestroy <><><><><><><><><><><>");
+        if(BuildConfig.DEBUG){
+            RefWatcher refWatcher = CheflyApplication.getRefWatcher(this);
+            refWatcher.watch(this);
+        }
+
     }
 
     @TargetApi(21)
@@ -340,7 +336,7 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
         }
 
         //create new tts listener
-        ttsUtteranceListener speechListener = new ttsUtteranceListener();
+
         textToSpeech.setOnUtteranceProgressListener(speechListener);
     }
 
@@ -359,59 +355,59 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
     // This method will be called when the VoiceRec class sends a nextInstruction event
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(VoiceInstructionEvent event){
-
-        if (event.getInstruction().equals("next")){
-            updateStepText();
-            pager.setCurrentItem(step+1, true);
-
-        } else if (event.getInstruction().equals("back")) {
-
-            if (ingredientsShowing){
-                ingredientsPopup.dismiss();
-                //directionsPopup.dismiss();
-                ingredientsShowing = false;
-            }else if (directionsShowing) {
-                directionsPopup.dismiss();
-                directionsShowing = false;
-            }
-            else {
-
+        String instruction = event.getInstruction();
+        switch (instruction){
+            case "next":
                 updateStepText();
-                pager.setCurrentItem(step - 1, true);
-            }
+                pager.setCurrentItem(step+1, true);
+                break;
+            case "back":
+                if (ingredientsShowing){
+                    ingredientsPopup.dismiss();
+                    //directionsPopup.dismiss();
+                    ingredientsShowing = false;
+                }else if (directionsShowing) {
+                    directionsPopup.dismiss();
+                    directionsShowing = false;
+                }
+                else {
 
-
-        } else if (event.getInstruction().equals("repeat")) {
-            read(directions.get(step));
-
-        } else if (event.getInstruction().equals("ingredients")) {
-            FragmentManager fm = getSupportFragmentManager();
-            ingredientsPopup.show(fm, "Ingredients");
-            ingredientsShowing = true;
-        } else if (event.getInstruction().equals("directions")) {
-            FragmentManager fm = getSupportFragmentManager();
-            directionsPopup.show(fm, "Directions");
-            directionsShowing = true;
-        } else if (event.getInstruction().equals("question")){
-            //TODO - make chefly icon at bottom of screen blow to show hes listening
-
-        } else if (event.getInstruction().equals("listen")){
-            //btnSpeak.setImageDrawable(getResources().getDrawable(R.drawable.heartselected, getApplicationContext().getTheme()));
-            //ImageView imgFp = (ImageView) findViewById(R.id.btnSpeak);
-            //imgFp.setImageResource(0);
-            //imgFp.setImageResource(R.drawable.heartselected);
-            ImageView image = (ImageView) findViewById(R.id.btnSpeak);
-            Glide.with(getApplicationContext())
-                    .load(R.drawable.heartselected)
-                    .asGif()
-                    .crossFade()
-                    .into(image);
-            //((ImageView) v.findViewById(R.id.ImageView1)).setImageResource(0);
-        }
-        else {
+                    updateStepText();
+                    pager.setCurrentItem(step - 1, true);
+                }
+                break;
+            case "repeat":
+                read(directions.get(step));
+                break;
+            case "ingredients":
+                FragmentManager fm = getSupportFragmentManager();
+                ingredientsPopup.show(fm, "Ingredients");
+                ingredientsShowing = true;
+                break;
+            case "directions":
+                fm = getSupportFragmentManager();
+                directionsPopup.show(fm, "Directions");
+                directionsShowing = true;
+                break;
+            case "question":
+                //TODO - make chefly icon at bottom of screen blow to show hes listening
+                break;
+            case "listen":
+                //btnSpeak.setImageDrawable(getResources().getDrawable(R.drawable.heartselected, getApplicationContext().getTheme()));
+                //ImageView imgFp = (ImageView) findViewById(R.id.btnSpeak);
+                //imgFp.setImageResource(0);
+                //imgFp.setImageResource(R.drawable.heartselected);
+                ImageView image = (ImageView) findViewById(R.id.btnSpeak);
+                Glide.with(getApplicationContext())
+                        .load(R.drawable.heartselected)
+                        .asGif()
+                        .crossFade()
+                        .into(image);
+                //((ImageView) v.findViewById(R.id.ImageView1)).setImageResource(0);
+                break;
+            default:
                 Toast.makeText(this, "Can you please say that again?", Toast.LENGTH_LONG).show();
         }
-
 
         Log.e("DEBUG", "Received VoiceInstructionEvent " + event.getInstruction());
     }
@@ -429,7 +425,7 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
 
     }
 
-    class ttsUtteranceListener extends UtteranceProgressListener {
+    private class ttsUtteranceListener extends UtteranceProgressListener {
 
         @Override
         public void onDone(String ID){

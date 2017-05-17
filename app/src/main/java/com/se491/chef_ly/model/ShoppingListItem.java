@@ -1,6 +1,8 @@
 package com.se491.chef_ly.model;
 
 
+import android.os.Build;
+
 import java.util.Objects;
 
 public class ShoppingListItem {
@@ -41,11 +43,21 @@ public class ShoppingListItem {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ShoppingListItem that = (ShoppingListItem) o;
-        return Objects.equals(name, that.name);
+        if(Build.VERSION.SDK_INT >= 19){
+            return Objects.equals(name, that.name);
+        }else{
+            return name.equals(that.name);
+        }
+
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name);
+        if(Build.VERSION.SDK_INT >= 19){
+            return Objects.hash(name);
+        }else{
+            return name.hashCode();
+        }
+
     }
 }

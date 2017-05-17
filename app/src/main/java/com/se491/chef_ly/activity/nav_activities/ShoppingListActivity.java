@@ -4,6 +4,7 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.text.InputType;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -73,7 +74,7 @@ public class ShoppingListActivity extends ListActivity {
                 params.setMargins(20,2,20,2);
                 newItem.setLayoutParams(params);
                 newItem.setHint("new grocery list item");
-                newItem.setBackground(getDrawable(R.color.white));
+                newItem.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.color.white));
                 newItem.setInputType(InputType.TYPE_CLASS_TEXT);
                 newItem.setImeOptions(EditorInfo.IME_ACTION_DONE);
                 newItem.setMaxLines(1);
