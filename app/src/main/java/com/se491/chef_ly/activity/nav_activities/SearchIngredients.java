@@ -8,10 +8,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.se491.chef_ly.R;
+import com.se491.chef_ly.http.RequestMethod;
 
 
 public class SearchIngredients extends AppCompatActivity implements View.OnClickListener{
-    private static final String urlString ="http://www.chef-ly.com/search/ingredients";
+    private static final String urlString ="http://www.chef-ly.com/search/ingredients?ingredients=";
    private EditText ingredients;
     //private Button addIn;
     private Button findRecipeBtn;
@@ -32,8 +33,15 @@ public class SearchIngredients extends AppCompatActivity implements View.OnClick
         switch (v.getId()) {
             case R.id.findRecipes:
                 selectedIngredient = ingredients.getText(); //take the text as ingredient1, ingredient2,..
-                findRecipe(selectedIngredient.toString());
+               // findRecipe(selectedIngredient.toString());
                // String[] splited = selectedIngredient.split(",");
+                RequestMethod requestPackage = new RequestMethod();
+                requestPackage.setEndPoint(urlString + selectedIngredient);//find the url
+                requestPackage.setMethod("GET");//send the post method request
+                Bundle searchIngredients = new Bundle();
+                searchIngredients.putParcelable("requestPackage", requestPackage);
+
+                //getSupportLoaderManager().initLoader(SEARCHID, searchRecipes,this).forceLoad();
                 break;
 
         }
