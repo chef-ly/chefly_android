@@ -115,7 +115,7 @@ public class RequestMethod implements Parcelable {
         }
     }
 
-    public static final Parcelable.Creator<RequestMethod> CREATOR = new Parcelable.Creator<RequestMethod>() {
+    public final Parcelable.Creator<RequestMethod> CREATOR = new Parcelable.Creator<RequestMethod>() {
         @Override
         public RequestMethod createFromParcel(Parcel source) {
             return new RequestMethod(source);

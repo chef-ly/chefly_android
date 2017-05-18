@@ -91,35 +91,29 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'org.greenrobot:eventbus:3.0.0'
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support:design:25.3.1'
-    compile 'com.android.support:support-v4:25.3.1'
-    compile 'com.auth0.android:auth0:1.7.0'
-    compile 'com.auth0.android:lock:2.4.0'
+
+    compile project(':pocketsphinx-android-5prealpha-release')
+
+    compile'org.greenrobot:eventbus:3.0.0'
+    compile'com.android.support:appcompat-v7:25.3.1'
+    compile'com.android.support:design:25.3.1'
+    compile'com.android.support:support-v4:25.3.1'
+    compile'com.auth0.android:auth0:1.7.0'
+    compile'com.auth0.android:lock:2.4.0'
     compile 'com.github.bumptech.glide:glide:3.8.0'
     compile 'com.google.android.gms:play-services-appindexing:9.8.0'
     compile 'com.google.code.gson:gson:2.8.0'
     compile 'com.mashape.unirest:unirest-java:1.4.9'
     compile 'com.squareup.okhttp3:okhttp:3.6.0'
-   // compile 'org.apache.httpcomponents:httpclient-android:4.3.5.1'
-
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.1'
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
     testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
-
     testCompile 'junit:junit:4.12'
     androidTestCompile 'com.android.support:support-annotations:25.3.1'
     androidTestCompile 'com.android.support.test:runner:0.5'
     androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'
     androidTestCompile 'com.jayway.android.robotium:robotium-solo:5.6.3'
-    compile project(':pocketsphinx-android-5prealpha-release')
-
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.1'
+    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
 }
-
-/*dependencies {
-    androidTestCompile 'com.jayway.android.robotium:robotium-solo:5.6.3'
-}*/
 
 jacoco {
     toolVersion = '0.7.5.201505241946'

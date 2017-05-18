@@ -2,9 +2,9 @@ package com.se491.chef_ly.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.compat.BuildConfig;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
@@ -36,19 +36,24 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ListViewFragment extends Fragment implements LoaderManager.LoaderCallbacks<RecipeList>{
 
-    private static final String ARG_PARAM1 = "title";
-    private static final String ARG_PARAM2 = "pageNum";
-    private static final String TAG = "LISTVIEW_FRAG";
+    private final String RECIPES = "Recipes";
+    private final String TAG = "LISTVIEW_FRAG";
 
-    private static final String urlString ="https://chefly-prod.herokuapp.com/list/random/5";
+    private final String urlString ="http://www.chef-ly.com/list/random/5";
+    private final String urlStringSearch ="http://www.chef-ly.com/search?q=";
+    private final String urlRequestNumber = "&n=";
+    private final String qMark = "?";
+    private int requestNumRandom = 1;
+    private int requestNumSearch = 1;
 
     private ListView listView;
     private RecipeList list;
     private View emptyView;
 
-    private static  String title;
+    private String title;
     private String pageNum;
     private AtomicBoolean isLoading;
+    private String searchText;
 
     private OnFragmentInteractionListener mListener;
 
@@ -56,20 +61,13 @@ public class ListViewFragment extends Fragment implements LoaderManager.LoaderCa
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ListViewFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ListViewFragment newInstance(String param1, String param2) {
+
+    public static ListViewFragment newInstance(String title, String pageNum, String searchText) {
         ListViewFragment fragment = new ListViewFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString("title", title);
+        args.putString("pageNum", pageNum);
+        args.putString("search", searchText);
         fragment.setArguments(args);
 
         return fragment;
@@ -85,10 +83,13 @@ public class ListViewFragment extends Fragment implements LoaderManager.LoaderCa
             title = savedInstanceState.getString("title");
             pageNum = savedInstanceState.getString("pageNum");
             list = savedInstanceState.getParcelable(title);
+            searchText = savedInstanceState.getString("search");
+
         }else{
             if (getArguments() != null) {
                 title = getArguments().getString("title");
                 pageNum = getArguments().getString("pageNum");
+                searchText = getArguments().getString("search");
                 //list = getArguments().getParcelableArrayList("list");
             }
             if(list == null){
@@ -102,7 +103,6 @@ public class ListViewFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     @Override
-    @Deprecated
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
@@ -140,7 +140,8 @@ public class ListViewFragment extends Fragment implements LoaderManager.LoaderCa
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 // Only load more recipes for the recipes side, favorites has its own logic
-                if(title.equals("Recipes")){
+
+                if(title.equals(RECIPES)){
                     //TODO remove limit and or wait for user to scroll past end of list to load more
                     if(firstVisibleItem+visibleItemCount + 2 == totalItemCount && totalItemCount!=0  && totalItemCount < 25) {
 
@@ -149,12 +150,23 @@ public class ListViewFragment extends Fragment implements LoaderManager.LoaderCa
                             isLoading.set(true);
 
                             RequestMethod requestPackage = new RequestMethod();
-                            requestPackage.setEndPoint(urlString);
-                            requestPackage.setMethod("GET"); //  or requestPackage.setMethod("POST");
+                            if(searchText.length() == 0){
+                                //requestPackage.setEndPoint(urlString + qMark + urlRequestNumber + requestNumRandom);
+                                requestPackage.setEndPoint(urlString);
+                                requestNumRandom++;
+                            }else{
+                                //requestPackage.setEndPoint(urlStringSearch + searchText + urlRequestNumber + requestNumSearch);
+                                requestPackage.setEndPoint(urlStringSearch + searchText);
+                                requestNumSearch++;
+                            }
 
+
+                            requestPackage.setMethod("GET");
+
+                            Log.d(TAG, "Get more recipes from -> " + requestPackage.getEndpoint());
                             Bundle bundle = new Bundle();
                             bundle.putParcelable("requestPackage", requestPackage);
-
+                            //Log.d(TAG, "onScroll: SearchQuery -> " + searchText);
                             getLoaderManager().initLoader((new Date()).hashCode() , bundle, callbacks).forceLoad();
                         }
                     }
@@ -174,16 +186,6 @@ public class ListViewFragment extends Fragment implements LoaderManager.LoaderCa
         return v;
     }
 
-    public void onRecipeLiked(RecipeInformation recipe, boolean b) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(recipe , b);
-        }
-    }
-
-    public int  getListSize(){
-        return list.size();
-    }
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -197,13 +199,35 @@ public class ListViewFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        if(title.equals(RECIPES) && list.size() == 0 ){
+            Log.d(TAG + "/" + title, "Reattempting to get recipes from server");
+            isLoading.set(true);
+
+            RequestMethod requestPackage = new RequestMethod();
+            //TODO - Implement paging on server so the same recipes are not loaded over and over.
+            // Once complete use commented endpoint
+            //requestPackage.setEndPoint(urlString + qMark + urlRequestNumber + requestNumRandom);
+            requestPackage.setEndPoint(urlString);
+
+            requestPackage.setMethod("GET"); //  or requestPackage.setMethod("POST");
+
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("requestPackage", requestPackage);
+
+            getLoaderManager().initLoader(34404 , bundle, this).forceLoad();
+        }
+    }
+
+    @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
     }
 
 
-    protected interface OnFragmentInteractionListener {
+    interface OnFragmentInteractionListener {
 
         void onFragmentInteraction(RecipeInformation recipe, boolean add);
     }
@@ -221,7 +245,16 @@ public class ListViewFragment extends Fragment implements LoaderManager.LoaderCa
         return title;
     }
 
-
+    public void setList(RecipeList newList, boolean goToTop){
+        list.clear();
+        for(RecipeInformation r : newList){
+            list.add(r);
+        }
+        ((BaseAdapter) listView.getAdapter()).notifyDataSetChanged();
+        if(goToTop){
+            listView.setSelectionAfterHeaderView();
+        }
+    }
     public void updateListAdapter(RecipeList newList){
         if(list == null){
             list = new RecipeList();
@@ -234,6 +267,13 @@ public class ListViewFragment extends Fragment implements LoaderManager.LoaderCa
             Log.d(TAG + "/" + title, "ListView updated " + title + " " + listView.getAdapter().getCount() + " list " + list.size());
             //listView.setVisibility(View.VISIBLE);
         }
+    }
+    public void updateSearch(String text){
+        searchText = text.trim();
+        requestNumSearch = 1;
+    }
+    public RecipeList getList(){
+        return list;
     }
 
     public void addRecipe(RecipeInformation r){
@@ -287,17 +327,19 @@ public class ListViewFragment extends Fragment implements LoaderManager.LoaderCa
     public void onDestroy() {
         super.onDestroy();
 
-
+    if(BuildConfig.DEBUG){
         RefWatcher refWatcher = CheflyApplication.getRefWatcher(getContext());
         refWatcher.watch(this);
     }
 
-    static private class RecipeAdapter extends BaseAdapter {
+    }
+
+    private class RecipeAdapter extends BaseAdapter {
         private final Context context;
         private final LayoutInflater inflater;
         private RecipeList recipes;
         private OnFragmentInteractionListener passer;
-        static class ViewHolder{
+        class ViewHolder{
             final ImageView icon;
             final TextView name;
             final ImageView rating;

@@ -3,24 +3,23 @@ package com.se491.chef_ly.http;
 import android.support.compat.BuildConfig;
 import android.util.Log;
 
+import org.json.JSONObject;
+
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
-import okhttp3.Call;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import okhttp3.MediaType;
-import org.json.JSONObject;
 
 //Helper class for working with a remote server
 //okhttp is better for failure recoveries
 
 public class HttpConnection {
-    private static final String TAG = "HttpConnection";
-    private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    private final String TAG = "HttpConnection";
+    private final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private String statusMessage;
 
     public HttpConnection(){}

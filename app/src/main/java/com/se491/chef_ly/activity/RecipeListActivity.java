@@ -12,11 +12,9 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.util.ArraySet;
-
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -29,6 +27,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -59,8 +58,6 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
     private static final String TAG = "RecipeListActivity";
     private final int CREATE_RECIPE_CODE = 7212;
 
-    private  RecipeList newServerRecipes;
-
     private RecipeList favoriteRecipes;
     private RecipeList serverRecipes;
 
@@ -69,15 +66,13 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
     private ViewPager pager;
     private TextView favoritesHeader;
     private TextView recipesHeader;
-    //private TextView ingredientsHeader;
-
+    private String queryString = "";
     private ArraySet<Integer> favListAdd = new ArraySet<>();
     private ArraySet<Integer> favListRemove = new ArraySet<>();
 
     private static final String urlString ="http://www.chef-ly.com/search?q=";
 
     private final int FAVORTIESID = 601;
-    private final int SEARCHID = 1346;
     private static final String urlFavsString ="http://www.chef-ly.com/user/favorites";
 
 
@@ -111,9 +106,22 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
 
         // PageViewer
         pager = (ViewPager) findViewById(R.id.viewpager);
-        favs = ListViewFragment.newInstance("Favorites", "2");
+        Bundle serv = new Bundle();
+        serv.putString("title", "Recipes");
+        serv.putString("pageNum", "1");
+        serv.putString("search", "");
 
-        server = ListViewFragment.newInstance("Recipes", "1");
+        server = new ListViewFragment();
+        server.setArguments(serv);
+
+        Bundle f = new Bundle();
+        f.putString("title", "Favorites");
+        f.putString("pageNum", "2");
+        f.putString("search", "");
+
+        favs = new ListViewFragment();
+        favs.setArguments(f);
+
 
         ListViewFragment[] frags = {server, favs};
         pager.setAdapter(new RecipeListPagerAdapter(getSupportFragmentManager(), frags));
@@ -121,7 +129,8 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-               if (position == 2) {
+                //Log.d(TAG, "Position -> " + position);
+               if (position == 1) {
                     favoritesHeader.setPaintFlags(favoritesHeader.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
                     recipesHeader.setPaintFlags(0);
                    // ingredientsHeader.setPaintFlags(0);
@@ -198,14 +207,6 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
 
         if(list != null){
             serverRecipes = list;
-//            if(favorites.size() > 0){
-//                for(RecipeInformation r : serverRecipes){
-//                    if(favorites.contains(r.getId())){
-//                        r.setFavorite(true);
-//                    }
-//                }
-//            }
-
             server.updateListAdapter(serverRecipes);
         }else{
             Log.d(TAG, "Error - No recipes loaded from server");
@@ -293,16 +294,19 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
     private void handleIntent(Intent intent) {
 
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
-            Toast.makeText(this, query, Toast.LENGTH_SHORT).show();
+            queryString = intent.getStringExtra(SearchManager.QUERY);
+            Toast.makeText(this, queryString, Toast.LENGTH_SHORT).show();
             // Put Search Logic Here
             RequestMethod requestPackage = new RequestMethod();
-            requestPackage.setEndPoint(urlString + query.trim());//find the url
+            requestPackage.setEndPoint(urlString + queryString);//find the url
             requestPackage.setMethod("GET");//send the post method request
             Bundle searchRecipes = new Bundle();
             searchRecipes.putParcelable("requestPackage", requestPackage);
+            searchRecipes.putString("test", "Handle Intent");
 
-            getSupportLoaderManager().initLoader(SEARCHID, searchRecipes,this).forceLoad();
+            server.updateSearch(queryString);
+            //getSupportLoaderManager().initLoader(SEARCHID, searchRecipes,this).forceLoad();
+            getSupportLoaderManager().initLoader(queryString.hashCode(), searchRecipes,this).forceLoad();
 
         } else {
             Log.d(TAG, "Intent does not equal action search");
@@ -364,14 +368,26 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
                 (SearchView) menu.findItem(R.id.action_search).getActionView();
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
+        searchView.setSubmitButtonEnabled(false);
 
+        ImageView closeButton = (ImageView) searchView.findViewById(R.id.search_close_btn);
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG , "SearchView -> OnClose --> " + queryString );
+                menu.findItem(searchView.getId()).collapseActionView();
+                queryString = "";
+                server.updateSearch("");
+                server.setList(serverRecipes, true);
+            }
+        });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                searchView.clearFocus();
-                searchView.setIconified(true);
 
-                menu.findItem(searchView.getId()).collapseActionView();
+                queryString = query;
+                server.updateSearch(query);
+
                 return false;
             }
 
@@ -380,6 +396,8 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
                 return false;
             }
         });
+
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -471,13 +489,14 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
                 favs.updateListAdapter(favoriteRecipes);
 
 
-            }else if(id == SEARCHID){
+            }else if(id == queryString.hashCode()){
                 Log.d(TAG, " Recipe Search -> " + data.size());
                 if(data.size() > 0){
-                    server.updateListAdapter(data);
+                    // Collect all recipes so list can be redisplayed when search is closed
+                    server.setList(data, true);
                 }else{
                     Log.d(TAG, "Error - No recipes loaded from server");
-                    Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Sorry we couldn't find any recipes", Toast.LENGTH_SHORT).show();
                     //TODO handle case where no recipes are retrieved from server
                 }
             }
@@ -489,8 +508,8 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
 
         if(getTaskId() == FAVORTIESID ){
             favoriteRecipes = new RecipeList();
-        }else if(getTaskId() == SEARCHID){
-            //TODO
+        }else if(getTaskId() == queryString.hashCode()){
+            loader.reset();
         }
     }
 

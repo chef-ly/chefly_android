@@ -83,5 +83,8 @@ public class RecipeList implements Parcelable, Iterable<RecipeInformation>{
     public void addAll(ArrayList<RecipeInformation> list){
         recipes.addAll(list);
     }
+    public void clear(){
+        recipes.clear();
+    }
 
 }

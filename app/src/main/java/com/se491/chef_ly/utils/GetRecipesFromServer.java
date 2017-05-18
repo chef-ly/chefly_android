@@ -24,7 +24,7 @@ public class GetRecipesFromServer extends AsyncTaskLoader<RecipeList> {
     }
     @Override
     public RecipeList loadInBackground() {
-        String response = "";
+        String response;
         Log.d(TAG, requestPackage.getMethod() + " " + requestPackage.getEndpoint());
         try {
 
@@ -43,8 +43,7 @@ public class GetRecipesFromServer extends AsyncTaskLoader<RecipeList> {
         Type type = new TypeToken<RecipeList>(){}.getType();
         Log.d("AsyncTaskLoader","Response " + getId() + " -> " + response);
         try{
-            RecipeList resp =  gson.fromJson(response, type);
-            return resp;
+            return gson.fromJson(response, type);
         }catch(JsonSyntaxException e){
             Log.d(TAG, "Error - RecipeListObject Required: " + e.getMessage());
             return new RecipeList();
