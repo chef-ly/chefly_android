@@ -15,8 +15,8 @@ https://play.google.com/store/apps/details?id=com.se491.chef_ly.alpha
 # Installation:
 The simplest way to install Chefly and learn more about how to use it, is with the help of our User's Manual guide:
 
-https://docs.google.com/document/d/1jye5vXMzLnV3jVACwOHXYlM4NlGV27211lbvXUeUC4Q/edit
+https://docs.google.com/document/d/1jye5vXMzLnV3jVACwOHXYlM4NlGV27211lbvXUeUC4Q/edit?usp=sharing
 
 ## Architecture Diagram:
-https://drive.google.com/drive/folders/0B_yVyD3vaKdWbWNSWi1FTGxCXzA
+https://drive.google.com/file/d/0B9fn7i3gBtBoNUxLbjZGY29RbU0/view?usp=sharing
 
