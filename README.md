@@ -25,3 +25,7 @@ https://drive.google.com/file/d/0B9fn7i3gBtBoNUxLbjZGY29RbU0/view?usp=sharing
 ## Issues:
 To report an issue or communicate with as, please send us an email to chef.ly.app@gmail.com
 
+## Feedback:
+Please provide our feedback to our survey:
+https://chef-ly.typeform.com/to/LKXdL8
+
