@@ -2,24 +2,17 @@ package com.se491.chef_ly.activity.nav_activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.se491.chef_ly.R;
-import com.se491.chef_ly.activity.ListViewFragment;
-import com.se491.chef_ly.activity.MainActivity;
 import com.se491.chef_ly.activity.RecipeListActivity;
 import com.se491.chef_ly.http.RequestMethod;
-import com.se491.chef_ly.model.RecipeInformation;
 import com.se491.chef_ly.model.RecipeList;
 import com.se491.chef_ly.utils.GetRecipesFromServer;
 import com.se491.chef_ly.utils.NetworkHelper;
@@ -29,35 +22,30 @@ public class SearchIngredients extends AppCompatActivity implements View.OnClick
      LoaderManager.LoaderCallbacks<RecipeList> {
 
     private static final String urlString ="http://www.chef-ly.com/search/ingredients?ingredients=";
-    //http://www.chef-ly.com/search/ingredients?ingredients=butter,cookies
     private EditText ingredients;
-    private final int SEARCHINGREDIENTS = 1345; //???
     private static final String TAG = "SearchIngredients";
-    //private Button addIn;
-    private Button findRecipeBtn;
-    private Editable selectedIngredient;
-    private RecipeList serverRecipes;
-    private Handler splashHandler;
+    private String selectedIngredient;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        serverRecipes = new RecipeList();
         setContentView(R.layout.activity_search_ingredients);
         //setContentView(R.layout.splash_layout);
         ingredients = (EditText) findViewById(R.id.ingredient1EditText);
            // addIn = (Button) findViewById(R.id.addINBtn);
           //  addIn.setOnClickListener(this);
-            findRecipeBtn = (Button) findViewById(R.id.findRecipes);
-            findRecipeBtn.setOnClickListener(this);
+        Button findRecipeBtn;
+        findRecipeBtn = (Button) findViewById(R.id.findRecipes);
+        findRecipeBtn.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.findRecipes:
-                selectedIngredient = ingredients.getText(); //take the text as ingredient1, ingredient2,..
+                selectedIngredient = ingredients.getText().toString(); //take the text as ingredient1, ingredient2,..
                // findRecipe(selectedIngredient.toString());
                // String[] splited = selectedIngredient.split(",");
 
@@ -72,17 +60,7 @@ public class SearchIngredients extends AppCompatActivity implements View.OnClick
                 //  serverConnection();
                 Bundle searchIngredients = new Bundle();
                 searchIngredients.putParcelable("requestPackage", requestPackage);
-                getSupportLoaderManager().initLoader(SEARCHINGREDIENTS, searchIngredients,this).forceLoad();
-
-                splashHandler = new Handler();
-                splashHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-
-
-                        setContentView(R.layout.activity_search_ingredients);
-                    }
-                }, 5000);
+                getSupportLoaderManager().initLoader(selectedIngredient.hashCode(), searchIngredients,this).forceLoad();
 
             }
             else
@@ -90,13 +68,9 @@ public class SearchIngredients extends AppCompatActivity implements View.OnClick
                 //Toast.makeText(RecipeListActivity.this,"No Internet Connection",Toast.LENGTH_LONG).show();
                 Log.d(TAG, "No Internet Connection");
             }
-
-                Intent recipeListIntent = new Intent(SearchIngredients.this, RecipeListActivity.class);
-                recipeListIntent.putExtra("name", "aaa");
-                recipeListIntent.putExtra("recipeList", serverRecipes);
-                Log.d(TAG, "ServerRecipes size = " + serverRecipes.size());
-                startActivity(recipeListIntent);
-                break;
+             break;
+            default:
+                Log.d(TAG, "Unknown click received");
         }
     }
 
@@ -110,10 +84,17 @@ public class SearchIngredients extends AppCompatActivity implements View.OnClick
     @Override
     public void onLoadFinished(Loader<RecipeList> loader, RecipeList data) {
         int id = loader.getId();
-        if(id == SEARCHINGREDIENTS) {
-            serverRecipes = data;
-            splashHandler.removeCallbacksAndMessages(null);
-            setContentView(R.layout.activity_search_ingredients);
+        if(id == selectedIngredient.hashCode()) {
+
+            Intent recipeListIntent = new Intent(SearchIngredients.this, RecipeListActivity.class);
+            recipeListIntent.putExtra("recipeList", data);
+            recipeListIntent.putExtra("search", selectedIngredient);
+            recipeListIntent.putExtra("name","Chef");
+            recipeListIntent.putExtra("isSearch", true);
+
+            Log.d(TAG, "ServerRecipes size = " + data.size());
+            startActivity(recipeListIntent);
+            finish();
 
         }
 
@@ -123,9 +104,6 @@ public class SearchIngredients extends AppCompatActivity implements View.OnClick
     @Override
     public void onLoaderReset(Loader<RecipeList> loader) {
 
-        if(getTaskId() == SEARCHINGREDIENTS){
-            serverRecipes = new RecipeList();
-        }
     }
 
 
