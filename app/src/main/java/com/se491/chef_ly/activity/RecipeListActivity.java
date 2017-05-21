@@ -70,6 +70,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
     private String queryString = "";
     private ArraySet<Integer> favListAdd = new ArraySet<>();
     private ArraySet<Integer> favListRemove = new ArraySet<>();
+    private SearchView searchView;
 
     private static final String urlString ="http://www.chef-ly.com/search?q=";
 
@@ -190,7 +191,6 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-
     }
 
     @Override
@@ -205,8 +205,14 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
         Bundle extras = intent.getExtras();
         String user = extras.getString("name");
         RecipeList list = extras.getParcelable("recipeList");
+        boolean isSearch = extras.getBoolean("isSearch");
+        if(isSearch){
+            String search = extras.getString("search");
+            queryString = search;
 
-        if(list != null){
+            server.updateSearch(search);
+            server.updateListAdapter(list);
+        }else if(list != null){
             serverRecipes = list;
             server.updateListAdapter(serverRecipes);
         }else{
@@ -365,7 +371,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
 
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        final SearchView searchView =
+        searchView =
                 (SearchView) menu.findItem(R.id.action_search).getActionView();
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
