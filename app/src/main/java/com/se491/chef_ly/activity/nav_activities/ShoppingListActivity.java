@@ -73,6 +73,7 @@ public class ShoppingListActivity extends ListActivity {
                 params.addRule(RelativeLayout.BELOW, add.getId());
                 params.setMargins(20,2,20,2);
                 newItem.setLayoutParams(params);
+                newItem.setTextColor( ContextCompat.getColor(getApplicationContext(), R.color.black));
                 newItem.setHint("new grocery list item");
                 newItem.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.color.white));
                 newItem.setInputType(InputType.TYPE_CLASS_TEXT);
