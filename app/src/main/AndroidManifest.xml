@@ -25,7 +25,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
 
@@ -37,7 +36,6 @@
                     android:pathPrefix="/android/com.se491.chef_ly/callback"
                     android:scheme="https" />
             </intent-filter>
-
 
             <meta-data
                 android:name="android.app.default_searchable"
@@ -80,6 +78,7 @@
         <activity android:name=".activity.nav_activities.UserProfileActivity" />
         <activity android:name=".activity.nav_activities.SearchIngredients" />
         <activity android:name=".activity.IntroActivity" />
+        <activity android:name=".activity.nav_activities.ContactUsActivity"></activity>
     </application>
 
 </manifest>

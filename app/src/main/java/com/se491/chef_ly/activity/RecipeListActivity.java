@@ -36,6 +36,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.se491.chef_ly.R;
+import com.se491.chef_ly.activity.nav_activities.ContactUsActivity;
 import com.se491.chef_ly.activity.nav_activities.SearchIngredients;
 import com.se491.chef_ly.activity.nav_activities.ShoppingListActivity;
 import com.se491.chef_ly.activity.nav_activities.UserProfileActivity;
@@ -435,7 +436,8 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
                 startActivity(in);
                 break;
             case R.id.contact_us:
-                Toast.makeText(this, "Contact Us!", Toast.LENGTH_SHORT).show();
+                Intent incontact = new Intent(this, ContactUsActivity.class);
+                startActivity(incontact);
                 break;
             case R.id.nav_log_out:
                 Toast.makeText(this, "Log Out", Toast.LENGTH_SHORT).show();

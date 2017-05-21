@@ -74,15 +74,15 @@ public class SearchIngredients extends AppCompatActivity implements View.OnClick
                 searchIngredients.putParcelable("requestPackage", requestPackage);
                 getSupportLoaderManager().initLoader(SEARCHINGREDIENTS, searchIngredients,this).forceLoad();
 
-//                splashHandler = new Handler();
-//                splashHandler.postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        //ViewGroup group = (ViewGroup) findViewById(R.id.activity_main);
-//
-//                        setContentView(R.layout.activity_search_ingredients);
-//                    }
-//                }, 5000);
+                splashHandler = new Handler();
+                splashHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+
+                        setContentView(R.layout.activity_search_ingredients);
+                    }
+                }, 5000);
 
             }
             else
@@ -112,8 +112,8 @@ public class SearchIngredients extends AppCompatActivity implements View.OnClick
         int id = loader.getId();
         if(id == SEARCHINGREDIENTS) {
             serverRecipes = data;
-            //splashHandler.removeCallbacksAndMessages(null);
-           // setContentView(R.layout.activity_search_ingredients);
+            splashHandler.removeCallbacksAndMessages(null);
+            setContentView(R.layout.activity_search_ingredients);
 
         }
 
