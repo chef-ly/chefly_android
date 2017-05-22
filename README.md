@@ -12,7 +12,7 @@ Youtube Video: N/A yet
 To download the app have to register first on our website:
 http://www.chef-ly.com
 Then download the app from GooglePlay:
-https://play.google.com/store/apps/details?id=com.se491.chef_ly.alpha
+https://play.google.com/apps/testing/com.se491.chef_ly.alpha
 
 ##  Installation:
 The simplest way to install Chefly and learn more about how to use it, is with the help of our User's Manual guide:
