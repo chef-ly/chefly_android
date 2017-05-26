@@ -135,58 +135,36 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
             input.setText(""); // clear input
             input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD); // hide password
         } else if (currentInstruction.equals(getResources().getText(R.string.chooseUsername))) {
-            //check if username exist
+            //check if username exists
             username = input.getText().toString();
             instruction.setText(R.string.createPassword);
             input.setText("");
             nextButton.setText(R.string.next);
         } else if (currentInstruction.equals(getResources().getText(R.string.createPassword))) {
-                password = input.getText().toString();
-            if (isValid(password)) {
-                instruction.setText(R.string.createPasswordAgain); // update instruction
-                input.setText(""); // clear input
-                nextButton.setText(R.string.done); // Change text of button
-            } else {
-                Toast.makeText(getApplicationContext(), "The password is invalid, Please try again", Toast.LENGTH_SHORT).show();
-            }
-        } else if (currentInstruction.equals(getResources().getText(R.string.createPasswordAgain))) {
-            // check if password matches new input
-            if (input.getText().toString().equals(password)) {
+            password = input.getText().toString();
+            if (isPasswordValid(password)) {
                 registerNewUser();
             } else {
-                Toast.makeText(getApplicationContext(), "Your passwords did not match. Please try again", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "The password is too weak, please try again", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
+    //https://stackoverflow.com/questions/3802192/regexp-java-for-password-validation
+    public static boolean isPasswordValid(String password){
+        Pattern p =
+                Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$\n");
 
-    public static boolean isValid(String password)
-    {
-        Boolean atleastOneUpper = false;
-        Boolean atleastOneLower = false;
+        Matcher m = p.matcher(password);
+        return(m.matches());
+    }
 
-            if(password.length()>=8) {
 
-                Pattern digit = Pattern.compile("[0-9]");
-                Pattern special = Pattern.compile("[!@#$%&*()_+=|<>?{}\\[\\]~-]");
-        for (int i = 0; i < password.length(); i++) {
-            if (Character.isUpperCase(password.charAt(i))) {
-                atleastOneUpper = true;
-            }
-            else if (Character.isLowerCase(password.charAt(i))) {
-                atleastOneLower = true;
-            }
-            }
-                Matcher hasDigit = digit.matcher(password);
-                Matcher hasSpecial = special.matcher(password);
+    private boolean emailExists() {
+        Log.d(TAG, "Checking if email exists in user database...");
 
-                return (atleastOneUpper && atleastOneLower && hasDigit.find() && hasSpecial.find());
-
-            }
-            else
-                return false;
-        }
-
+        return false;
+    }
 
 
 
