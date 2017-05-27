@@ -60,7 +60,7 @@ public class  MainActivity extends AppCompatActivity implements LoaderManager.Lo
     private final int INTROACTIVITYCODE = 1775;
 
 
-    private static final String urlString ="https://chefly-prod.herokuapp.com/list/random/10";
+    private static final String urlString ="http://www.chef-ly.com/list/random/10?p=0";
     //TODO update urlFacsString
 
     private RecipeList serverRecipes;
@@ -368,12 +368,15 @@ Log.d(TAG, "On Click - " + v.getId());
             setupViews();
 
            Credentials credentials = CredentialsManager.getCredentials(this);
-            if (credentials.getAccessToken() != null) {
-                TextView skip = (TextView) findViewById(R.id.continueAsGuest);
-                String name = CredentialsManager.getUsername(this);
-                String msg = getString(R.string.welcomeback) + (name != null? " " + name : "");
-                skip.setText(msg);
-                skip.setPaintFlags(skip.getPaintFlags()| Paint.UNDERLINE_TEXT_FLAG);
+
+            if (credentials.getAccessToken() != null ) {
+                if( credentials.getExpiresIn() > 0){
+                    TextView skip = (TextView) findViewById(R.id.continueAsGuest);
+                    String name = CredentialsManager.getUsername(this);
+                    String msg = getString(R.string.welcomeback) + (name != null? " " + name : "");
+                    skip.setText(msg);
+                    skip.setPaintFlags(skip.getPaintFlags()| Paint.UNDERLINE_TEXT_FLAG);
+                }
             }
         }
         Log.d(TAG, "OnLoadFinished " + loader.getId());

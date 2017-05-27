@@ -72,7 +72,8 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
     private ArraySet<Integer> favListRemove = new ArraySet<>();
     private SearchView searchView;
 
-    private static final String urlString ="http://www.chef-ly.com/search?q=";
+    private final String urlStringSearch ="http://www.chef-ly.com/search?q=";
+    private final String urlPageNum = "&p=";
 
     private final int FAVORTIESID = 601;
     private static final String urlFavsString ="http://www.chef-ly.com/user/favorites";
@@ -305,7 +306,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
             Toast.makeText(this, queryString, Toast.LENGTH_SHORT).show();
             // Put Search Logic Here
             RequestMethod requestPackage = new RequestMethod();
-            requestPackage.setEndPoint(urlString + queryString);//find the url
+            requestPackage.setEndPoint(urlStringSearch + queryString + urlPageNum + 0);//find the url
             requestPackage.setMethod("GET");//send the post method request
             Bundle searchRecipes = new Bundle();
             searchRecipes.putParcelable("requestPackage", requestPackage);

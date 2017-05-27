@@ -41,8 +41,10 @@ public class ListViewFragment extends Fragment implements LoaderManager.LoaderCa
 
     private final String urlString ="http://www.chef-ly.com/list/random/5";
     private final String urlStringSearch ="http://www.chef-ly.com/search?q=";
-    private final String urlRequestNumber = "&n=";
-    private final String qMark = "?";
+    private final String urlPageNum = "p=";
+    private final String urlQ = "?";
+    private final String urlA = "&";
+
     private int requestNumRandom = 1;
     private int requestNumSearch = 1;
 
@@ -152,11 +154,11 @@ public class ListViewFragment extends Fragment implements LoaderManager.LoaderCa
                             RequestMethod requestPackage = new RequestMethod();
                             if(searchText.length() == 0){
                                 //requestPackage.setEndPoint(urlString + qMark + urlRequestNumber + requestNumRandom);
-                                requestPackage.setEndPoint(urlString);
+                                requestPackage.setEndPoint(urlString + urlQ + urlPageNum + requestNumRandom);
                                 requestNumRandom++;
                             }else{
                                 //requestPackage.setEndPoint(urlStringSearch + searchText + urlRequestNumber + requestNumSearch);
-                                requestPackage.setEndPoint(urlStringSearch + searchText);
+                                requestPackage.setEndPoint(urlStringSearch + searchText + urlA + urlPageNum + requestNumSearch);
                                 requestNumSearch++;
                             }
 
@@ -209,14 +211,15 @@ public class ListViewFragment extends Fragment implements LoaderManager.LoaderCa
             //TODO - Implement paging on server so the same recipes are not loaded over and over.
             // Once complete use commented endpoint
             //requestPackage.setEndPoint(urlString + qMark + urlRequestNumber + requestNumRandom);
-            requestPackage.setEndPoint(urlString);
-
+            requestPackage.setEndPoint(urlString + urlQ + urlPageNum + requestNumRandom);
+            requestNumRandom++;
             requestPackage.setMethod("GET"); //  or requestPackage.setMethod("POST");
 
             Bundle bundle = new Bundle();
             bundle.putParcelable("requestPackage", requestPackage);
 
-            getLoaderManager().initLoader(34404 , bundle, this).forceLoad();
+            getLoaderManager().initLoader(((Long)System.currentTimeMillis()).intValue(), bundle, this).forceLoad();
+
         }
     }
 
