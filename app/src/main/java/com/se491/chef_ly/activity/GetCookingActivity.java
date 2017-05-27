@@ -200,11 +200,14 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
             @Override
             public void onClick(View v) {
                 FragmentManager fm = getSupportFragmentManager();
-                directionsPopup.show(fm, "Directions");
-                getSupportFragmentManager().executePendingTransactions();
-                if(directionsPopup.getDialog().getWindow() != null)
-                    directionsPopup.getDialog().getWindow().setLayout((6 * width)/7, (4 * height)/5);
-
+                if(directionsPopup != null){
+                    directionsPopup.show(fm, "Directions");
+                    getSupportFragmentManager().executePendingTransactions();
+                    if(directionsPopup.getDialog().getWindow() != null)
+                        directionsPopup.getDialog().getWindow().setLayout((6 * width)/7, (4 * height)/5);
+                }else{
+                    Log.d(TAG, "Directions pop up is null.  Directions size = " + directions.size());
+                }
             }
         });
 
