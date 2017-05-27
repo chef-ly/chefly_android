@@ -39,10 +39,6 @@ public class RequestMethod implements Parcelable {
         return headers;
     }
 
-    public void setParams(Map<String, String> params) {
-        this.params = params;
-    }
-
     public void setParam(String key, String value) {
         params.put(key, value);
     }
@@ -108,7 +104,7 @@ public class RequestMethod implements Parcelable {
         }
         int headersSize = in.readInt();
         headers = new HashMap<>(headersSize);
-        for (int i = 0; i < paramsSize; i++) {
+        for (int i = 0; i < headersSize; i++) {
             String key = in.readString();
             String value = in.readString();
             headers.put(key, value);
