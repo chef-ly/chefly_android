@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.BuildConfig;
 import android.support.v4.content.LocalBroadcastManager;
@@ -18,9 +19,13 @@ import android.widget.Toast;
 import com.auth0.android.Auth0;
 import com.auth0.android.authentication.AuthenticationAPIClient;
 import com.auth0.android.authentication.AuthenticationException;
+import com.auth0.android.result.Credentials;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.se491.chef_ly.application.CheflyApplication;
+import com.se491.chef_ly.http.HttpConnection;
 import com.se491.chef_ly.http.MyService;
 import com.se491.chef_ly.http.RequestMethod;
 
@@ -29,6 +34,8 @@ import com.se491.chef_ly.R;
 import com.se491.chef_ly.utils.CredentialsManager;
 import com.squareup.leakcanary.RefWatcher;
 
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -129,11 +136,17 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
         CharSequence currentInstruction = instruction.getText();
 
         if (currentInstruction.equals(getResources().getText(R.string.enterUserEmail))) {
-            //check if email exist
             userEmail = input.getText().toString(); //save user email
-            instruction.setText(R.string.chooseUsername); // update instruction
-            input.setText(""); // clear input
-            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD); // hide password
+            if(emailExists()) {
+                String existsMsg = "Hmm, that email is registered. Did you already sign up?";
+                Toast.makeText(RegisterActivity.this, existsMsg, Toast.LENGTH_SHORT).show();
+                input.setText("");
+                instruction.setText("Please enter your email");
+            } else {
+                instruction.setText(R.string.chooseUsername); // update instruction
+                input.setText(""); // clear input
+                input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD); // hide password
+            }
         } else if (currentInstruction.equals(getResources().getText(R.string.chooseUsername))) {
             //check if username exists
             username = input.getText().toString();
@@ -162,7 +175,12 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
 
     private boolean emailExists() {
         Log.d(TAG, "Checking if email exists in user database...");
-
+        //call Chefly server
+        UserCheck userCheck = new UserCheck(userEmail);
+        userCheck.execute(new RequestMethod());
+        //check JSON response
+        if(userCheck.getReponse().equals("true"))
+                return true;
         return false;
     }
 
@@ -170,17 +188,7 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
 
     private void registerNewUser() throws UnirestException {
         Log.d(TAG, "Register new user entered");
-        /*HttpResponse<String> response = Unirest.post("")
-                .header("content-type", "application/json")
-                .body("{\"client_id\": \"zeCz4YI9I8nAHSZg2q4wnMIExGvENAu4\",\"email\": \"$('#userEmail').val()\",\"password\": \"$('#password').val()\",\"user_metadata\": {\"username\": \"$('#username').val()\"}}")
-                .asString();*/
 
-       /* window.auth0 = new Auth0({
-                domain: 'chefly.auth0.com',
-                clientID: 'zeCz4YI9I8nAHSZg2q4wnMIExGvENAu4',
-                // Callback made to your server's callback endpoint
-                callbackURL: 'http://chefly-dev.herokuapp.com*//*',
-        });*/
 
         RequestMethod requestPackage = new RequestMethod();
         requestPackage.setEndPoint(urlString);
@@ -193,5 +201,60 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
         Intent intent = new Intent(this, MyService.class);
         intent.putExtra(MyService.REQUEST_PACKAGE, requestPackage);
         startService(intent);
+    }
+
+    private class UserCheck extends AsyncTask<RequestMethod, Integer, String> {
+        private String email;
+        private String statusMessage;
+        private String response;
+
+        UserCheck(String email){
+            this.email= email;
+        }
+
+        @Override
+        protected String doInBackground(RequestMethod... requestMethod) {
+            String urlString = "https://chef-ly.com/exists?email=";
+            urlString.concat(this.email + "\"");
+            RequestMethod rm = new RequestMethod();
+            rm.setEndPoint(urlString);
+            rm.setMethod("GET");
+            String response = "";
+            try {
+                HttpConnection http = new HttpConnection();
+                response = http.downloadFromFeed(rm);
+                this.statusMessage = http.getStatusMessage();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            return response;
+        }
+
+        @Override
+        protected void onPostExecute(String response) {
+            if (response == null || response.equals("")) {
+                Log.d(TAG, "Invalid Login HTTP Response");
+
+            } else {
+                Log.d(TAG, "USER EXISTS TOKEN RESPONSE: " + response);
+                Log.d(TAG, "STATUS MESSAGE: " + this.getStatusMessage());
+                this.response = response;
+                if (this.getStatusMessage().contains("OK")) {
+                    Log.d(TAG, "USER EXISTS SUCCESS");
+
+                } else {
+                    Log.d(TAG, "USER EXISTS FAIL");
+                    String errorMsg = "Username check failed";
+                    Toast.makeText(RegisterActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+
+        String getReponse(){
+            return this.response;
+        }
+
+        String getStatusMessage() { return this.statusMessage; }
+
     }
 }

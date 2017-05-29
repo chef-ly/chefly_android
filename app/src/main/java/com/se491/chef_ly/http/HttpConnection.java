@@ -1,11 +1,27 @@
 package com.se491.chef_ly.http;
 
+import android.content.res.Resources;
+import android.os.AsyncTask;
 import android.support.compat.BuildConfig;
+import android.util.Base64;
 import android.util.Log;
+
+import com.auth0.android.result.Credentials;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import com.se491.chef_ly.R;
+import com.se491.chef_ly.activity.MainActivity;
+import com.se491.chef_ly.utils.CredentialsManager;
 
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Map;
 
 import okhttp3.MediaType;
@@ -30,16 +46,18 @@ public class HttpConnection {
 
         String address = requestPackage.getEndpoint();
         String encodedParams = requestPackage.getEncodedParams();
-//check for get request
+
+        //check for get request
         if (requestPackage.getMethod().equals("GET") &&
                 encodedParams.length() > 0) {
             address = String.format("%s?%s", address, encodedParams);
         }
-//create request object
+
+        //create request object
         OkHttpClient client;
         if(BuildConfig.DEBUG){
             client = new OkHttpClient.Builder().addInterceptor(new LoggingInterceptor()).build();
-        }else{
+        } else {
             client = new OkHttpClient();
         }
 
@@ -57,8 +75,7 @@ public class HttpConnection {
         }
 
 
-
-//check for post request
+        //check for post request
         if (requestPackage.getMethod().equals("POST")) {
             //extract the parameters from the request
             Map<String, String> params = requestPackage.getParams();//get the reference of the pair
@@ -95,13 +112,12 @@ public class HttpConnection {
         }
     }
 
+
     public String getStatusMessage(){
         if(this.statusMessage != null)
             return this.statusMessage;
         else
             return null;
     }
-
-
 
 }

@@ -404,7 +404,6 @@ Log.d(TAG, "On Click - " + v.getId());
     }
 
 
-    //TODO: Find way to store the login strings in resources. Formatting for HTTP calls gets in way. */
     private class Login extends AsyncTask<RequestMethod, Integer, String> {
         private String emailOrUsername;
         private String password;
