@@ -162,6 +162,7 @@ public class InvertedIndex {
         return answer;
     }
 
+
     public static ArrayList queryIndex(String query){
         String[] words = query.toLowerCase().replaceAll("\\p{P}","").split(" ");
 
@@ -189,6 +190,14 @@ public class InvertedIndex {
 
         return dedupedPostingsList;
     }
+
+
+    public static void loadIngredientsInToIndex(List ingredients){
+
+    }
+
+    public static void loadDirectionsInToIndex(List directions){}
+
 
     public static void main(String[] args) {
 	// write your code here

@@ -15,6 +15,4 @@ public class VoiceInstructionEvent {
         return nextInstruction;
     }
 
-
-
 }

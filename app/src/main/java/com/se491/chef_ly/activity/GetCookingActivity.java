@@ -32,6 +32,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.se491.chef_ly.R;
 import com.se491.chef_ly.application.CheflyApplication;
+import com.se491.chef_ly.utils.AnswerEvent;
 import com.se491.chef_ly.utils.DialogPopUp;
 import com.se491.chef_ly.utils.VoiceInstructionEvent;
 import com.se491.chef_ly.utils.VoiceRecognizer;
@@ -352,6 +353,12 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
 
     }
 
+    //This method is called in when an AnswerEvent is thrown
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(AnswerEvent event){
+        read(event.getAnswer());
+    }
+
     // This method will be called when the VoiceRec class sends a nextInstruction event
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(VoiceInstructionEvent event){
@@ -390,7 +397,7 @@ public class GetCookingActivity extends AppCompatActivity implements GetCookingF
                 directionsShowing = true;
                 break;
             case "question":
-                //TODO - make chefly icon at bottom of screen blow to show hes listening
+                //TODO - make chefly icon at bottom of screen glow to show hes listening
                 break;
             case "listen":
                 //btnSpeak.setImageDrawable(getResources().getDrawable(R.drawable.heartselected, getApplicationContext().getTheme()));
