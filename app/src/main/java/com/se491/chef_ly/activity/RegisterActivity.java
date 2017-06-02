@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.BuildConfig;
+import android.support.v4.app.INotificationSideChannel;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.widget.Button;
@@ -36,6 +37,8 @@ import com.squareup.leakcanary.RefWatcher;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.net.ConnectException;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -112,7 +115,12 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
                     handleRegisterButtonClick();
                 } catch (UnirestException e) {
                     e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
                 }
+
                 break;
             default:
                 // TODO error handler?
@@ -132,7 +140,7 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    private void handleRegisterButtonClick() throws UnirestException {
+    private void handleRegisterButtonClick() throws UnirestException, InterruptedException, ExecutionException {
         CharSequence currentInstruction = instruction.getText();
 
         if (currentInstruction.equals(getResources().getText(R.string.enterUserEmail))) {
@@ -145,13 +153,14 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
             } else {
                 instruction.setText(R.string.chooseUsername); // update instruction
                 input.setText(""); // clear input
-                input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD); // hide password
+
             }
         } else if (currentInstruction.equals(getResources().getText(R.string.chooseUsername))) {
             //check if username exists
             username = input.getText().toString();
             instruction.setText(R.string.createPassword);
             input.setText("");
+            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD); // hide password
             nextButton.setText(R.string.next);
         } else if (currentInstruction.equals(getResources().getText(R.string.createPassword))) {
             password = input.getText().toString();
@@ -166,21 +175,31 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
     //https://stackoverflow.com/questions/3802192/regexp-java-for-password-validation
     public static boolean isPasswordValid(String password){
         Pattern p =
-                Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$\n");
+                Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$");
 
         Matcher m = p.matcher(password);
         return(m.matches());
     }
 
 
-    private boolean emailExists() {
+    private boolean emailExists() throws InterruptedException, ExecutionException{
         Log.d(TAG, "Checking if email exists in user database...");
+        String userEmailExists = null;
+
         //call Chefly server
-        UserCheck userCheck = new UserCheck(userEmail);
-        userCheck.execute(new RequestMethod());
+        userEmailExists = new UserCheck(userEmail)
+                            .execute(new RequestMethod())
+                            .get();
         //check JSON response
-        if(userCheck.getReponse().equals("true"))
-                return true;
+
+        if(userEmailExists.equals("true")) {
+            Log.d(TAG, "user email exists returns true");
+            return true;
+        } else if(userEmailExists.equals("false")) {
+            Log.d(TAG, "user email exists returns false");
+            return false;
+        }
+        Log.d(TAG, "user email exists DID NOT RETURN TRUE OR FALSE");
         return false;
     }
 
@@ -214,12 +233,13 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
 
         @Override
         protected String doInBackground(RequestMethod... requestMethod) {
-            String urlString = "https://chef-ly.com/exists?email=";
-            urlString.concat(this.email + "\"");
+            String urlString = "https://chefly-dev.herokuapp.com/exists?email=";
+            urlString = urlString.concat(this.email);
             RequestMethod rm = new RequestMethod();
             rm.setEndPoint(urlString);
             rm.setMethod("GET");
             String response = "";
+            Log.d(TAG, urlString);
             try {
                 HttpConnection http = new HttpConnection();
                 response = http.downloadFromFeed(rm);
@@ -227,6 +247,7 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
+            Log.d(TAG, email + " " + response);
             return response;
         }
 
@@ -236,7 +257,7 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
                 Log.d(TAG, "Invalid Login HTTP Response");
 
             } else {
-                Log.d(TAG, "USER EXISTS TOKEN RESPONSE: " + response);
+                Log.d(TAG, "USER EXISTS RESPONSE: " + response);
                 Log.d(TAG, "STATUS MESSAGE: " + this.getStatusMessage());
                 this.response = response;
                 if (this.getStatusMessage().contains("OK")) {
