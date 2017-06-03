@@ -5,8 +5,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.BuildConfig;
+import android.support.v4.app.INotificationSideChannel;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.widget.Button;
@@ -18,9 +20,13 @@ import android.widget.Toast;
 import com.auth0.android.Auth0;
 import com.auth0.android.authentication.AuthenticationAPIClient;
 import com.auth0.android.authentication.AuthenticationException;
+import com.auth0.android.result.Credentials;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.se491.chef_ly.application.CheflyApplication;
+import com.se491.chef_ly.http.HttpConnection;
 import com.se491.chef_ly.http.MyService;
 import com.se491.chef_ly.http.RequestMethod;
 
@@ -29,6 +35,10 @@ import com.se491.chef_ly.R;
 import com.se491.chef_ly.utils.CredentialsManager;
 import com.squareup.leakcanary.RefWatcher;
 
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.net.ConnectException;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -105,7 +115,12 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
                     handleRegisterButtonClick();
                 } catch (UnirestException e) {
                     e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
                 }
+
                 break;
             default:
                 // TODO error handler?
@@ -125,84 +140,74 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    private void handleRegisterButtonClick() throws UnirestException {
+    private void handleRegisterButtonClick() throws UnirestException, InterruptedException, ExecutionException {
         CharSequence currentInstruction = instruction.getText();
 
         if (currentInstruction.equals(getResources().getText(R.string.enterUserEmail))) {
-            //check if email exist
             userEmail = input.getText().toString(); //save user email
-            instruction.setText(R.string.chooseUsername); // update instruction
-            input.setText(""); // clear input
-            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD); // hide password
+            if(emailExists()) {
+                String existsMsg = "Hmm, that email is registered. Did you already sign up?";
+                Toast.makeText(RegisterActivity.this, existsMsg, Toast.LENGTH_SHORT).show();
+                input.setText("");
+                instruction.setText("Please enter your email");
+            } else {
+                instruction.setText(R.string.chooseUsername); // update instruction
+                input.setText(""); // clear input
+
+            }
         } else if (currentInstruction.equals(getResources().getText(R.string.chooseUsername))) {
-            //check if username exist
+            //check if username exists
             username = input.getText().toString();
             instruction.setText(R.string.createPassword);
             input.setText("");
+            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD); // hide password
             nextButton.setText(R.string.next);
         } else if (currentInstruction.equals(getResources().getText(R.string.createPassword))) {
-                password = input.getText().toString();
-            if (isValid(password)) {
-                instruction.setText(R.string.createPasswordAgain); // update instruction
-                input.setText(""); // clear input
-                nextButton.setText(R.string.done); // Change text of button
-            } else {
-                Toast.makeText(getApplicationContext(), "The password is invalid, Please try again", Toast.LENGTH_SHORT).show();
-            }
-        } else if (currentInstruction.equals(getResources().getText(R.string.createPasswordAgain))) {
-            // check if password matches new input
-            if (input.getText().toString().equals(password)) {
+            password = input.getText().toString();
+            if (isPasswordValid(password)) {
                 registerNewUser();
             } else {
-                Toast.makeText(getApplicationContext(), "Your passwords did not match. Please try again", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "The password is too weak, please try again", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
+    //https://stackoverflow.com/questions/3802192/regexp-java-for-password-validation
+    public static boolean isPasswordValid(String password){
+        Pattern p =
+                Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$");
 
-    public static boolean isValid(String password)
-    {
-        Boolean atleastOneUpper = false;
-        Boolean atleastOneLower = false;
+        Matcher m = p.matcher(password);
+        return(m.matches());
+    }
 
-            if(password.length()>=8) {
 
-                Pattern digit = Pattern.compile("[0-9]");
-                Pattern special = Pattern.compile("[!@#$%&*()_+=|<>?{}\\[\\]~-]");
-        for (int i = 0; i < password.length(); i++) {
-            if (Character.isUpperCase(password.charAt(i))) {
-                atleastOneUpper = true;
-            }
-            else if (Character.isLowerCase(password.charAt(i))) {
-                atleastOneLower = true;
-            }
-            }
-                Matcher hasDigit = digit.matcher(password);
-                Matcher hasSpecial = special.matcher(password);
+    private boolean emailExists() throws InterruptedException, ExecutionException{
+        Log.d(TAG, "Checking if email exists in user database...");
+        String userEmailExists = null;
 
-                return (atleastOneUpper && atleastOneLower && hasDigit.find() && hasSpecial.find());
+        //call Chefly server
+        userEmailExists = new UserCheck(userEmail)
+                            .execute(new RequestMethod())
+                            .get();
+        //check JSON response
 
-            }
-            else
-                return false;
+        if(userEmailExists.equals("true")) {
+            Log.d(TAG, "user email exists returns true");
+            return true;
+        } else if(userEmailExists.equals("false")) {
+            Log.d(TAG, "user email exists returns false");
+            return false;
         }
-
+        Log.d(TAG, "user email exists DID NOT RETURN TRUE OR FALSE");
+        return false;
+    }
 
 
 
     private void registerNewUser() throws UnirestException {
         Log.d(TAG, "Register new user entered");
-        /*HttpResponse<String> response = Unirest.post("")
-                .header("content-type", "application/json")
-                .body("{\"client_id\": \"zeCz4YI9I8nAHSZg2q4wnMIExGvENAu4\",\"email\": \"$('#userEmail').val()\",\"password\": \"$('#password').val()\",\"user_metadata\": {\"username\": \"$('#username').val()\"}}")
-                .asString();*/
 
-       /* window.auth0 = new Auth0({
-                domain: 'chefly.auth0.com',
-                clientID: 'zeCz4YI9I8nAHSZg2q4wnMIExGvENAu4',
-                // Callback made to your server's callback endpoint
-                callbackURL: 'http://chefly-dev.herokuapp.com*//*',
-        });*/
 
         RequestMethod requestPackage = new RequestMethod();
         requestPackage.setEndPoint(urlString);
@@ -215,5 +220,62 @@ public class RegisterActivity extends Activity implements View.OnClickListener {
         Intent intent = new Intent(this, MyService.class);
         intent.putExtra(MyService.REQUEST_PACKAGE, requestPackage);
         startService(intent);
+    }
+
+    private class UserCheck extends AsyncTask<RequestMethod, Integer, String> {
+        private String email;
+        private String statusMessage;
+        private String response;
+
+        UserCheck(String email){
+            this.email= email;
+        }
+
+        @Override
+        protected String doInBackground(RequestMethod... requestMethod) {
+            String urlString = "https://chefly-dev.herokuapp.com/exists?email=";
+            urlString = urlString.concat(this.email);
+            RequestMethod rm = new RequestMethod();
+            rm.setEndPoint(urlString);
+            rm.setMethod("GET");
+            String response = "";
+            Log.d(TAG, urlString);
+            try {
+                HttpConnection http = new HttpConnection();
+                response = http.downloadFromFeed(rm);
+                this.statusMessage = http.getStatusMessage();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            Log.d(TAG, email + " " + response);
+            return response;
+        }
+
+        @Override
+        protected void onPostExecute(String response) {
+            if (response == null || response.equals("")) {
+                Log.d(TAG, "Invalid Login HTTP Response");
+
+            } else {
+                Log.d(TAG, "USER EXISTS RESPONSE: " + response);
+                Log.d(TAG, "STATUS MESSAGE: " + this.getStatusMessage());
+                this.response = response;
+                if (this.getStatusMessage().contains("OK")) {
+                    Log.d(TAG, "USER EXISTS SUCCESS");
+
+                } else {
+                    Log.d(TAG, "USER EXISTS FAIL");
+                    String errorMsg = "Username check failed";
+                    Toast.makeText(RegisterActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+
+        String getReponse(){
+            return this.response;
+        }
+
+        String getStatusMessage() { return this.statusMessage; }
+
     }
 }

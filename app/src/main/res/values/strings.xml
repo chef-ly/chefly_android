@@ -19,7 +19,7 @@
     <string name="continueAsGuest"><u>Skip</u></string>
     <string name="contactus"><u>Contact Us:</u></string>
     <string name="webtext"><u>Please provide our feedback to our survey: https://chef-ly.typeform.com/to/LKXdL8</u></string>
-    <string name="emailtext"><u>To report an issue or communicate with as, please send us an email to: chef.ly.app@gmail.com</u></string>
+    <string name="emailtext"><u>To report an issue or communicate with as, please send an email to: chef.ly.app@gmail.com</u></string>
     <string name="continueWithSocial">Continue with social</string>
     <string name="createPassword">Create a new Password:\n * Must have 8 characters in length\n *At least one digit,symbol,Lower/Upper case letter\n</string>
     <string name="createPasswordAgain">Please Re-enter password for match confirmation</string>
