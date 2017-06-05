@@ -248,15 +248,33 @@ public class ListViewFragment extends Fragment implements LoaderManager.LoaderCa
         return title;
     }
 
-    public void setList(RecipeList newList, boolean goToTop){
+    public void setList(RecipeList newList, final boolean goToTop){
         list.clear();
         for(RecipeInformation r : newList){
             list.add(r);
         }
-        ((BaseAdapter) listView.getAdapter()).notifyDataSetChanged();
-        if(goToTop){
-            listView.setSelectionAfterHeaderView();
+        //sometimes the parent activity tries to set the list before the fragment can finish inflating
+        // If the list view is null just wait 100 ms to give it time to inflate
+        if(listView == null){
+            Handler h = new Handler();
+            h.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    ((BaseAdapter) listView.getAdapter()).notifyDataSetChanged();
+                    if(goToTop){
+                        listView.setSelectionAfterHeaderView();
+                    }
+                }
+            }, 100);
+
+        }else{
+            ((BaseAdapter) listView.getAdapter()).notifyDataSetChanged();
+            if(goToTop){
+                listView.setSelectionAfterHeaderView();
+            }
         }
+
+
     }
     public void updateListAdapter(RecipeList newList){
         if(list == null){

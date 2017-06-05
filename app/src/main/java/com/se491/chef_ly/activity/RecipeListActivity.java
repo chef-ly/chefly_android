@@ -13,6 +13,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v4.util.ArraySet;
 import android.support.v4.view.GravityCompat;
@@ -28,6 +29,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -71,6 +74,7 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
     private ArraySet<Integer> favListAdd = new ArraySet<>();
     private ArraySet<Integer> favListRemove = new ArraySet<>();
     private SearchView searchView;
+    private ProgressBar spinner;
 
     private final String urlStringSearch ="http://www.chef-ly.com/search?q=";
     private final String urlPageNum = "&p=";
@@ -82,8 +86,15 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_recipe_list);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
+        // Progress bar for loading search
+        spinner = (ProgressBar) findViewById(R.id.progressBar1);
+        spinner.setVisibility(View.GONE);
+
+        spinner.setIndeterminateDrawable(ContextCompat.getDrawable(this, R.drawable.customprogressbar));
 
         //Initialize recipe lists
         serverRecipes = new RecipeList();
@@ -395,6 +406,8 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
 
                 queryString = query;
                 server.updateSearch(query);
+                spinner.setVisibility(View.VISIBLE);
+                spinner.bringToFront();
 
                 return false;
             }
@@ -499,9 +512,11 @@ public class RecipeListActivity extends AppCompatActivity implements NavigationV
 
 
             }else if(id == queryString.hashCode()){
+                spinner.setVisibility(View.GONE);
                 Log.d(TAG, " Recipe Search -> " + data.size());
                 if(data.size() > 0){
                     // Collect all recipes so list can be redisplayed when search is closed
+
                     server.setList(data, true);
                 }else{
                     Log.d(TAG, "Error - No recipes loaded from server");
