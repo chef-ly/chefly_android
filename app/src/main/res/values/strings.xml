@@ -30,7 +30,7 @@
     <string name="dot">&#8226;</string>
     <string name="edit">Edit</string>
     <string name="edit_directionView">edit direction step</string>
-    <string name="email">heinsd@hotmail.com</string>
+    <string name="email">user@email.com</string>
     <string name="enterUserEmail">Please enter your email</string>
     <string name="favorite">Favorite</string>
     <string name="favorites">Favorites</string>
@@ -82,7 +82,7 @@
     <string name="unit">Unit</string>
     <string name="unknown">Unk</string>
     <string name="updateEmailPassword">Update Username &#0038; Password</string>
-    <string name="user">Don Heins</string>
+    <string name="user">Lewis Puller</string>
     <string name="userImage">User Image</string>
     <string name="useremail">Email</string>
     <string name="x">X</string>

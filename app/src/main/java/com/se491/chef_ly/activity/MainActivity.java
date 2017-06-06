@@ -466,20 +466,19 @@ Log.d(TAG, "On Click - " + v.getId());
 
                     startRecipeListActivity(emailOrUsername);
 
-            } else {
+                } else {
                     String responseCode = response.substring(6);
                     Log.d(TAG, responseCode);
                     if(!NetworkHelper.hasNetworkAccess(MainActivity.this)){
                         Toast.makeText(MainActivity.this, "Login Failed No Internet Connection", Toast.LENGTH_SHORT).show();
                     }else if(responseCode.startsWith("4")){
                         Toast.makeText(MainActivity.this, "Invalid Credentials, Please try again", Toast.LENGTH_LONG).show();
-
                     }else{
                         Log.d(TAG, "LOGIN FAIL - " + response);
                         String errorMsg = "Sign in request failed";
                         showToast(errorMsg);
                     }
-            }
+                }
             }
         }
 
