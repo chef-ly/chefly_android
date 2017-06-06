@@ -309,7 +309,7 @@ Log.d(TAG, "On Click - " + v.getId());
                 } else {
                     login(user.toString(), pword.toString());
                 }
-
+                password.getText().clear();
                 break;
             case R.id.continueAsGuest:
                 startRecipeListActivity("guest");
@@ -435,8 +435,8 @@ Log.d(TAG, "On Click - " + v.getId());
             String response = "";
             try {
                 HttpConnection http = new HttpConnection();
+
                 response = http.downloadFromFeed(rm);
-                this.statusMessage = http.getStatusMessage();
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -450,9 +450,8 @@ Log.d(TAG, "On Click - " + v.getId());
 
             } else {
                 Log.d(TAG, "LOGIN TOKEN RESPONSE: " + response);
-                Log.d(TAG, "STATUS MESSAGE: " + this.getStatusMessage());
                 this.response = response;
-                if (this.getStatusMessage().contains("OK")) {
+                if (!response.startsWith("Error")) {
                     Log.d(TAG, "LOGIN SUCCESS");
                     GsonBuilder gsonBuilder = new GsonBuilder();
                     Gson gson = gsonBuilder.create();
@@ -460,26 +459,29 @@ Log.d(TAG, "On Click - " + v.getId());
                     }.getType();
 
                     //is this legal?
-                    Credentials credentials = gson.fromJson(this.getReponse(), type);
+                    Credentials credentials = gson.fromJson(response, type);
                     //store login credentials
                     CredentialsManager.saveCredentials(MainActivity.this, credentials);
                     CredentialsManager.saveUsername(MainActivity.this, emailOrUsername);
 
                     startRecipeListActivity(emailOrUsername);
 
-                } else {
-                    Log.d(TAG, "LOGIN FAIL");
-                    String errorMsg = "Sign in request failed";
-                    showToast(errorMsg);
-                }
+            } else {
+                    String responseCode = response.substring(6);
+                    Log.d(TAG, responseCode);
+                    if(!NetworkHelper.hasNetworkAccess(MainActivity.this)){
+                        Toast.makeText(MainActivity.this, "Login Failed No Internet Connection", Toast.LENGTH_SHORT).show();
+                    }else if(responseCode.startsWith("4")){
+                        Toast.makeText(MainActivity.this, "Invalid Credentials, Please try again", Toast.LENGTH_LONG).show();
+
+                    }else{
+                        Log.d(TAG, "LOGIN FAIL - " + response);
+                        String errorMsg = "Sign in request failed";
+                        showToast(errorMsg);
+                    }
+            }
             }
         }
-
-        String getReponse(){
-            return this.response;
-        }
-
-        String getStatusMessage() { return this.statusMessage; }
 
         String generateCodeChallenge() throws UnsupportedEncodingException, NoSuchAlgorithmException{
             SecureRandom sr = new SecureRandom();

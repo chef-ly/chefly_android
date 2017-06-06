@@ -108,7 +108,10 @@ public class HttpConnection {
             return response.body().string();
         } else {
             Log.d(TAG, response.toString());
-            throw new IOException("Exception: response code " + response.code());
+            Log.d(TAG, "Response Code ------> " + response.code());
+
+            return "Error " +response.code();
+            //throw new IOException("Exception: response code " + response.code());
         }
     }
 

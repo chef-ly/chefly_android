@@ -77,8 +77,9 @@
             android:windowSoftInputMode="adjustPan" />
         <activity android:name=".activity.nav_activities.UserProfileActivity" />
         <activity android:name=".activity.nav_activities.SearchIngredients" />
-        <activity android:name=".activity.IntroActivity" />
-        <activity android:name=".activity.nav_activities.ContactUsActivity"></activity>
+        <activity android:name=".activity.IntroActivity"
+            android:hardwareAccelerated="false"/>
+        <activity android:name=".activity.nav_activities.ContactUsActivity"/>
     </application>
 
 </manifest>
